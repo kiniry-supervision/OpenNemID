@@ -1,0 +1,10 @@
+title Open NemId (User Settings [Per User])
+
+User->AuthenticationProvider: 1. Register for Open NemId
+AuthenticationProvider->User: 2. OTP Card
+AuthenticationProvider->User: 3. Initial Password
+User->AuthenticationProvider: 4. Change userId
+User->AuthenticationProvider: 5. Change password
+User->AuthenticationProvider: 6. Add/Revoke n-factor
+User->AuthenticationProvider: 7. Revoke identity provider
+AuthenticationProvider->User: 8. OK!

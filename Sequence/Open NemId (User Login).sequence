@@ -1,0 +1,16 @@
+title Open NemId (User Login)
+
+Browser->+IdentityProvider: 1. Login
+IdentityProvider->-Browser: 2. Login Page
+
+Browser->+IdentityProvider: 3.1 POST credentials
+IdentityProvider->+AuthenticationProvider: 3.2 Credentials delegated
+AuthenticationProvider->-IdentityProvider: 3.3 Return n-factor challenge
+IdentityProvider->-Browser: 3.4 Delegate n-factor challenge
+
+Browser->+IdentityProvider: 4.1 POST n-factor credentials
+IdentityProvider-->N-factor challenge: 4.2 Delegate n-factor credentials
+N-factor challenge-->-IdentityProvider: 4.3 Return n-factor response
+IdentityProvider->-Browser: Return Certificate (or TRUE)
+
+Browser->IdentityProvider: GET ...

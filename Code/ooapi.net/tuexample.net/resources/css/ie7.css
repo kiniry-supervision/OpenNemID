@@ -1,0 +1,16 @@
+﻿/* tab menu */
+ul#tabs										{ position: absolute; bottom: 0; }
+ul#tabs li									{ display: inline-block; margin: 0 6px 0 5px; padding: 0; list-style-type: none; background: url(../images/tabLeft.png) no-repeat 0 0; }
+ul#tabs li a									{ float: left; min-width: 270px; display: block; height: 53px; padding: 0; color: #35353d; text-decoration: none; background: url(../images/tabRight.png) no-repeat 100% 0; }
+ul#tabs li a span								{ text-align: right!important;float: left; padding: 12px 30px 10px 14px; font-size: 1.166em; line-height: 24px; color: #fff; cursor: pointer; }
+ul#tabs li.selected,
+ul#tabs li.selected:hover						{ margin: 0 5px 0 -4px; padding: 0 9px 0 12px; background: url(../images/tabSelectedLeft.png) no-repeat 0 0; }
+ul#tabs li.selected a,
+ul#tabs li.selected:hover	a					{ margin-right: -22px; padding-right: 10px; display: block; background: url(../images/tabSelectedRight.png) no-repeat 100% 0; }
+ul#tabs li.selected a span	 					{ padding-left: 11px; padding-right: 33px; color: #35353d; }
+ul#tabs li:hover								{ background: url(../images/tabHoverLeft.png) no-repeat 0 0; }
+ul#tabs li:hover a							{ background: url(../images/tabHoverRight.png) no-repeat 100% 0; }
+ul#tabs li a span.nemidLogo					{ float: left; height: 16px; padding: 10px; width: 52px; background: url(../images/tabNemID.png) no-repeat 75% 75%; }
+ul#tabs li a span.digitalSignaturLogo			{ float: left; height: 16px; padding: 13px 10px; width: 69px; background: url(../images/tabDigitalSignatur.png) no-repeat 75% 65%; }
+ul#tabs li.selected a span.nemidLogo			{ background: url(../images/tabNemIDSelected.png) no-repeat 62% 75%; }
+ul#tabs li.selected a span.digitalSignaturLogo	{ background: url(../images/tabDigitalSignaturSelected.png) no-repeat 62% 65%; }
