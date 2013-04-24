@@ -20,6 +20,12 @@ type LoginData =
                   site:string -> data:string ->
                   LoginData
 
+type LoginInfo =
+  | UserLogin:  user:string -> password:string ->
+                LoginInfo
+  | CprLogin:   cpr:int -> password:string ->
+                LoginInfo
+
 type Assertion =
   | SignedAssertion: assertiontoken -> dsig -> Assertion
   | EncryptedAssertion: cypher -> Assertion
@@ -29,10 +35,11 @@ type SamlStatus =
   | Requester: SamlStatus
   | Responder: SamlStatus
 
+(*Define type for cpr so length = 10*)
 type SamlMessage =
-  | Login: uri -> SamlMessage
+  | Login: LoginInfo -> SamlMessage
   | LoginResponse: string -> SamlMessage
-  | AuthnRequestMessage: issuer:prin ->  destination:endpoint -> message:string -> dsig -> SamlMessage
+  | AuthnRequestMessage: issuer:prin ->  destination:endpoint -> message:string -> loginInfo:LoginInfo -> dsig -> SamlMessage
   | AuthResponseMessage: issuer:prin -> destination:endpoint -> Assertion -> SamlMessage
   | UserAuthenticated: status:string -> loginData:LoginData -> authnRequest:AuthnRequest -> SamlMessage
   | UserCredRequest: challenge:nonce -> SamlMessage
