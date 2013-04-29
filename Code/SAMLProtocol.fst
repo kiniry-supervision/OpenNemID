@@ -1,6 +1,7 @@
 module SamlProtocol
 
 open Crypto
+open TypeFunc
 
 type assertiontoken = string (*Add refinements*)
 type signedtoken = string (*Add refinements*)
@@ -21,10 +22,16 @@ type LoginData =
                   LoginData
 
 type LoginInfo =
-  | UserLogin:  user:string -> password:string ->
+  | UserLogin:  name:string -> password:string ->
                 LoginInfo
   | CprLogin:   cpr:int -> password:string ->
                 LoginInfo
+
+type Authentication =
+  | Facebook: Authentication
+  | SMS: Authentication
+  | Google: Authentication
+  | OpenId: Authentication
 
 type Assertion =
   | SignedAssertion: assertiontoken -> dsig -> Assertion
@@ -40,10 +47,13 @@ type SamlMessage =
   | Login: LoginInfo -> SamlMessage
   | LoginResponse: string -> SamlMessage
   | AuthnRequestMessage: issuer:prin ->  destination:endpoint -> message:string -> loginInfo:LoginInfo -> dsig -> SamlMessage
-  | AuthResponseMessage: issuer:prin -> destination:endpoint -> Assertion -> SamlMessage
-  | UserAuthenticated: status:string -> loginData:LoginData -> authnRequest:AuthnRequest -> SamlMessage
+  | AuthResponseMessage: issuer:prin -> destination:endpoint -> Assertion -> authmethod:Authentication -> SamlMessage
+  | UserAuthenticated: status:string -> (*authentication:Authentication ->*) authnRequest:AuthnRequest -> SamlMessage
   | UserCredRequest: challenge:nonce -> SamlMessage
+  | UserAuthRequest: authmethod:Authentication -> authnRequest:AuthnRequest -> SamlMessage
   | Failed: SamlStatus -> SamlMessage
+  | LoginFailed: SamlMessage
+  | LoginSuccess: (*Add func*) -> SamlMessage
   | DisplayError: int -> SamlMessage
 
 
