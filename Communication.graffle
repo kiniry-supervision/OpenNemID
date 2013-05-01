@@ -14,7 +14,7 @@
 	<key>BackgroundGraphic</key>
 	<dict>
 		<key>Bounds</key>
-		<string>{{0, 0}, {559.28997802734375, 782.8900146484375}}</string>
+		<string>{{0, 0}, {1118.5799560546875, 1565.780029296875}}</string>
 		<key>Class</key>
 		<string>SolidGraphic</string>
 		<key>ID</key>
@@ -52,13 +52,254 @@
 	<key>GraphicsList</key>
 	<array>
 		<dict>
+			<key>Bounds</key>
+			<string>{{344, 11.125}, {253, 60.875}}</string>
+			<key>Class</key>
+			<string>ShapedGraphic</string>
+			<key>ID</key>
+			<integer>104</integer>
+			<key>Shape</key>
+			<string>NoteShape</string>
+			<key>Style</key>
+			<dict/>
+			<key>Text</key>
+			<dict>
+				<key>Align</key>
+				<integer>0</integer>
+				<key>Text</key>
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf1138\cocoasubrtf510
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
+
+\f0\fs18 \cf0 NF = Set of NFactor Challenges to pass\
+NFC = NFactor Challenge (KeyCard, SMS, Facebook etc.)\
+NFR = NFactor Challenge Response\
+LID = Login Data (from Authentication Provider)\
+UC = User Certificate}</string>
+				<key>VerticalPad</key>
+				<integer>0</integer>
+			</dict>
+		</dict>
+		<dict>
+			<key>Bounds</key>
+			<string>{{182, 9.875}, {151, 60.875}}</string>
+			<key>Class</key>
+			<string>ShapedGraphic</string>
+			<key>ID</key>
+			<integer>103</integer>
+			<key>Shape</key>
+			<string>NoteShape</string>
+			<key>Style</key>
+			<dict/>
+			<key>Text</key>
+			<dict>
+				<key>Align</key>
+				<integer>0</integer>
+				<key>Text</key>
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf1138\cocoasubrtf510
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
+
+\f0\fs18 \cf0 RE = Response (SAML)\
+C = Challenge (nonce)\
+SAS = SAML Session\
+AK = Authentication Key (From SP)\
+LOS = Log On Site}</string>
+				<key>VerticalPad</key>
+				<integer>0</integer>
+			</dict>
+		</dict>
+		<dict>
+			<key>Bounds</key>
+			<string>{{20, 4}, {151, 85}}</string>
+			<key>Class</key>
+			<string>ShapedGraphic</string>
+			<key>ID</key>
+			<integer>102</integer>
+			<key>Shape</key>
+			<string>NoteShape</string>
+			<key>Style</key>
+			<dict/>
+			<key>Text</key>
+			<dict>
+				<key>Align</key>
+				<integer>0</integer>
+				<key>Text</key>
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf1138\cocoasubrtf510
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
+
+\f0\fs18 \cf0 R = Rquested Resource\
+AR = AuthRequest (SAML)\
+RS = RelayState (Created by SP)\
+IdP = Identity Provider\
+SP = Service Provider\
+U = Username\
+P = Password}</string>
+				<key>VerticalPad</key>
+				<integer>0</integer>
+			</dict>
+		</dict>
+		<dict>
+			<key>Bounds</key>
+			<string>{{385, 588}, {143, 55}}</string>
+			<key>Class</key>
+			<string>ShapedGraphic</string>
+			<key>ID</key>
+			<integer>101</integer>
+			<key>Shape</key>
+			<string>NoteShape</string>
+			<key>Style</key>
+			<dict/>
+			<key>Text</key>
+			<dict>
+				<key>Align</key>
+				<integer>0</integer>
+				<key>Text</key>
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf1138\cocoasubrtf510
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
+
+\f0\fs18 \cf0 4.1 Such that:\
+MRE1 = BASE64ENCODE(RE1)\
+RE1.InResponseTo = AR1.Id\
+RE1.Status = Requester}</string>
+				<key>VerticalPad</key>
+				<integer>0</integer>
+			</dict>
+		</dict>
+		<dict>
+			<key>Bounds</key>
+			<string>{{421, 724}, {168.00003051757812, 62}}</string>
+			<key>Class</key>
+			<string>ShapedGraphic</string>
+			<key>ID</key>
+			<integer>100</integer>
+			<key>Shape</key>
+			<string>NoteShape</string>
+			<key>Style</key>
+			<dict/>
+			<key>Text</key>
+			<dict>
+				<key>Align</key>
+				<integer>0</integer>
+				<key>Text</key>
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf1138\cocoasubrtf510
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
+
+\f0\fs18 \cf0 8: Such that:\
+LID.Signature = SIGN(LID, UC.Private)\
+LID.Certificate = UC.Public\
+LID.Challenge = C1\
+LID.LogOnTo = LOS}</string>
+				<key>VerticalPad</key>
+				<integer>0</integer>
+			</dict>
+		</dict>
+		<dict>
+			<key>Bounds</key>
+			<string>{{7, 565.25}, {253, 85}}</string>
+			<key>Class</key>
+			<string>ShapedGraphic</string>
+			<key>ID</key>
+			<integer>99</integer>
+			<key>Shape</key>
+			<string>NoteShape</string>
+			<key>Style</key>
+			<dict/>
+			<key>Text</key>
+			<dict>
+				<key>Align</key>
+				<integer>0</integer>
+				<key>Text</key>
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf1138\cocoasubrtf510
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
+
+\f0\fs18 \cf0 9: Such that:\
+MRE1 = BASE64ENCODE(RE1)\
+ENCRYPT(SP1.Public, RE1.Assertion)\
+RE1.Assertion.Signature = SIGN(IdP.Private, RE1.Assertion)\
+RE1.InResponseTo = A1.Id\
+RE1.Status = Success\
+A1.SessionIndex = SAS}</string>
+				<key>VerticalPad</key>
+				<integer>0</integer>
+			</dict>
+		</dict>
+		<dict>
+			<key>Bounds</key>
+			<string>{{7, 476}, {200, 74}}</string>
+			<key>Class</key>
+			<string>ShapedGraphic</string>
+			<key>ID</key>
+			<integer>98</integer>
+			<key>Shape</key>
+			<string>NoteShape</string>
+			<key>Style</key>
+			<dict/>
+			<key>Text</key>
+			<dict>
+				<key>Align</key>
+				<integer>0</integer>
+				<key>Text</key>
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf1138\cocoasubrtf510
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
+
+\f0\fs18 \cf0 4: Such that:\
+APP.SigParam.Challenge = C\
+APP.SigParam.Site = IdP.Id\
+APP.SigParam.Certificate = IdP.AppCert.Public\
+APP.SigParam.Signature = SIGN(APP.SigParam, IdP.AppCert.Private)}</string>
+				<key>VerticalPad</key>
+				<integer>0</integer>
+			</dict>
+		</dict>
+		<dict>
+			<key>Bounds</key>
+			<string>{{445.00006103515625, 264}, {139, 46}}</string>
+			<key>Class</key>
+			<string>ShapedGraphic</string>
+			<key>ID</key>
+			<integer>97</integer>
+			<key>Shape</key>
+			<string>NoteShape</string>
+			<key>Style</key>
+			<dict/>
+			<key>Text</key>
+			<dict>
+				<key>Align</key>
+				<integer>0</integer>
+				<key>Text</key>
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf1138\cocoasubrtf510
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
+
+\f0\fs18 \cf0 2: Such that:\
+MA1 = BASE64ENCODE(AR1)\
+SS1 = SIGN(SP1:Private, AR1)}</string>
+				<key>VerticalPad</key>
+				<integer>0</integer>
+			</dict>
+		</dict>
+		<dict>
 			<key>Class</key>
 			<string>Group</string>
 			<key>Graphics</key>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{201.5, 236.75}, {162, 12}}</string>
+					<string>{{248.35501098632812, 319.75}, {162, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -111,8 +352,8 @@
 					<integer>96</integer>
 					<key>Points</key>
 					<array>
-						<string>{264.50000040948396, 255.75}</string>
-						<string>{300.49999959051604, 255.75}</string>
+						<string>{311.35501139581208, 338.75}</string>
+						<string>{347.35501057684417, 338.75}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -142,7 +383,7 @@
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{230.00000338852442, 208}, {105, 12}}</string>
+					<string>{{276.85501437485254, 291}, {105, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -195,8 +436,8 @@
 					<integer>93</integer>
 					<key>Points</key>
 					<array>
-						<string>{264.50000379800838, 227}</string>
-						<string>{300.50000297904046, 227}</string>
+						<string>{311.3550147843365, 310}</string>
+						<string>{347.35501396536858, 310}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -226,7 +467,7 @@
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{218.78997802734375, 88.5}, {128, 12}}</string>
+					<string>{{265.64498901367188, 171.5}, {128, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -279,8 +520,8 @@
 					<integer>90</integer>
 					<key>Points</key>
 					<array>
-						<string>{264.78997802734375, 107.5}</string>
-						<string>{300.78997778892506, 107.5}</string>
+						<string>{311.64498901367188, 190.5}</string>
+						<string>{347.64498877525318, 190.5}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -310,7 +551,7 @@
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{196.14498901367188, 476}, {177, 12}}</string>
+					<string>{{243, 559}, {177, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -363,8 +604,8 @@
 					<integer>87</integer>
 					<key>Points</key>
 					<array>
-						<string>{266.64498942315583, 495}</string>
-						<string>{302.64498860418792, 495}</string>
+						<string>{313.50000040948396, 578}</string>
+						<string>{349.49999959051604, 578}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -394,7 +635,7 @@
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{229.14498901367188, 669}, {107, 12}}</string>
+					<string>{{276, 752}, {107, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -447,8 +688,8 @@
 					<integer>84</integer>
 					<key>Points</key>
 					<array>
-						<string>{264.64498901367188, 688}</string>
-						<string>{300.64498877525318, 688}</string>
+						<string>{311.5, 771}</string>
+						<string>{347.49999976158131, 771}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -473,7 +714,7 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{17.144989013671875, 463}, {99, 46}}</string>
+			<string>{{116.71002197265625, 127.25}, {123, 24.75}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -492,8 +733,7 @@
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
 
-\f0\fs20 \cf0 7:\
-Repeat for all NFActor Challenges}</string>
+\f0\fs18 \cf0 7: Repeat for all NFC in NF}</string>
 				<key>VerticalPad</key>
 				<integer>0</integer>
 			</dict>
@@ -505,7 +745,7 @@ Repeat for all NFActor Challenges}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{217.64498901367188, 569}, {126, 12}}</string>
+					<string>{{264.5, 652}, {126, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -558,8 +798,8 @@ Repeat for all NFActor Challenges}</string>
 					<integer>80</integer>
 					<key>Points</key>
 					<array>
-						<string>{262.64498901367188, 588}</string>
-						<string>{298.64498877525318, 588}</string>
+						<string>{309.5, 671}</string>
+						<string>{345.49999976158131, 671}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -589,7 +829,7 @@ Repeat for all NFActor Challenges}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{231.14498901367188, 287}, {101, 12}}</string>
+					<string>{{278, 370}, {101, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -642,8 +882,8 @@ Repeat for all NFActor Challenges}</string>
 					<integer>77</integer>
 					<key>Points</key>
 					<array>
-						<string>{263.64498901367188, 306}</string>
-						<string>{299.64498877525318, 306}</string>
+						<string>{310.5, 389}</string>
+						<string>{346.49999976158131, 389}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -673,7 +913,7 @@ Repeat for all NFActor Challenges}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{220.28997802734375, 44.25}, {129, 12}}</string>
+					<string>{{267.14498901367188, 127.25}, {129, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -726,8 +966,8 @@ Repeat for all NFActor Challenges}</string>
 					<integer>71</integer>
 					<key>Points</key>
 					<array>
-						<string>{266.78997843682771, 63.25}</string>
-						<string>{302.78997761785979, 63.25}</string>
+						<string>{313.64498942315583, 146.25}</string>
+						<string>{349.64498860418792, 146.25}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -757,7 +997,7 @@ Repeat for all NFActor Challenges}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{221.28997802734375, 6}, {123, 12}}</string>
+					<string>{{268.14498901367188, 89}, {123, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -810,8 +1050,8 @@ Repeat for all NFActor Challenges}</string>
 					<integer>68</integer>
 					<key>Points</key>
 					<array>
-						<string>{264.78997802734375, 25}</string>
-						<string>{300.78997778892506, 25}</string>
+						<string>{311.64498901367188, 108}</string>
+						<string>{347.64498877525318, 108}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -846,9 +1086,9 @@ Repeat for all NFActor Challenges}</string>
 			<integer>65</integer>
 			<key>Points</key>
 			<array>
-				<string>{62.144989013671875, 125.25}</string>
-				<string>{62, 35}</string>
-				<string>{437.14501953125, 35}</string>
+				<string>{109, 208.25}</string>
+				<string>{108.85501098632812, 118}</string>
+				<string>{484.00003051757812, 118}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -872,7 +1112,7 @@ Repeat for all NFActor Challenges}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{437.14501953125, 17}, {105, 36}}</string>
+			<string>{{484.00003051757812, 100}, {105, 36}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -909,7 +1149,7 @@ Repeat for all NFActor Challenges}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{227.78997802734375, 447}, {110, 12}}</string>
+					<string>{{274.64498901367188, 530}, {110, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -962,8 +1202,8 @@ Repeat for all NFActor Challenges}</string>
 					<integer>63</integer>
 					<key>Points</key>
 					<array>
-						<string>{264.78997802734375, 466}</string>
-						<string>{300.78997778892506, 466}</string>
+						<string>{311.64498901367188, 549}</string>
+						<string>{347.64498877525318, 549}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -993,7 +1233,7 @@ Repeat for all NFActor Challenges}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{229.78997802734375, 641}, {104, 12}}</string>
+					<string>{{276.64498901367188, 724}, {104, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -1046,8 +1286,8 @@ Repeat for all NFActor Challenges}</string>
 					<integer>60</integer>
 					<key>Points</key>
 					<array>
-						<string>{263.78997802734375, 660}</string>
-						<string>{299.78997778892506, 660}</string>
+						<string>{310.64498901367188, 743}</string>
+						<string>{346.64498877525318, 743}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -1077,7 +1317,7 @@ Repeat for all NFActor Challenges}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{223.78997802734375, 599}, {116, 12}}</string>
+					<string>{{270.64498901367188, 682}, {116, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -1130,8 +1370,8 @@ Repeat for all NFActor Challenges}</string>
 					<integer>57</integer>
 					<key>Points</key>
 					<array>
-						<string>{263.78997802734375, 618}</string>
-						<string>{299.78997778892506, 618}</string>
+						<string>{310.64498901367188, 701}</string>
+						<string>{346.64498877525318, 701}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -1161,7 +1401,7 @@ Repeat for all NFActor Challenges}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{240.78997802734375, 318}, {82, 12}}</string>
+					<string>{{287.64498901367188, 401}, {82, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -1214,8 +1454,8 @@ Repeat for all NFActor Challenges}</string>
 					<integer>54</integer>
 					<key>Points</key>
 					<array>
-						<string>{263.78997802734375, 337}</string>
-						<string>{299.78997778892506, 337}</string>
+						<string>{310.64498901367188, 420}</string>
+						<string>{346.64498877525318, 420}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -1245,7 +1485,7 @@ Repeat for all NFActor Challenges}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{200.28997802734375, 418}, {163, 12}}</string>
+					<string>{{247.14498901367188, 501}, {163, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -1298,8 +1538,8 @@ Repeat for all NFActor Challenges}</string>
 					<integer>51</integer>
 					<key>Points</key>
 					<array>
-						<string>{263.78997843682771, 437}</string>
-						<string>{299.78997761785979, 437}</string>
+						<string>{310.64498942315583, 520}</string>
+						<string>{346.64498860418792, 520}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -1329,7 +1569,7 @@ Repeat for all NFActor Challenges}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{226.28997802734375, 389}, {111, 12}}</string>
+					<string>{{273.14498901367188, 472}, {111, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -1382,8 +1622,8 @@ Repeat for all NFActor Challenges}</string>
 					<integer>48</integer>
 					<key>Points</key>
 					<array>
-						<string>{263.78997843682771, 408}</string>
-						<string>{299.78997761785979, 408}</string>
+						<string>{310.64498942315583, 491}</string>
+						<string>{346.64498860418792, 491}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -1413,7 +1653,7 @@ Repeat for all NFActor Challenges}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{227.28997802734375, 347}, {109, 12}}</string>
+					<string>{{274.14498901367188, 430}, {109, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -1466,8 +1706,8 @@ Repeat for all NFActor Challenges}</string>
 					<integer>45</integer>
 					<key>Points</key>
 					<array>
-						<string>{263.78997802734375, 366}</string>
-						<string>{299.78997778892506, 366}</string>
+						<string>{310.64498901367188, 449}</string>
+						<string>{346.64498877525318, 449}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -1497,7 +1737,7 @@ Repeat for all NFActor Challenges}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{199.28997761785979, 181}, {165, 12}}</string>
+					<string>{{246.14498860418792, 264}, {165, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -1550,8 +1790,8 @@ Repeat for all NFActor Challenges}</string>
 					<integer>39</integer>
 					<key>Points</key>
 					<array>
-						<string>{263.78997802734375, 200}</string>
-						<string>{299.78997720837583, 200}</string>
+						<string>{310.64498901367188, 283}</string>
+						<string>{346.64498819470396, 283}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -1581,7 +1821,7 @@ Repeat for all NFActor Challenges}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{202.28998100638421, 152.25}, {159, 12}}</string>
+					<string>{{249.14499199271233, 235.25}, {159, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -1634,8 +1874,8 @@ Repeat for all NFActor Challenges}</string>
 					<integer>35</integer>
 					<key>Points</key>
 					<array>
-						<string>{263.78998141586817, 171.25}</string>
-						<string>{299.78998059690025, 171.25}</string>
+						<string>{310.64499240219629, 254.25}</string>
+						<string>{346.64499158322838, 254.25}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -1665,7 +1905,7 @@ Repeat for all NFActor Challenges}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{258.78997802734375, 114.25}, {46, 12}}</string>
+					<string>{{305.64498901367188, 197.25}, {46, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -1718,8 +1958,8 @@ Repeat for all NFActor Challenges}</string>
 					<integer>42</integer>
 					<key>Points</key>
 					<array>
-						<string>{263.78997802734375, 133.25}</string>
-						<string>{299.78997778892506, 133.25}</string>
+						<string>{310.64498901367188, 216.25}</string>
+						<string>{346.64498877525318, 216.25}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -1754,9 +1994,9 @@ Repeat for all NFActor Challenges}</string>
 			<integer>16</integer>
 			<key>Points</key>
 			<array>
-				<string>{107.14498901367188, 143.25}</string>
-				<string>{309.14498901367188, 143.25}</string>
-				<string>{437.14498901367188, 143.25}</string>
+				<string>{154, 226.25}</string>
+				<string>{356, 226.25}</string>
+				<string>{484, 226.25}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1780,7 +2020,7 @@ Repeat for all NFActor Challenges}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{437.14498901367188, 125.25}, {105, 36}}</string>
+			<string>{{484, 208.25}, {105, 36}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -1822,9 +2062,9 @@ Repeat for all NFActor Challenges}</string>
 			<integer>14</integer>
 			<key>Points</key>
 			<array>
-				<string>{489.64498901367188, 395}</string>
-				<string>{488.14498901367188, 628}</string>
-				<string>{156.14498901367188, 629.5}</string>
+				<string>{536.5, 478}</string>
+				<string>{535, 711}</string>
+				<string>{203, 712.5}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1858,9 +2098,9 @@ Repeat for all NFActor Challenges}</string>
 			<integer>12</integer>
 			<key>Points</key>
 			<array>
-				<string>{62.144989013671875, 161.25}</string>
-				<string>{62.144989013671875, 377}</string>
-				<string>{437.14498901367188, 377}</string>
+				<string>{109, 244.25}</string>
+				<string>{109, 460}</string>
+				<string>{484, 460}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1884,7 +2124,7 @@ Repeat for all NFActor Challenges}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{17.144989013671875, 611.5}, {139, 36}}</string>
+			<string>{{64, 694.5}, {139, 36}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -1916,7 +2156,7 @@ Repeat for all NFActor Challenges}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{437.14498901367188, 359}, {105.00000000000001, 36}}</string>
+			<string>{{484, 442}, {105.00000000000001, 36}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -1948,7 +2188,7 @@ Repeat for all NFActor Challenges}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{17.144989013671875, 125.25}, {90, 36}}</string>
+			<string>{{64, 208.25}, {90, 36}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -1985,7 +2225,7 @@ Repeat for all NFActor Challenges}</string>
 	<key>GuidesVisible</key>
 	<string>YES</string>
 	<key>HPages</key>
-	<integer>1</integer>
+	<integer>2</integer>
 	<key>ImageCounter</key>
 	<integer>1</integer>
 	<key>KeepToScale</key>
@@ -2025,7 +2265,7 @@ Repeat for all NFActor Challenges}</string>
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2013-05-01 10:31:49 +0000</string>
+	<string>2013-05-01 21:29:20 +0000</string>
 	<key>Modifier</key>
 	<string>Andreas Kjeldsen</string>
 	<key>NotesVisible</key>
@@ -2103,7 +2343,7 @@ Repeat for all NFActor Challenges}</string>
 	<key>UseEntirePage</key>
 	<false/>
 	<key>VPages</key>
-	<integer>1</integer>
+	<integer>2</integer>
 	<key>WindowInfo</key>
 	<dict>
 		<key>CurrentSheet</key>
@@ -2130,7 +2370,7 @@ Repeat for all NFActor Challenges}</string>
 		<key>SidebarWidth</key>
 		<integer>120</integer>
 		<key>VisibleRegion</key>
-		<string>{{-38, 102}, {636, 675}}</string>
+		<string>{{5, 0}, {636, 675}}</string>
 		<key>Zoom</key>
 		<real>1</real>
 		<key>ZoomValues</key>
