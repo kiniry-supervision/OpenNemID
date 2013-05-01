@@ -1,13 +1,18 @@
 module SamlProtocol
 
 open Crypto
-open TypeFunc
 
 type assertiontoken = string (*Add refinements*)
 type signedtoken = string (*Add refinements*)
 type id = string
 type endpoint = string
 type uri = string
+
+type Authentication =
+  | Facebook: id:int -> Authentication
+  | SMS: generated:int -> Authentication
+  | Google: id:int -> Authentication
+  | OpenId: id:int -> Authentication
 
 type AuthnRequest = 
   | MkAuthnRequest: id:string -> IssueInstant:string ->
@@ -17,7 +22,7 @@ type AuthnRequest =
 
 type LoginData = 
   | MkLoginData:  user:prin -> signature:dsig ->
-                  cert:pubkey user -> challenge:nonce ->
+                  cert:pubkey user -> auth:Authentication ->
                   site:string -> data:string ->
                   LoginData
 
@@ -27,12 +32,6 @@ type LoginInfo =
   | CprLogin:   cpr:int -> password:string ->
                 LoginInfo
 
-type Authentication =
-  | Facebook: Authentication
-  | SMS: Authentication
-  | Google: Authentication
-  | OpenId: Authentication
-
 type Assertion =
   | SignedAssertion: assertiontoken -> dsig -> Assertion
   | EncryptedAssertion: cypher -> Assertion
@@ -41,6 +40,7 @@ type SamlStatus =
   | Success: SamlStatus
   | Requester: SamlStatus
   | Responder: SamlStatus
+  | User: SamlStatus
 
 (*Define type for cpr so length = 10*)
 type SamlMessage =
@@ -48,12 +48,10 @@ type SamlMessage =
   | LoginResponse: string -> SamlMessage
   | AuthnRequestMessage: issuer:prin ->  destination:endpoint -> message:string -> loginInfo:LoginInfo -> dsig -> SamlMessage
   | AuthResponseMessage: issuer:prin -> destination:endpoint -> Assertion -> authmethod:Authentication -> SamlMessage
-  | UserAuthenticated: status:string -> (*authentication:Authentication ->*) authnRequest:AuthnRequest -> SamlMessage
+  | UserAuthenticated: status:string -> logindata:LoginData -> authmethod:Authentication -> SamlMessage
   | UserCredRequest: challenge:nonce -> SamlMessage
-  | UserAuthRequest: authmethod:Authentication -> authnRequest:AuthnRequest -> SamlMessage
+  | UserAuthRequest: authmethod:Authentication -> SamlMessage
   | Failed: SamlStatus -> SamlMessage
-  | LoginFailed: SamlMessage
-  | LoginSuccess: (*Add func*) -> SamlMessage
   | DisplayError: int -> SamlMessage
 
 
