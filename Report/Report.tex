@@ -1,0 +1,56 @@
+\documentclass[twosided]{report}
+
+% Packages %
+\usepackage{fancyhdr}
+\usepackage{titling}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{array}
+\usepackage{pifont}
+\usepackage{color}
+\usepackage{listing}
+
+% Stylings %
+\pagestyle{fancy}
+
+% Commands %
+\newcommand{\subtitle}[1]{%
+  \posttitle{%
+    \par\end{center}
+    \begin{center}\large#1\end{center}
+    \vskip0.5em}%
+}
+
+\begin{document}
+
+\renewcommand{\arraystretch}{1.5}
+\title{OpenNemID 
+	\\Bachelor project - Spring 2013}
+\subtitle{Verified Secure Open Source Alternative to NemID}
+\author{
+  Andreas Hallberg Kjeldsen\\
+  \texttt{ahal@itu.dk}
+  \and
+  Morten Chabert Eskesen\\
+  \texttt{mche@itu.dk}
+}
+
+\date{May 22, 2013}
+\maketitle
+
+\begin{abstract}
+Your abstract goes here...
+\end{abstract}
+
+\tableofcontents 
+
+\chapter{Introduction}
+\section{Background}
+We're extending the work done by Jacob Højgaard in his Masters Thesis 'Securing Single Sign-On Systems With Executable Models'. Jacobs research has focused on the current implementation of NemID and therefore describes, outlines and models the current system used in Denmark as of May 2013.
+
+\chapter{Static analysis}
+
+\chapter{Remodelling the protocol}
+
+\end{document}
