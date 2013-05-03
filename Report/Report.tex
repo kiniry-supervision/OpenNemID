@@ -141,7 +141,7 @@ TEXT DESCRIBING ALGORITHM 5
 		\STATE USER $\leftarrow$ GetUser(U, P)
 		\IF{USER is valid}
 			\STATE C2 $\leftarrow$ GenChallenge()
-			\STATE NF $\leftarrow$ GetNFactorChallenges(USER)
+			\STATE NF $\leftarrow$ GetNextNFactorChallenge(USER)
 			\STATE NF.SigParam.User = USER.id
 			\STATE NF.SigParam.Challenge $\leftarrow$ C2
 			\STATE NF.SigParam.Certificate $\leftarrow$ USER.Public
@@ -162,6 +162,59 @@ TEXT DESCRIBING ALGORITHM 6
 		\ELSE
 			\STATE \textbf{Delegate} ERROR \TO Browser
 		\ENDIF
+	\end{algorithmic}
+\end{algorithm}
+
+TEXT DESCRIBING ALGORITHM 7
+\begin{algorithm}[H]
+	\caption{Process 6.1}
+	\begin{algorithmic}
+		\STATE SigParams $\leftarrow$ NF.SigParams
+		\IF{VERIFY(SigParams, SigParams.Signature, SigParams.Certificate)}
+			\STATE AUTHENTICATE(NF)
+		\ELSE
+			\PRINT ERROR
+		\ENDIF
+	\end{algorithmic}
+\end{algorithm}
+
+TEXT DESCRIBING ALGORITHM 8
+\begin{algorithm}[H]
+	\caption{Process 6.2}
+	\begin{algorithmic}
+		\STATE NFR $\leftarrow$ NFactorResult(NF)
+		\RETURN RESPONSE(NFR)
+	\end{algorithmic}
+\end{algorithm}
+
+TEXT DESCRIBING ALGORITHM 9
+\begin{algorithm}[H]
+	\caption{Process 6.5}
+	\begin{algorithmic}
+		\STATE SigParams $\leftarrow$ NF.SigParams
+		\IF{VERIFY(SigParams, SigParams.Signature, SigParams.Certificate)}
+			\IF{NFR is acceptable result of NF}
+				\STATE USER $\leftarrow$ GetUser(SigParam.USER, SigParam.Certificate)
+				\STATE C2 $\leftarrow$ GenChallenge()
+				\IF{USER.HasNextChallenge}
+					\STATE NF $\leftarrow$ GetNextNFactorChallenge(USER)
+					\STATE NF.SigParam.User = USER.id
+					\STATE NF.SigParam.Challenge $\leftarrow$ C2
+					\STATE NF.SigParam.Certificate $\leftarrow$ USER.Public
+					\STATE NF.SigParam.Signature $\leftarrow$ SIGN(NF.SigParam, USER.Private)					\RETURN RESPONSE(NF)
+				\ELSE					\STATE LID $\leftarrow$ CreateLogInData()
+					\STATE LID.Certificate $\leftarrow$ USER.Public
+					\STATE LID.Challenge $\leftarrow$ C2					\STATE LID.Signature $\leftarrow$ SIGN(LID, USER.Private)
+					\STATE ST $\leftarrow$ ”OK”
+				\ENDIF
+			\ELSE
+				\RETURN RESPONSE(ERROR)
+			\ENDIF
+		\ELSE
+			\RETURN RESPONSE(ERROR)
+		\ENDIF
+	
+		
 	\end{algorithmic}
 \end{algorithm}
 
