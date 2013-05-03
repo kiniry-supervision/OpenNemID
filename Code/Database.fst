@@ -2,6 +2,7 @@ module Database
 
 open SamlProtocol
 open Crypto
+open CertStore
 
 (*Identity provider functionality*)
 val whitelist: idp:prin -> unit
@@ -17,6 +18,8 @@ val removenfactor: user:string -> nfactor:Authentication -> unit
 
 val getnfactor: user:string -> Authentication
 val checknfactor: user:string -> Authentication -> bool
+val allnfactauthed: user:string -> bool
+val resetnfact: user:string -> unit
 
 val checklogin: user:string -> password:string -> bool
 
