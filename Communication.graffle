@@ -46,11 +46,69 @@
 	<key>Creator</key>
 	<string>Andreas Kjeldsen</string>
 	<key>DisplayScale</key>
-	<string>1 0/72 in = 1 0/72 in</string>
+	<string>1 0/72 in = 1.0000 in</string>
 	<key>GraphDocumentVersion</key>
 	<integer>8</integer>
 	<key>GraphicsList</key>
 	<array>
+		<dict>
+			<key>Bounds</key>
+			<string>{{115, 130.75}, {135, 46}}</string>
+			<key>Class</key>
+			<string>ShapedGraphic</string>
+			<key>ID</key>
+			<integer>109</integer>
+			<key>Shape</key>
+			<string>NoteShape</string>
+			<key>Style</key>
+			<dict/>
+			<key>Text</key>
+			<dict>
+				<key>Align</key>
+				<integer>0</integer>
+				<key>Text</key>
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf1138\cocoasubrtf510
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\ftech\fcharset77 Symbol;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
+
+\f0\fs18 \cf0 Repeat 6 
+\f1\fs26 \uc0\u8594 
+\f0\fs18  6.5 for all NFactor Challenges required to authenticate}</string>
+				<key>VerticalPad</key>
+				<integer>0</integer>
+			</dict>
+		</dict>
+		<dict>
+			<key>Bounds</key>
+			<string>{{73, 766.8900146484375}, {187, 74}}</string>
+			<key>Class</key>
+			<string>ShapedGraphic</string>
+			<key>ID</key>
+			<integer>105</integer>
+			<key>Shape</key>
+			<string>NoteShape</string>
+			<key>Style</key>
+			<dict/>
+			<key>Text</key>
+			<dict>
+				<key>Align</key>
+				<integer>0</integer>
+				<key>Text</key>
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf1138\cocoasubrtf510
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
+
+\f0\fs18 \cf0 6: Such that:\
+NF.SigParam.Challenge = C2\
+NF.SigParam.User = USER.id\
+NF.SigParam.Certificate = USER.Public\
+NF.SigParam.Signature = SIGN(NF.SigParam, USER.Private)}</string>
+				<key>VerticalPad</key>
+				<integer>0</integer>
+			</dict>
+		</dict>
 		<dict>
 			<key>Bounds</key>
 			<string>{{344, 11.125}, {253, 60.875}}</string>
@@ -72,8 +130,7 @@
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
 
-\f0\fs18 \cf0 NF = Set of NFactor Challenges to pass\
-NFC = NFactor Challenge (KeyCard, SMS, Facebook etc.)\
+\f0\fs18 \cf0 NF = NFactor Challenge\
 NFR = NFactor Challenge Response\
 LID = Login Data (from Authentication Provider)\
 UC = User Certificate}</string>
@@ -145,7 +202,7 @@ P = Password}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{385, 588}, {143, 55}}</string>
+			<string>{{389, 601.25}, {143, 55}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -174,7 +231,7 @@ RE1.Status = Requester}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{421, 724}, {168.00003051757812, 62}}</string>
+			<string>{{416.00003051757812, 745}, {172.99996948242188, 60}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -193,18 +250,18 @@ RE1.Status = Requester}</string>
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
 
-\f0\fs18 \cf0 8: Such that:\
-LID.Signature = SIGN(LID, UC.Private)\
-LID.Certificate = UC.Public\
-LID.Challenge = C1\
-LID.LogOnTo = LOS}</string>
+\f0\fs18 \cf0 7: Such that:\
+LID.SigParam.Challenge = C2\
+LID.SigParam.Certificate = USER.Public\
+LID.SigParam.Signature = \
+SIGN(LID, USER.Private)}</string>
 				<key>VerticalPad</key>
 				<integer>0</integer>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{7, 565.25}, {253, 85}}</string>
+			<string>{{7, 586.25}, {253, 85}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -223,7 +280,7 @@ LID.LogOnTo = LOS}</string>
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
 
-\f0\fs18 \cf0 9: Such that:\
+\f0\fs18 \cf0 8: Such that:\
 MRE1 = BASE64ENCODE(RE1)\
 ENCRYPT(SP1.Public, RE1.Assertion)\
 RE1.Assertion.Signature = SIGN(IdP.Private, RE1.Assertion)\
@@ -236,7 +293,7 @@ A1.SessionIndex = SAS}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{7, 476}, {200, 74}}</string>
+			<string>{{7, 497}, {187, 74}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -256,17 +313,17 @@ A1.SessionIndex = SAS}</string>
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
 
 \f0\fs18 \cf0 4: Such that:\
-APP.SigParam.Challenge = C\
-APP.SigParam.Site = IdP.Id\
-APP.SigParam.Certificate = IdP.AppCert.Public\
-APP.SigParam.Signature = SIGN(APP.SigParam, IdP.AppCert.Private)}</string>
+JS.SigParam.Challenge = C1\
+JS.SigParam.Site = IdP.Id\
+JS.SigParam.Certificate = IdP.JsCert.Public\
+JS.SigParam.Signature = SIGN(JS.SigParam, IdP.JsCert.Private)}</string>
 				<key>VerticalPad</key>
 				<integer>0</integer>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{445.00006103515625, 264}, {139, 46}}</string>
+			<string>{{445.00006103515625, 285}, {139, 46}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -286,8 +343,8 @@ APP.SigParam.Signature = SIGN(APP.SigParam, IdP.AppCert.Private)}</string>
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
 
 \f0\fs18 \cf0 2: Such that:\
-MA1 = BASE64ENCODE(AR1)\
-SS1 = SIGN(SP1:Private, AR1)}</string>
+MA1 = BASE64ENCODE(A1)\
+SS1 = SIGN(SP1.Private, A1)}</string>
 				<key>VerticalPad</key>
 				<integer>0</integer>
 			</dict>
@@ -299,7 +356,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{248.35501098632812, 319.75}, {162, 12}}</string>
+					<string>{{248.35501098632812, 340.75}, {162, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -307,7 +364,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 					<key>Flow</key>
 					<string>Resize</string>
 					<key>ID</key>
-					<integer>95</integer>
+					<integer>111</integer>
 					<key>Shape</key>
 					<string>Rectangle</string>
 					<key>Style</key>
@@ -338,7 +395,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\qc
 
-\f0\fs20 \cf0 12.1: RESPONSE(403, "Forbidden")}</string>
+\f0\fs20 \cf0 10.1: RESPONSE(403, "Forbidden")}</string>
 						<key>VerticalPad</key>
 						<integer>0</integer>
 					</dict>
@@ -349,11 +406,11 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 					<key>Class</key>
 					<string>LineGraphic</string>
 					<key>ID</key>
-					<integer>96</integer>
+					<integer>112</integer>
 					<key>Points</key>
 					<array>
-						<string>{311.35501139581208, 338.75}</string>
-						<string>{347.35501057684417, 338.75}</string>
+						<string>{311.3550113958122, 359.75}</string>
+						<string>{347.35501057684405, 359.75}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -374,7 +431,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 				</dict>
 			</array>
 			<key>ID</key>
-			<integer>94</integer>
+			<integer>110</integer>
 		</dict>
 		<dict>
 			<key>Class</key>
@@ -383,7 +440,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{276.85501437485254, 291}, {105, 12}}</string>
+					<string>{{276.85501437485254, 312}, {105, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -391,7 +448,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 					<key>Flow</key>
 					<string>Resize</string>
 					<key>ID</key>
-					<integer>92</integer>
+					<integer>114</integer>
 					<key>Shape</key>
 					<string>Rectangle</string>
 					<key>Style</key>
@@ -422,7 +479,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\qc
 
-\f0\fs20 \cf0 12: RESPONSE(R, AK)}</string>
+\f0\fs20 \cf0 10: RESPONSE(R, AK)}</string>
 						<key>VerticalPad</key>
 						<integer>0</integer>
 					</dict>
@@ -433,11 +490,11 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 					<key>Class</key>
 					<string>LineGraphic</string>
 					<key>ID</key>
-					<integer>93</integer>
+					<integer>115</integer>
 					<key>Points</key>
 					<array>
-						<string>{311.3550147843365, 310}</string>
-						<string>{347.35501396536858, 310}</string>
+						<string>{311.35501478433662, 331}</string>
+						<string>{347.35501396536847, 331}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -458,7 +515,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 				</dict>
 			</array>
 			<key>ID</key>
-			<integer>91</integer>
+			<integer>113</integer>
 		</dict>
 		<dict>
 			<key>Class</key>
@@ -467,7 +524,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{265.64498901367188, 171.5}, {128, 12}}</string>
+					<string>{{268.14498901367188, 192.5}, {123, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -506,7 +563,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\qc
 
-\f0\fs20 \cf0 10: POST(SP1, MRE1, RS1)}</string>
+\f0\fs20 \cf0 9: POST(SP1, MRE1, RS1)}</string>
 						<key>VerticalPad</key>
 						<integer>0</integer>
 					</dict>
@@ -520,8 +577,8 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 					<integer>90</integer>
 					<key>Points</key>
 					<array>
-						<string>{311.64498901367188, 190.5}</string>
-						<string>{347.64498877525318, 190.5}</string>
+						<string>{311.64498901367188, 211.50000000000006}</string>
+						<string>{347.6449887752533, 211.50000000000006}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -551,7 +608,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{243, 559}, {177, 12}}</string>
+					<string>{{243, 580}, {177, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -590,7 +647,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\qc
 
-\f0\fs20 \cf0 9: RESPONSE(SP1, MRE1, RS1, SAS)}</string>
+\f0\fs20 \cf0 8: RESPONSE(SP1, MRE1, RS1, SAS)}</string>
 						<key>VerticalPad</key>
 						<integer>0</integer>
 					</dict>
@@ -604,8 +661,8 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 					<integer>87</integer>
 					<key>Points</key>
 					<array>
-						<string>{313.50000040948396, 578}</string>
-						<string>{349.49999959051604, 578}</string>
+						<string>{313.50000040948407, 599}</string>
+						<string>{349.49999959051593, 599}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -635,7 +692,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{276, 752}, {107, 12}}</string>
+					<string>{{276, 773}, {107, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -674,7 +731,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\qc
 
-\f0\fs20 \cf0 8: RESPONSE(ST, LID)}</string>
+\f0\fs20 \cf0 7: RESPONSE(ST, LID)}</string>
 						<key>VerticalPad</key>
 						<integer>0</integer>
 					</dict>
@@ -688,8 +745,8 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 					<integer>84</integer>
 					<key>Points</key>
 					<array>
-						<string>{311.5, 771}</string>
-						<string>{347.49999976158131, 771}</string>
+						<string>{311.5, 792}</string>
+						<string>{347.49999976158142, 792}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -713,39 +770,13 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 			<integer>82</integer>
 		</dict>
 		<dict>
-			<key>Bounds</key>
-			<string>{{116.71002197265625, 127.25}, {123, 24.75}}</string>
-			<key>Class</key>
-			<string>ShapedGraphic</string>
-			<key>ID</key>
-			<integer>81</integer>
-			<key>Shape</key>
-			<string>NoteShape</string>
-			<key>Style</key>
-			<dict/>
-			<key>Text</key>
-			<dict>
-				<key>Align</key>
-				<integer>0</integer>
-				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf1138\cocoasubrtf510
-{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
-
-\f0\fs18 \cf0 7: Repeat for all NFC in NF}</string>
-				<key>VerticalPad</key>
-				<integer>0</integer>
-			</dict>
-		</dict>
-		<dict>
 			<key>Class</key>
 			<string>Group</string>
 			<key>Graphics</key>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{264.5, 652}, {126, 12}}</string>
+					<string>{{268.5, 673}, {118, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -784,7 +815,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\qc
 
-\f0\fs20 \cf0 7.4: DELEGATE(NFC, NFR)}</string>
+\f0\fs20 \cf0 6.5: DELEGATE(NF, NFR)}</string>
 						<key>VerticalPad</key>
 						<integer>0</integer>
 					</dict>
@@ -798,8 +829,8 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 					<integer>80</integer>
 					<key>Points</key>
 					<array>
-						<string>{309.5, 671}</string>
-						<string>{345.49999976158131, 671}</string>
+						<string>{309.5, 692}</string>
+						<string>{345.49999976158142, 692}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -829,7 +860,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{278, 370}, {101, 12}}</string>
+					<string>{{282.5, 391}, {92, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -868,7 +899,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\qc
 
-\f0\fs20 \cf0 7.3: POST(NFC, NFR)}</string>
+\f0\fs20 \cf0 6.4: POST(NF, NFR)}</string>
 						<key>VerticalPad</key>
 						<integer>0</integer>
 					</dict>
@@ -882,8 +913,8 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 					<integer>77</integer>
 					<key>Points</key>
 					<array>
-						<string>{310.5, 389}</string>
-						<string>{346.49999976158131, 389}</string>
+						<string>{310.5, 410}</string>
+						<string>{346.49999976158142, 410}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -913,7 +944,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{267.14498901367188, 127.25}, {129, 12}}</string>
+					<string>{{280.14498901367188, 132.25}, {103, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -952,7 +983,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\qc
 
-\f0\fs20 \cf0 7.2: RESPONSE(NFC, NFR)}</string>
+\f0\fs20 \cf0 6.3: RESPONSE(NFR)}</string>
 						<key>VerticalPad</key>
 						<integer>0</integer>
 					</dict>
@@ -966,8 +997,8 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 					<integer>71</integer>
 					<key>Points</key>
 					<array>
-						<string>{313.64498942315583, 146.25}</string>
-						<string>{349.64498860418792, 146.25}</string>
+						<string>{313.64498942315595, 151.25}</string>
+						<string>{349.6449886041878, 151.25}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -997,7 +1028,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{268.14498901367188, 89}, {123, 12}}</string>
+					<string>{{272.14498901367188, 94}, {115, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -1036,7 +1067,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\qc
 
-\f0\fs20 \cf0 7.1: AUTHENTICATE(NFC)}</string>
+\f0\fs20 \cf0 6.2: AUTHENTICATE(NF)}</string>
 						<key>VerticalPad</key>
 						<integer>0</integer>
 					</dict>
@@ -1050,8 +1081,8 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 					<integer>68</integer>
 					<key>Points</key>
 					<array>
-						<string>{311.64498901367188, 108}</string>
-						<string>{347.64498877525318, 108}</string>
+						<string>{311.64498901367188, 113}</string>
+						<string>{347.6449887752533, 113}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -1086,9 +1117,9 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 			<integer>65</integer>
 			<key>Points</key>
 			<array>
-				<string>{109, 208.25}</string>
-				<string>{108.85501098632812, 118}</string>
-				<string>{484.00003051757812, 118}</string>
+				<string>{109, 229.25}</string>
+				<string>{108.85501098632812, 123}</string>
+				<string>{484.00003051757812, 123}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1112,7 +1143,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{484.00003051757812, 100}, {105, 36}}</string>
+			<string>{{484.00003051757812, 105}, {105, 36}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -1149,7 +1180,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{274.64498901367188, 530}, {110, 12}}</string>
+					<string>{{283.14498901367188, 551}, {93, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -1188,7 +1219,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\qc
 
-\f0\fs20 \cf0 6.1: DELEGATE(NF, C2)}</string>
+\f0\fs20 \cf0 6.1: DELEGATE(NF)}</string>
 						<key>VerticalPad</key>
 						<integer>0</integer>
 					</dict>
@@ -1202,8 +1233,8 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 					<integer>63</integer>
 					<key>Points</key>
 					<array>
-						<string>{311.64498901367188, 549}</string>
-						<string>{347.64498877525318, 549}</string>
+						<string>{311.64498901367188, 570}</string>
+						<string>{347.6449887752533, 570}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -1233,7 +1264,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{276.64498901367188, 724}, {104, 12}}</string>
+					<string>{{285.14498901367188, 745}, {87, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -1272,7 +1303,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\qc
 
-\f0\fs20 \cf0 6: RESPONSE(NF, C2)}</string>
+\f0\fs20 \cf0 6: RESPONSE(NF)}</string>
 						<key>VerticalPad</key>
 						<integer>0</integer>
 					</dict>
@@ -1286,8 +1317,8 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 					<integer>60</integer>
 					<key>Points</key>
 					<array>
-						<string>{310.64498901367188, 743}</string>
-						<string>{346.64498877525318, 743}</string>
+						<string>{310.64498901367188, 764}</string>
+						<string>{346.6449887752533, 764}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -1317,7 +1348,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{270.64498901367188, 682}, {116, 12}}</string>
+					<string>{{279.14498901367188, 703}, {99, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -1356,7 +1387,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\qc
 
-\f0\fs20 \cf0 5.1: DELEGATE(U, P, C1)}</string>
+\f0\fs20 \cf0 5.1: DELEGATE(U, P)}</string>
 						<key>VerticalPad</key>
 						<integer>0</integer>
 					</dict>
@@ -1370,8 +1401,8 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 					<integer>57</integer>
 					<key>Points</key>
 					<array>
-						<string>{310.64498901367188, 701}</string>
-						<string>{346.64498877525318, 701}</string>
+						<string>{310.64498901367188, 722}</string>
+						<string>{346.6449887752533, 722}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -1401,7 +1432,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{287.64498901367188, 401}, {82, 12}}</string>
+					<string>{{287.64498901367188, 422}, {82, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -1454,8 +1485,8 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 					<integer>54</integer>
 					<key>Points</key>
 					<array>
-						<string>{310.64498901367188, 420}</string>
-						<string>{346.64498877525318, 420}</string>
+						<string>{310.64498901367188, 441}</string>
+						<string>{346.6449887752533, 441}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -1485,7 +1516,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{247.14498901367188, 501}, {163, 12}}</string>
+					<string>{{247.14498901367188, 522}, {163, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -1538,8 +1569,8 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 					<integer>51</integer>
 					<key>Points</key>
 					<array>
-						<string>{310.64498942315583, 520}</string>
-						<string>{346.64498860418792, 520}</string>
+						<string>{310.64498942315583, 541}</string>
+						<string>{346.64498860418757, 541}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -1569,7 +1600,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{273.14498901367188, 472}, {111, 12}}</string>
+					<string>{{285.64498901367188, 493}, {86, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -1608,7 +1639,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\qc
 
-\f0\fs20 \cf0 4: RESPONSE(APP, C1)}</string>
+\f0\fs20 \cf0 4: RESPONSE(JS)}</string>
 						<key>VerticalPad</key>
 						<integer>0</integer>
 					</dict>
@@ -1622,8 +1653,8 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 					<integer>48</integer>
 					<key>Points</key>
 					<array>
-						<string>{310.64498942315583, 491}</string>
-						<string>{346.64498860418792, 491}</string>
+						<string>{310.64498942315583, 512}</string>
+						<string>{346.64498860418792, 512}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -1653,7 +1684,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{274.14498901367188, 430}, {109, 12}}</string>
+					<string>{{274.14498901367188, 451}, {109, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -1706,8 +1737,8 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 					<integer>45</integer>
 					<key>Points</key>
 					<array>
-						<string>{310.64498901367188, 449}</string>
-						<string>{346.64498877525318, 449}</string>
+						<string>{310.64498901367188, 470}</string>
+						<string>{346.64498877525318, 470}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -1737,7 +1768,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{246.14498860418792, 264}, {165, 12}}</string>
+					<string>{{246.14498860418792, 285}, {165, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -1790,8 +1821,8 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 					<integer>39</integer>
 					<key>Points</key>
 					<array>
-						<string>{310.64498901367188, 283}</string>
-						<string>{346.64498819470396, 283}</string>
+						<string>{310.64498901367188, 304}</string>
+						<string>{346.64498819470396, 304}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -1821,7 +1852,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{249.14499199271233, 235.25}, {159, 12}}</string>
+					<string>{{249.14499199271233, 256.25}, {159, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -1874,8 +1905,8 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 					<integer>35</integer>
 					<key>Points</key>
 					<array>
-						<string>{310.64499240219629, 254.25}</string>
-						<string>{346.64499158322838, 254.25}</string>
+						<string>{310.64499240219629, 275.25}</string>
+						<string>{346.64499158322838, 275.25}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -1905,7 +1936,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{305.64498901367188, 197.25}, {46, 12}}</string>
+					<string>{{305.64498901367188, 218.25}, {46, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -1958,8 +1989,8 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 					<integer>42</integer>
 					<key>Points</key>
 					<array>
-						<string>{310.64498901367188, 216.25}</string>
-						<string>{346.64498877525318, 216.25}</string>
+						<string>{310.64498901367188, 237.25}</string>
+						<string>{346.64498877525318, 237.25}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -1994,9 +2025,9 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 			<integer>16</integer>
 			<key>Points</key>
 			<array>
-				<string>{154, 226.25}</string>
-				<string>{356, 226.25}</string>
-				<string>{484, 226.25}</string>
+				<string>{154, 247.25}</string>
+				<string>{356, 247.25}</string>
+				<string>{484, 247.25}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -2020,7 +2051,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{484, 208.25}, {105, 36}}</string>
+			<string>{{484, 229.25}, {105, 36}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -2062,9 +2093,9 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 			<integer>14</integer>
 			<key>Points</key>
 			<array>
-				<string>{536.5, 478}</string>
-				<string>{535, 711}</string>
-				<string>{203, 712.5}</string>
+				<string>{536.5, 499}</string>
+				<string>{535, 732}</string>
+				<string>{203, 733.5}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -2098,9 +2129,9 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 			<integer>12</integer>
 			<key>Points</key>
 			<array>
-				<string>{109, 244.25}</string>
-				<string>{109, 460}</string>
-				<string>{484, 460}</string>
+				<string>{109, 265.25}</string>
+				<string>{109, 481}</string>
+				<string>{484, 481}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -2124,7 +2155,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{64, 694.5}, {139, 36}}</string>
+			<string>{{64, 715.5}, {139, 36}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -2156,7 +2187,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{484, 442}, {105.00000000000001, 36}}</string>
+			<string>{{484, 463}, {105.00000000000001, 36}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -2188,7 +2219,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{64, 208.25}, {90, 36}}</string>
+			<string>{{64, 229.25}, {90, 36}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -2265,7 +2296,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2013-05-01 21:29:20 +0000</string>
+	<string>2013-05-03 18:26:00 +0000</string>
 	<key>Modifier</key>
 	<string>Andreas Kjeldsen</string>
 	<key>NotesVisible</key>
@@ -2370,7 +2401,7 @@ SS1 = SIGN(SP1:Private, AR1)}</string>
 		<key>SidebarWidth</key>
 		<integer>120</integer>
 		<key>VisibleRegion</key>
-		<string>{{5, 0}, {636, 675}}</string>
+		<string>{{0, 401}, {636, 675}}</string>
 		<key>Zoom</key>
 		<real>1</real>
 		<key>ZoomValues</key>
