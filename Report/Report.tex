@@ -3,12 +3,7 @@
 % Packages %
 \usepackage{fancyhdr}
 \usepackage{titling}
-\usepackage{amsmath}
 \usepackage{graphicx}
-\usepackage{amssymb}
-\usepackage{amsthm}
-\usepackage{array}
-\usepackage{pifont}
 \usepackage{color}
 \usepackage{listings}
 \usepackage{algorithm}
@@ -30,36 +25,59 @@
 \fancyhead[LO,RE]{\slshape \rightmark}
 \fancyfoot[C]{\thepage}
 
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
 \begin{document}
 
-\lstdefinelanguage{pseudo}{
-	morekeywords={if, else, for, in, remove, from, case, do, forever, to, False, True},
-	sensitive=true,
-	morecomment=[l]\#,
-	morestring=[b]',
-	frame=single,
-	caption={Algorithm}
-}
+\begin{titlepage}
+\begin{center}
 
-\title{OpenNemID 
-	\\Bachelor project - Spring 2013}
-\subtitle{Verified Secure Open Source Alternative to NemID}
-\author{
-  Andreas Hallberg Kjeldsen\\
-  \texttt{ahal@itu.dk}
-  \and
-  Morten Chabert Eskesen\\
-  \texttt{mche@itu.dk}
-}
+\includegraphics[scale=0.4]{images/ITULogo.jpg}\\[1cm]
 
-\date{May 22, 2013}
-\maketitle
+\textsc{\LARGE IT University of Copenhagen}\\[1.5cm]
+
+\textsc{\Large Bachelor Project}\\[0.5cm]
+
+% Title
+\HRule \\[0.4cm]
+{\huge \bfseries Verifiable Secure Open Source Alternative to NemID}\\[0.1cm]
+\HRule \\[1.5cm]
+
+% Author and supervisor
+\begin{minipage}[t]{0.45\textwidth}
+\begin{flushleft} \large
+\emph{Authors:}
+\\[10pt]
+Andreas Hallberg \textsc{Kjeldsen}\\
+\emph{ahal@itu.dk}
+\\[10pt]
+Morten Chabert \textsc{Eskesen}\\
+\emph{mche@itu.dk}\\
+\end{flushleft}
+\end{minipage}
+\begin{minipage}[t]{0.45\textwidth}
+\begin{flushright} \large
+\emph{Supervisor:}
+\\[10pt]
+Joseph Roland \textsc{KINIRY}\\
+\emph{josr@itu.dk}
+\end{flushright}
+\end{minipage}
+
+\vfill
+
+% Bottom of the page
+{\large May 22, 2013}
+
+\end{center}
+\end{titlepage}
+
 
 \begin{abstract}
 Your abstract goes here...
 \end{abstract}
 
-\tableofcontents 
+\tableofcontents
 
 \chapter{Introduction}
 
@@ -108,7 +126,7 @@ TEXT DESCRIBING ALGORITHM 2
 \begin{algorithm}[H]
 	\caption{Process 3}
 	\begin{algorithmic}
-		\REQUIRE{GET is well-formed \AND IdP.Private \AND SP.Public \AND IdPJsCert.Public \AND IdP has JavaScript from AuthP}		\STATE AR $\leftarrow$ DeflateDecompress(Base64Dec(UrlDec(MA)))		\IF{VERIFY(AR, SS, SP.Public)}			\STATE C $\leftarrow$ GenChallenge()			\STATE JS $\leftarrow$ StoredJavaScript()			\STATE JS.SigParams.Challenge $\leftarrow$ C			\STATE JS.SigParams.Certificate $\leftarrow$ IdPJsCert.Public
+		\REQUIRE{GET is well-formed \AND IdP.Private \AND SP.Public \AND IdPJsCert.Public \AND IdP has JavaScript from AuthP}		\STATE AR $\leftarrow$ DeflateDecompress(Base64Dec(UrlDec(MA)))		\IF{VERIFY(AR, SS, SP.Public)}			\STATE C1 $\leftarrow$ GenChallenge()			\STATE JS $\leftarrow$ StoredJavaScript()			\STATE JS.SigParams.Challenge $\leftarrow$ C1			\STATE JS.SigParams.Certificate $\leftarrow$ IdPJsCert.Public
 			\STATE JS.SigParams.Signature $\leftarrow$ SIGN(JS.SigParams, IdPJsCert.Private)			\RETURN RESPONSE(JS)		\ELSE			\STATE RE $\leftarrow$ CreateResponse()
 			\STATE RE.InResponseTo $\leftarrow$ AR.Id
 			\STATE RE.Status $\leftarrow$ ”Requester”			\STATE MRE $\leftarrow$ Base64Enc(RE)			\RETURN REDIRECT(SP, MRE, RS)		\ENDIF
@@ -146,7 +164,7 @@ TEXT DESCRIBING ALGORITHM 5
 		\IF{USER is valid}
 			\STATE C2 $\leftarrow$ GenChallenge()
 			\STATE NF $\leftarrow$ GetNextNFactorChallenge(USER)
-			\STATE NF.SigParam.User = USER.id
+			\STATE NF.SigParam.User $\leftarrow$ USER.id
 			\STATE NF.SigParam.Challenge $\leftarrow$ C2
 			\STATE NF.SigParam.Certificate $\leftarrow$ USER.Public
 			\STATE NF.SigParam.Signature $\leftarrow$ SIGN(NF.SigParam, USER.Private)			\RETURN RESPONSE(NF)
@@ -202,7 +220,7 @@ TEXT DESCRIBING ALGORITHM 9
 				\STATE C2 $\leftarrow$ GenChallenge()
 				\IF{USER.HasNextChallenge}
 					\STATE NF $\leftarrow$ GetNextNFactorChallenge(USER)
-					\STATE NF.SigParam.User = USER.id
+					\STATE NF.SigParam.User $\leftarrow$ USER.id
 					\STATE NF.SigParam.Challenge $\leftarrow$ C2
 					\STATE NF.SigParam.Certificate $\leftarrow$ USER.Public
 					\STATE NF.SigParam.Signature $\leftarrow$ SIGN(NF.SigParam, USER.Private)					\RETURN RESPONSE(NF)
