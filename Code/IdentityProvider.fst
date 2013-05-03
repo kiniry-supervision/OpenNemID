@@ -2,9 +2,6 @@ module Identityprovider
 
 open SamlProtocol
 open Crypto
-(* Must handle a receivesaml from authentication provider that specifies the second
-authentication method and then prompt client for it - and handle if the clients
-information was correct *)
 
 (*type SecurityRestriction = 
 	| Session: 1
@@ -13,69 +10,107 @@ information was correct *)
 
 type SecurityProfile =
 	| Profile:	prin -> SecurityRestriction ->
-				int -> SecurityProfile*)
-val authenticateuser: me:prin -> user:prin -> authp:prin -> unit
+				int -> SecurityProfile
+*)
 
-let authenticateuser me user authp =
-	let request = ReceiveSaml authp in
-	match request with
-	| AuthResponseMessage(issuer, destination, encassertion, authmethod) ->
+val getauthnrequest: user:prin -> challenge:nonce -> AuthnRequest
+val getuserchallenge: user:prin -> nonce
+val relatechallenge: user:prin -> challenge:nonce -> unit
+val relate: user:prin -> challenge:nonce -> authnReq:AuthnRequest -> unit
+val generateid: id
+val timestamp: string
+
+val handleUserAuthenticated: me:prin -> user:prin -> authnReq:AuthnRequest -> unit
+
+let handleUserAuthenticated me user authnReq = 
+	match authnReq with
+	| MkAuthnRequest(reqid,issueinst,dest,sp,msg,sigSP) ->
+		let pubksp = CertStore.GetPublicKey sp in
+			if (VerifySignature sp pubksp msg sigSP) then
+        	(assert (Log sp msg);
+        	let assertion = IssueAssertion me user sp reqid in
+        	let myprivk = CertStore.GetPrivateKey me in
+        	assume(Log me assertion);
+        	let sigAs = Sign me myprivk assertion in
+        	let signAssertion = AddSignatureToAssertion assertion sigAs in
+        	let encryptedAssertion = EncryptAssertion sp pubksp signAssertion in
+        	let resp = AuthResponseMessage me sp encryptedAssertion in
+        	SendSaml user resp)
+      else
+        SendSaml user (Failed Requester)
+
+val handleauthresponse: me:prin -> user:prin -> authp:prin -> unit
+
+let handleauthresponse me user authp =
+	let resp = ReceiveSaml authp in
+	match resp with
+	| LoginResponseMessage(issuer, destination, encassertion, authmethod, challenge) ->
 		let meprivk = CertStore.GetPrivateKey me in
 		let assertion = DecryptAssertion me meprivk encassertion in
 		match assertion with
-		| SignedAssertion (token, sigAuthP) ->
+		| SignedAssertion(token, sigAuthP) ->
 			let pubkissuer = CertStore.GetPublicKey authp in
-			if VerifySignature authp pubkissuer token sigAuthP
-			then
+			if VerifySignature authp pubkissuer token sigAuthP then
 				(assert (Log authp token);
-				let response = UserAuthRequest authmethod in
-				SendSaml user response)
+				relatechallenge user challenge;
+				let resp = UserAuthRequest authmethod challenge in
+				SendSaml user resp)
 			else SendSaml user (DisplayError 403)
+		| _ -> SendSaml user (DisplayError 400)
+	| LoginSuccess(status, issuer, destination, encassertion) ->
+		let meprivk = CertStore.GetPrivateKey me in
+		let assertion = DecryptAssertion me meprivk encassertion in
+		match assertion with
+		| SignedAssertion(token, sigAuthP) ->
+			let pubkissuer = CertStore.GetPublicKey authp in
+			if (status = "OK") && (VerifySignature authp pubkissuer token sigAuthP) then
+				(assert (Log authp token);
+				let challenge = getuserchallenge user in
+				let authnReq = getauthnrequest user challenge in
+				handleUserAuthenticated me user authnReq)
+			else SendSaml user (DisplayError 403)
+		| _ -> SendSaml user (DisplayError 400)
 	| _ -> SendSaml user (DisplayError 400)
-
-val handlenfactorauth: auth:Authentication -> correctAuth:Authentication -> bool
-
-let handlenfactorauth auth correctAuth =
-	match auth with
-	| Facebook(id) -> true
-  	| SMS(useranswer) -> true
-  	| Google(id) -> true
-  	| OpenId(id) -> true
-  	| _ -> false
-
 
 val identityprovider: me:prin -> user:prin -> authp:prin -> unit
 
 let rec identityprovider me user authp =
 	let request = ReceiveSaml user in
 	match request with
-	| Login (loginInfo) ->
-		let authnReq = CreateAuthnRequestMessage me authp in
-		assume(Log me authnReq);
-		let myprivk = CertStore.GetPrivateKey me in
-		let sigIdP = Sign me myprivk authnReq in
-		let req = AuthnRequestMessage me authp authnReq loginInfo sigIdP in
-		SendSaml authp req;
-		authenticateuser me user authp;
-		identityprovider me user authp
-	| UserAuthenticated(status, logindata, authmethod) ->
-		match logindata with
-		| MkLoginData(user, sig, cert, auth, site, data) ->
-			if (status = "OK") && (VerifySignature user cert data sig) then
-				(assert (Log user data);
-					if handlenfactorauth auth authmethod then
-						let resp = LoginResponse "You are now logged in" in
-						SendSaml user resp;
-						identityprovider me user authp
-					else
-						let response = LoginResponse "Incorrect authentication" in
-						SendSaml user response;
-						identityprovider me user authp
-				)
-			else
-				SendSaml user (DisplayError 400);
-      			identityprovider me user authp
-      	| _ -> SendSaml user (DisplayError 400);
+	| AuthnRequestMessage(issuer, destination, message, sigSP) ->
+		let pubkissuer = CertStore.GetPublicKey issuer in
+    	if (VerifySignature issuer pubkissuer message sigSP) then
+      		(assert (Log issuer message);
+      		(*Relate challenge to authnrequest*)
+      		let id = generateid in
+      		let issueinstant = timestamp in
+      		let authnReq = MkAuthnRequest id issueinstant me issuer message sigSP in
+      		let challenge = GenerateNonce me in
+      		relate user challenge authnReq;
+      		relatechallenge user challenge;
+      		let resp = UserCredRequest challenge in
+      		SendSaml user resp;
+      		identityprovider me user authp)
+    	else
+      		SendSaml user (Failed Requester);
       		identityprovider me user authp
+	| Login (loginInfo, challenge) ->
+		let loginReq = CreateLoginRequestMessage me authp in
+		assume(Log me loginReq);
+		let myprivk = CertStore.GetPrivateKey me in
+		let sigIdP = Sign me myprivk loginReq in
+		let req = LoginRequestMessage me authp loginReq loginInfo sigIdP in
+		SendSaml authp req;
+		handleauthresponse me user authp;
+		identityprovider me user authp
+	| UserAuthResponse(authInfo, challenge) ->
+		let authReq = CreateSecondAuthReqMessage me authp in
+		assume(Log me authReq);
+		let myprivk = CertStore.GetPrivateKey me in
+		let sigIdP = Sign me myprivk authReq in
+		let req = SecondAuthRequest me authp authReq authInfo challenge sigIdP in
+		SendSaml authp req;
+		handleauthresponse me user authp;
+		identityprovider me user authp
 	| _ -> SendSaml user (DisplayError 400);
 		identityprovider me user authp
