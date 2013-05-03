@@ -81,7 +81,6 @@ let rec identityprovider me user authp =
 		let pubkissuer = CertStore.GetPublicKey issuer in
     	if (VerifySignature issuer pubkissuer message sigSP) then
       		(assert (Log issuer message);
-      		(*Relate challenge to authnrequest*)
       		let id = generateid in
       		let issueinstant = timestamp in
       		let authnReq = MkAuthnRequest id issueinstant me issuer message sigSP in
@@ -108,7 +107,7 @@ let rec identityprovider me user authp =
 		assume(Log me authReq);
 		let myprivk = CertStore.GetPrivateKey me in
 		let sigIdP = Sign me myprivk authReq in
-		let req = SecondAuthRequest me authp authReq authInfo challenge sigIdP in
+		let req = NfactAuthRequest me authp authReq authInfo challenge sigIdP in
 		SendSaml authp req;
 		handleauthresponse me user authp;
 		identityprovider me user authp

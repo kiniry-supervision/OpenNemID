@@ -50,7 +50,7 @@ type SamlMessage =
   | LoginResponse: string -> SamlMessage
   | AuthnRequestMessage: issuer:prin ->  destination:endpoint -> message:string -> dsig -> SamlMessage
   | LoginRequestMessage: issuer:prin ->  destination:endpoint -> message:string -> loginInfo:LoginInfo -> dsig -> SamlMessage
-  | SecondAuthRequest: issuer:prin -> destination:endpoint -> message:string -> authInfo:AuthInfo -> challenge:nonce -> dsig -> SamlMessage
+  | NfactAuthRequest: issuer:prin -> destination:endpoint -> message:string -> authInfo:AuthInfo -> challenge:nonce -> dsig -> SamlMessage
   | AuthResponseMessage: issuer:prin -> destination:endpoint -> Assertion -> SamlMessage
   | LoginResponseMessage: issuer:prin -> destination:endpoint -> Assertion -> authmethod:Authentication -> challenge:nonce -> SamlMessage
   | UserAuthenticated: status:string -> logindata:LoginData -> authnReq:AuthnRequest -> SamlMessage
