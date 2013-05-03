@@ -203,18 +203,77 @@ TEXT DESCRIBING ALGORITHM 9
 					\STATE NF.SigParam.Certificate $\leftarrow$ USER.Public
 					\STATE NF.SigParam.Signature $\leftarrow$ SIGN(NF.SigParam, USER.Private)					\RETURN RESPONSE(NF)
 				\ELSE					\STATE LID $\leftarrow$ CreateLogInData()
-					\STATE LID.Certificate $\leftarrow$ USER.Public
-					\STATE LID.Challenge $\leftarrow$ C2					\STATE LID.Signature $\leftarrow$ SIGN(LID, USER.Private)
+					\STATE LID.SigParam.Challenge $\leftarrow$ C2
+					\STATE LID.Certificate $\leftarrow$ USER.Public					\STATE LID.Signature $\leftarrow$ SIGN(LID, USER.Private)
 					\STATE ST $\leftarrow$ ”OK”
+					\RETURN RESPONSE(ST, LID)
 				\ENDIF
 			\ELSE
 				\RETURN RESPONSE(ERROR)
 			\ENDIF
 		\ELSE
 			\RETURN RESPONSE(ERROR)
+		\ENDIF	
+	\end{algorithmic}
+\end{algorithm}
+
+TEXT DESCRIBING ALGORITHM 10
+\begin{algorithm}[H]
+	\caption{Process 7}
+	\begin{algorithmic}
+		\IF{VERIFY(LID, LID.Signature, LID.Certificate)}
+			\IF{ST = "OK"}
+				\STATE MA $\leftarrow$ ARC.AR
+				\STATE SS $\leftarrow$ ARC.SS
+				\STATE RS $\leftarrow$ ARC.RS
+				\STATE AR $\leftarrow$ DeflateDecompress(Base64Dec(UrlDec(MA)))
+				\IF{VERIFY(AR, SS, SP.Public)}
+					\STATE A $\leftarrow$ BuildAssertion(LID.Certificate)
+					\STATE SI $\leftarrow$ GenerateSessionIndex()
+					\STATE A.InResponseTo $\leftarrow$ AR.Id
+					\STATE A.Issuer $\leftarrow$ IdpP.Id
+					\STATE A.Audience $\leftarrow$ SP.Id
+					\STATE A.SessionIndex $\leftarrow$ SI
+					\STATE A.Signature $\leftarrow$ SIGN(A, IdP.Private)
+					\STATE EA $\leftarrow$ ENCRYPT(A, SP.Public)
+					\STATE RE $\leftarrow$ CreateResponse()
+					\STATE RE.Assertion $\leftarrow$ EA
+					\STATE RE.InResponseTo $\leftarrow$ AR.Id
+					\STATE Re.Status $\leftarrow$ "Success"
+					\STATE MRE $\leftarrow$ Base64Enc(RE)
+					\STATE SAS $\leftarrow$ CreateSAMLSession(SI, SP.Id, LID.CertificateSubject)
+					\RETURN REDIRECT(SP, MRE, RS, SAS)
+				\ELSE
+					\STATE RE $\leftarrow$ CreateResponse()
+					\STATE RE.InResponseTo $\leftarrow$ AR.Id
+					\STATE RE.Status $\leftarrow$ "Requester"
+					\STATE MRE $\leftarrow$ Base64Enc(RE)
+					\RETURN REDIRECT(SP, MRE, RS)
+				\ENDIF	
+			\ELSE
+				\RETURN RESPONSE(ST)
+			\ENDIF
+		\ELSE
+			\RETURN RESPONSE(ERROR)
 		\ENDIF
-	
-		
+	\end{algorithmic}
+\end{algorithm}
+
+TEXT DESCRIBING ALGORITHM 11
+\begin{algorithm}[H]
+	\caption{Process 9}
+	\begin{algorithmic}
+		\REQUIRE{POST is well.formed \AND SP.Private \AND IdP.Public}
+		\STATE RE $\leftarrow$ Base64Dec(MRE)
+		\STATE A $\leftarrow$ DECRYPT(RE.Assertion, SP.Private)
+		\IF{VERIFY(A, A.Signature, IdP.Public)}
+			\STATE AK $\leftarrow$ GenAuthKey()
+			\STATE R $\leftarrow$ Base64Dec(UrlDec(RS))
+			\STATE RES $\leftarrow$ GetResource(R)
+			\RETURN RESPONSE(RES, AK)
+		\ELSE
+			\RETURN RESPONSE(403, Forbidden)
+		\ENDIF
 	\end{algorithmic}
 \end{algorithm}
 
