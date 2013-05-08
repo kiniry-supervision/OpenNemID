@@ -53,7 +53,38 @@
 	<array>
 		<dict>
 			<key>Bounds</key>
-			<string>{{115, 130.75}, {135, 46}}</string>
+			<string>{{20, 4}, {151, 74}}</string>
+			<key>Class</key>
+			<string>ShapedGraphic</string>
+			<key>ID</key>
+			<integer>102</integer>
+			<key>Shape</key>
+			<string>NoteShape</string>
+			<key>Style</key>
+			<dict/>
+			<key>Text</key>
+			<dict>
+				<key>Align</key>
+				<integer>0</integer>
+				<key>Text</key>
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf1138\cocoasubrtf510
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
+
+\f0\fs18 \cf0 R = Rquested Resource\
+IdP = Identity Provider\
+SP = Service Provider\
+AR = AuthRequest (SAML)\
+SAR = Signed AuthRequest\
+RS = RelayState (Created by SP)}</string>
+				<key>VerticalPad</key>
+				<integer>0</integer>
+			</dict>
+		</dict>
+		<dict>
+			<key>Bounds</key>
+			<string>{{115, 130.75}, {135, 55}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -74,14 +105,14 @@
 
 \f0\fs18 \cf0 Repeat 6 
 \f1\fs26 \uc0\u8594 
-\f0\fs18  6.5 for all NFactor Challenges required to authenticate}</string>
+\f0\fs18  6.5 for all NFactor Challenges required to authenticate at the AuthenticationProvider}</string>
 				<key>VerticalPad</key>
 				<integer>0</integer>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{73, 766.8900146484375}, {187, 74}}</string>
+			<string>{{73, 766.8900146484375}, {172.99996948242188, 74}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -102,7 +133,7 @@
 
 \f0\fs18 \cf0 6: Such that:\
 NF.SigParam.Challenge = C2\
-NF.SigParam.User = USER.id\
+NF.SigParam.User = USER\
 NF.SigParam.Certificate = USER.Public\
 NF.SigParam.Signature = SIGN(NF.SigParam, USER.Private)}</string>
 				<key>VerticalPad</key>
@@ -111,7 +142,7 @@ NF.SigParam.Signature = SIGN(NF.SigParam, USER.Private)}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{344, 11.125}, {253, 60.875}}</string>
+			<string>{{344, 11.125}, {200, 66.875}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -130,17 +161,18 @@ NF.SigParam.Signature = SIGN(NF.SigParam, USER.Private)}</string>
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
 
-\f0\fs18 \cf0 NF = NFactor Challenge\
+\f0\fs18 \cf0 SAS = SAML Session\
+AK = Authentication Key (From SP)\
+NF = NFactor Challenge\
 NFR = NFactor Challenge Response\
-LID = Login Data (from Authentication Provider)\
-UC = User Certificate}</string>
+LID = Login Data (from Authentication Provider)}</string>
 				<key>VerticalPad</key>
 				<integer>0</integer>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{182, 9.875}, {151, 60.875}}</string>
+			<string>{{182, 9.875}, {151, 68.125}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -159,50 +191,18 @@ UC = User Certificate}</string>
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
 
-\f0\fs18 \cf0 RE = Response (SAML)\
-C = Challenge (nonce)\
-SAS = SAML Session\
-AK = Authentication Key (From SP)\
-LOS = Log On Site}</string>
-				<key>VerticalPad</key>
-				<integer>0</integer>
-			</dict>
-		</dict>
-		<dict>
-			<key>Bounds</key>
-			<string>{{20, 4}, {151, 85}}</string>
-			<key>Class</key>
-			<string>ShapedGraphic</string>
-			<key>ID</key>
-			<integer>102</integer>
-			<key>Shape</key>
-			<string>NoteShape</string>
-			<key>Style</key>
-			<dict/>
-			<key>Text</key>
-			<dict>
-				<key>Align</key>
-				<integer>0</integer>
-				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf1138\cocoasubrtf510
-{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
-
-\f0\fs18 \cf0 R = Rquested Resource\
-AR = AuthRequest (SAML)\
-RS = RelayState (Created by SP)\
-IdP = Identity Provider\
-SP = Service Provider\
+\f0\fs18 \cf0 A = Assertion (From IdP)\
+RE = Response (SAML)\
 U = Username\
-P = Password}</string>
+P = Password\
+C = Challenge (nonce)}</string>
 				<key>VerticalPad</key>
 				<integer>0</integer>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{389, 601.25}, {143, 55}}</string>
+			<string>{{388, 601.25}, {143, 55}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -222,46 +222,16 @@ P = Password}</string>
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
 
 \f0\fs18 \cf0 4.1 Such that:\
-RE1.InResponseTo = AR1.Id\
-RE1.Status = Requester\
-MRE1 = BASE64ENCODE(RE1)}</string>
+RE.InResponseTo = AR\
+RE.Status = Requester\
+MRE2 = BASE64ENCODE(RE)}</string>
 				<key>VerticalPad</key>
 				<integer>0</integer>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{416.00003051757812, 745}, {172.99996948242188, 60}}</string>
-			<key>Class</key>
-			<string>ShapedGraphic</string>
-			<key>ID</key>
-			<integer>100</integer>
-			<key>Shape</key>
-			<string>NoteShape</string>
-			<key>Style</key>
-			<dict/>
-			<key>Text</key>
-			<dict>
-				<key>Align</key>
-				<integer>0</integer>
-				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf1138\cocoasubrtf510
-{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
-
-\f0\fs18 \cf0 7: Such that:\
-LID.SigParam.Challenge = C2\
-LID.SigParam.Certificate = USER.Public\
-LID.SigParam.Signature = \
-SIGN(LID, USER.Private)}</string>
-				<key>VerticalPad</key>
-				<integer>0</integer>
-			</dict>
-		</dict>
-		<dict>
-			<key>Bounds</key>
-			<string>{{7, 586.25}, {253, 85}}</string>
+			<string>{{7, 586.25}, {187, 85}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -281,12 +251,12 @@ SIGN(LID, USER.Private)}</string>
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
 
 \f0\fs18 \cf0 8: Such that:\
-MRE1 = BASE64ENCODE(RE1)\
-ENCRYPT(SP1.Public, RE1.Assertion)\
-RE1.Assertion.Signature = SIGN(IdP.Private, RE1.Assertion)\
-RE1.InResponseTo = A1R.Id\
-RE1.Status = Success\
-AR1.SessionIndex = SAS}</string>
+A.Signature = SIGN(IdP.Private, A)\
+RE.Assertion = ENCRYPT(SP.Public, A)\
+RE.InResponseTo = AR\
+RE.Status = Success\
+AR.SessionIndex = SAS\
+MRE1 = BASE64ENCODE(RE)}</string>
 				<key>VerticalPad</key>
 				<integer>0</integer>
 			</dict>
@@ -314,7 +284,7 @@ AR1.SessionIndex = SAS}</string>
 
 \f0\fs18 \cf0 4: Such that:\
 JS.SigParam.Challenge = C1\
-JS.SigParam.Site = IdP.Id\
+JS.SigParam.Site = IdP\
 JS.SigParam.Certificate = IdP.JsCert.Public\
 JS.SigParam.Signature = SIGN(JS.SigParam, IdP.JsCert.Private)}</string>
 				<key>VerticalPad</key>
@@ -343,8 +313,8 @@ JS.SigParam.Signature = SIGN(JS.SigParam, IdP.JsCert.Private)}</string>
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
 
 \f0\fs18 \cf0 2: Such that:\
-MA1 = BASE64ENCODE(AR1)\
-SS1 = SIGN(SP1.Private, AR1)}</string>
+MA = BASE64ENCODE(AR)\
+SS = SIGN(SP.Private, AR)}</string>
 				<key>VerticalPad</key>
 				<integer>0</integer>
 			</dict>
@@ -524,7 +494,7 @@ SS1 = SIGN(SP1.Private, AR1)}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{268.14498901367188, 192.5}, {123, 12}}</string>
+					<string>{{273.64498901367188, 192.5}, {112, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -563,7 +533,7 @@ SS1 = SIGN(SP1.Private, AR1)}</string>
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\qc
 
-\f0\fs20 \cf0 9: POST(SP1, MRE1, RS1)}</string>
+\f0\fs20 \cf0 9: POST(SP1, MRE, RS)}</string>
 						<key>VerticalPad</key>
 						<integer>0</integer>
 					</dict>
@@ -608,7 +578,7 @@ SS1 = SIGN(SP1.Private, AR1)}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{243, 580}, {177, 12}}</string>
+					<string>{{252, 580}, {159, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -647,7 +617,7 @@ SS1 = SIGN(SP1.Private, AR1)}</string>
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\qc
 
-\f0\fs20 \cf0 8: RESPONSE(SP1, MRE1, RS1, SAS)}</string>
+\f0\fs20 \cf0 8: RESPONSE(SP, MRE, RS, SAS)}</string>
 						<key>VerticalPad</key>
 						<integer>0</integer>
 					</dict>
@@ -1516,7 +1486,7 @@ SS1 = SIGN(SP1.Private, AR1)}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{247.14498901367188, 522}, {163, 12}}</string>
+					<string>{{257.14498901367188, 522}, {143, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -1555,7 +1525,7 @@ SS1 = SIGN(SP1.Private, AR1)}</string>
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\qc
 
-\f0\fs20 \cf0 4.1: REDIRECT(SP1, MRE1.1, RS1)}</string>
+\f0\fs20 \cf0 4.1: REDIRECT(SP, MRE2, RS)}</string>
 						<key>VerticalPad</key>
 						<integer>0</integer>
 					</dict>
@@ -1684,7 +1654,7 @@ SS1 = SIGN(SP1.Private, AR1)}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{274.14498901367188, 451}, {109, 12}}</string>
+					<string>{{279.14498901367188, 451}, {99, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -1723,7 +1693,7 @@ SS1 = SIGN(SP1.Private, AR1)}</string>
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\qc
 
-\f0\fs20 \cf0 3: GET(MA1, SS1, RS1)}</string>
+\f0\fs20 \cf0 3: GET(MA, SAR, RS)}</string>
 						<key>VerticalPad</key>
 						<integer>0</integer>
 					</dict>
@@ -1852,7 +1822,7 @@ SS1 = SIGN(SP1.Private, AR1)}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{249.14499199271233, 256.25}, {159, 12}}</string>
+					<string>{{254.14499199271233, 256.25}, {149, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -1891,7 +1861,7 @@ SS1 = SIGN(SP1.Private, AR1)}</string>
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\qc
 
-\f0\fs20 \cf0 2: REDIRECT(IdP, MA1, SS1, RS1)}</string>
+\f0\fs20 \cf0 2: REDIRECT(IdP, MA, SAR, RS)}</string>
 						<key>VerticalPad</key>
 						<integer>0</integer>
 					</dict>
@@ -2296,7 +2266,7 @@ SS1 = SIGN(SP1.Private, AR1)}</string>
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2013-05-08 09:33:19 +0000</string>
+	<string>2013-05-08 13:40:35 +0000</string>
 	<key>Modifier</key>
 	<string>Andreas Kjeldsen</string>
 	<key>NotesVisible</key>
@@ -2401,7 +2371,7 @@ SS1 = SIGN(SP1.Private, AR1)}</string>
 		<key>SidebarWidth</key>
 		<integer>120</integer>
 		<key>VisibleRegion</key>
-		<string>{{3, 155}, {636, 675}}</string>
+		<string>{{0, 397}, {636, 675}}</string>
 		<key>Zoom</key>
 		<real>1</real>
 		<key>ZoomValues</key>
