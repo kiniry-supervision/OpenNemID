@@ -222,9 +222,9 @@ P = Password}</string>
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
 
 \f0\fs18 \cf0 4.1 Such that:\
-MRE1 = BASE64ENCODE(RE1)\
 RE1.InResponseTo = AR1.Id\
-RE1.Status = Requester}</string>
+RE1.Status = Requester\
+MRE1 = BASE64ENCODE(RE1)}</string>
 				<key>VerticalPad</key>
 				<integer>0</integer>
 			</dict>
@@ -284,9 +284,9 @@ SIGN(LID, USER.Private)}</string>
 MRE1 = BASE64ENCODE(RE1)\
 ENCRYPT(SP1.Public, RE1.Assertion)\
 RE1.Assertion.Signature = SIGN(IdP.Private, RE1.Assertion)\
-RE1.InResponseTo = A1.Id\
+RE1.InResponseTo = A1R.Id\
 RE1.Status = Success\
-A1.SessionIndex = SAS}</string>
+AR1.SessionIndex = SAS}</string>
 				<key>VerticalPad</key>
 				<integer>0</integer>
 			</dict>
@@ -343,8 +343,8 @@ JS.SigParam.Signature = SIGN(JS.SigParam, IdP.JsCert.Private)}</string>
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
 
 \f0\fs18 \cf0 2: Such that:\
-MA1 = BASE64ENCODE(A1)\
-SS1 = SIGN(SP1.Private, A1)}</string>
+MA1 = BASE64ENCODE(AR1)\
+SS1 = SIGN(SP1.Private, AR1)}</string>
 				<key>VerticalPad</key>
 				<integer>0</integer>
 			</dict>
@@ -2296,7 +2296,7 @@ SS1 = SIGN(SP1.Private, A1)}</string>
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2013-05-03 18:26:00 +0000</string>
+	<string>2013-05-08 09:33:19 +0000</string>
 	<key>Modifier</key>
 	<string>Andreas Kjeldsen</string>
 	<key>NotesVisible</key>
@@ -2387,7 +2387,7 @@ SS1 = SIGN(SP1.Private, A1)}</string>
 			</dict>
 		</array>
 		<key>Frame</key>
-		<string>{{90, 64}, {771, 814}}</string>
+		<string>{{89, 64}, {771, 814}}</string>
 		<key>ListView</key>
 		<true/>
 		<key>OutlineWidth</key>
@@ -2401,7 +2401,7 @@ SS1 = SIGN(SP1.Private, A1)}</string>
 		<key>SidebarWidth</key>
 		<integer>120</integer>
 		<key>VisibleRegion</key>
-		<string>{{0, 401}, {636, 675}}</string>
+		<string>{{3, 155}, {636, 675}}</string>
 		<key>Zoom</key>
 		<real>1</real>
 		<key>ZoomValues</key>

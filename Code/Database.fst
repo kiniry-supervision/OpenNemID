@@ -23,6 +23,6 @@ val resetnfact: user:string -> unit
 
 val checklogin: user:string -> password:string -> bool
 
-val revokeidp: cpr:int -> idp:prin -> unit
+val revokeidp: user:string -> idp:prin -> unit
 
 val revokedidp: user:string -> idp:prin -> bool
