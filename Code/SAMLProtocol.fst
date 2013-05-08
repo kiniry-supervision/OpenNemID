@@ -1,6 +1,7 @@
 module SamlProtocol
 
 open Crypto
+open TypeFunc
 
 type assertiontoken = string (*Add refinements*)
 type signedtoken = string (*Add refinements*)
@@ -8,14 +9,9 @@ type id = string
 type endpoint = string
 type uri = string
 
-type Authentication =
-  | Facebook: id:int -> Authentication
-  | SMS: generated:int -> Authentication
-  | Google: id:int -> Authentication
-  | OpenId: id:int -> Authentication
 
 type AuthnRequest = 
-  | MkAuthnRequest: id:string -> IssueInstant:string ->
+  | MkAuthnRequest: IssueInstant:string ->
                     Destination:endpoint -> Issuer:prin ->
                     message:string -> sig:dsig ->
                     AuthnRequest
@@ -27,12 +23,12 @@ type LoginData =
                   LoginData
 
 type LoginInfo =
-  | UserLogin:  name:string -> password:string ->
+  | UserLogin:  userid:string -> password:string ->
                 LoginInfo
 
 type AuthInfo =
-  | UserAuth:   name:string -> auth:Authentication ->
-                AuthInfo
+  | UserAuth:   userid:string -> authmethod:Authentication ->
+                authresponse:Authentication -> AuthInfo
 
 type Assertion =
   | SignedAssertion: assertiontoken -> dsig -> Assertion
@@ -49,15 +45,15 @@ type SamlMessage =
   | Login: loginInfo:LoginInfo -> challenge:nonce -> SamlMessage
   | LoginResponse: string -> SamlMessage
   | AuthnRequestMessage: issuer:prin ->  destination:endpoint -> message:string -> dsig -> SamlMessage
-  | LoginRequestMessage: issuer:prin ->  destination:endpoint -> message:string -> loginInfo:LoginInfo -> dsig -> SamlMessage
-  | NfactAuthRequest: issuer:prin -> destination:endpoint -> message:string -> authInfo:AuthInfo -> challenge:nonce -> dsig -> SamlMessage
+  | LoginRequestMessage: issuer:prin ->  destination:endpoint -> loginInfo:LoginInfo -> SamlMessage 
+  | NfactAuthRequest: issuer:prin -> destination:endpoint -> authInfo:AuthInfo -> challenge:nonce -> dsig -> SamlMessage
   | AuthResponseMessage: issuer:prin -> destination:endpoint -> Assertion -> SamlMessage
-  | LoginResponseMessage: issuer:prin -> destination:endpoint -> Assertion -> authmethod:Authentication -> challenge:nonce -> SamlMessage
+  | LoginResponseMessage: issuer:prin -> destination:endpoint -> auth:Authentication -> challenge:nonce -> dsig -> SamlMessage
   | UserAuthenticated: status:string -> logindata:LoginData -> authnReq:AuthnRequest -> SamlMessage
-  | UserCredRequest: challenge:nonce -> SamlMessage
-  | UserAuthRequest: authmethod:Authentication -> challenge:nonce -> SamlMessage
-  | UserAuthResponse: authInfo:AuthInfo -> challenge:nonce -> SamlMessage
-  | LoginSuccess: status:string -> issuer:prin -> destination:endpoint -> Assertion -> SamlMessage
+  | UserCredRequest: javascript:string -> challenge:nonce -> dsig -> SamlMessage
+  | UserAuthRequest: authmethod:Authentication -> challenge:nonce -> dsig -> SamlMessage
+  | UserAuthResponse: authInfo:AuthInfo -> challenge:nonce -> dsig -> SamlMessage
+  | LoginSuccess: status:string -> issuer:prin -> destination:endpoint -> SamlMessage
   | Failed: SamlStatus -> SamlMessage
   | DisplayError: int -> SamlMessage
 
@@ -67,8 +63,8 @@ val ReceiveSaml: prin -> SamlMessage
 
 val CreateAuthnRequestMessage: issuer:prin -> destination:prin -> string
 val CreateLoginRequestMessage: issuer:prin -> destination:prin -> string
-val CreateSecondAuthReqMessage: issuer:prin -> destination:prin -> string
-val IssueAssertion: issuer:prin -> subject:prin -> audience:prin -> inresto:id -> assertiontoken
+val CreateNfactAuthReqMessage: issuer:prin -> destination:prin -> string
+val IssueAssertion: issuer:prin -> subject:prin -> audience:prin -> inresto:AuthnRequest -> assertiontoken
 val MakeAssertion: issuer:prin -> subject:prin -> audience:prin -> assertiontoken
 val AddSignatureToAssertion: assertiontoken -> dsig -> signedtoken
 val EncryptAssertion: receiver:prin -> pubkey receiver -> signedtoken -> Assertion

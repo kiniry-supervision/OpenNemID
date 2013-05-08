@@ -2,11 +2,15 @@ module Browser
 
 open SamlProtocol
 open Crypto
+open CertStore
+open TypeFunc
 
 val loginWithFb: Authentication
 val loginWithGoogle: Authentication
 val loginWithSMS: Authentication
 val loginWithOpenId: Authentication
+val userid: string
+val password: string
 val fakeprint: str:string -> unit
 (*Handle the two-factor authentication*)
 
@@ -21,39 +25,44 @@ let handleAuthMethod auth =
 					
 val loop: user:string -> idp:prin -> sp:prin -> unit
 
-let rec loop user idp sp =
+let rec loop userid idp sp =
 	let loginresp = ReceiveSaml idp in
 		match loginresp with
-		| UserAuthRequest(authmethod, challenge) ->
-			let authtry = handleAuthMethod authmethod in
-			let authInfo = UserAuth user authtry in
-			let authresp = UserAuthResponse authInfo challenge in
+		| UserAuthRequest(authmethod, challenge, sigAuth) ->
+			let authresponse = handleAuthMethod authmethod in
+			let authInfo = UserAuth userid authmethod authresponse in
+			let authresp = UserAuthResponse authInfo challenge sigAuth in
 			SendSaml idp authresp;
-			loop user idp sp
+			loop userid idp sp
 		| AuthResponseMessage(idenp, dest, assertion) ->
 			SendSaml sp loginresp
 		| _ -> loginresp; ()
 
-val browser: sp:prin -> res:uri -> user:string -> password:string -> unit
+val browser: sp:prin -> res:uri -> unit
 
-let browser sp resource user password =
+let browser sp resource =
 	let req = SPLogin resource in
 	let _ = SendSaml sp req in
 		let res = ReceiveSaml sp in
 		match res with
 		| AuthnRequestMessage(sp, idp, message, sigSP) ->
-			SendSaml idp res;
+			let _ = SendSaml idp res in
 			let idpResp = ReceiveSaml idp in
 			match idpResp with
-			| UserCredRequest(challenge) ->
-				let loginInfo = UserLogin user password in
-				let loginreq = Login loginInfo challenge in
-				SendSaml idp loginreq;
-				loop user idp sp;
-				let spResp = ReceiveSaml sp in
+			| UserCredRequest(javascript, challenge, sigIdP) ->
+				let pubkissuer = CertStore.GetPublicKey idp in
+				if VerifySignature idp pubkissuer javascript sigIdP then 
+					(assert (Log idp javascript);
+					let loginInfo = UserLogin userid password in
+					let loginreq = Login loginInfo challenge in
+					SendSaml idp loginreq;
+					loop userid idp sp;
+					let spResp = ReceiveSaml sp in
 					match spResp with
 					| LoginResponse(str) ->
 							fakeprint str
-					| _ -> spResp; ()
+					| _ -> spResp; ())
+				else
+					fakeprint "Validation Error"
 			| _ -> idpResp; ()
 		| _ -> res; ()

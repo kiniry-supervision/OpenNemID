@@ -3,6 +3,7 @@ module Database
 open SamlProtocol
 open Crypto
 open CertStore
+open TypeFunc
 
 (*Identity provider functionality*)
 val whitelist: idp:prin -> unit
