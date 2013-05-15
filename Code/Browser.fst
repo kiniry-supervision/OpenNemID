@@ -56,7 +56,7 @@ let browser sp resource =
 			let idpResp = ReceiveSaml idp in
 			match idpResp with
 			| UserCredRequest(javascript, challenge, sigIdP) ->
-				let pubkissuer = CertStore.GetPublicKey idp in
+				let pubkissuer = CertStore.GetJSPublicKey idp in
 				if VerifySignature idp pubkissuer javascript sigIdP then 
 					(assert (Log idp javascript);
 					let loginInfo = UserLogin userid password in
@@ -156,8 +156,8 @@ let addNfact authp =
 		match resp with
 		| StatusMessage(status) ->
 				match status with
-				| Successful -> fakeprint "You have added this n factor authentication method"
-				| Unsuccessful -> fakeprint "Something went wrong. You have not added this n factor authentication method"
+				| Successful -> fakeprint "You have added this authentication method"
+				| Unsuccessful -> fakeprint "Something went wrong. You have not added this authentication method"
 		| _ -> resp; ()
 
 val removeNfact: authp:prin -> unit
@@ -172,6 +172,6 @@ let removeNfact authp =
 		match resp with
 		| StatusMessage(status) ->
 				match status with
-				| Successful -> fakeprint "You have removed this n factor authentication method"
-				| Unsuccessful -> fakeprint "Something went wrong. You have not removed this n factor authentication method"
+				| Successful -> fakeprint "You have removed this authentication method"
+				| Unsuccessful -> fakeprint "Something went wrong. You have not removed this authentication method"
 		| _ -> resp; ()

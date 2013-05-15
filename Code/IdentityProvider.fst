@@ -5,16 +5,6 @@ open Crypto
 open TypeFunc
 open Messaging
 
-(*type SecurityRestriction = 
-	| Session: 1
-	| User: 2
-	| IdP: 4
-
-type SecurityProfile =
-	| Profile:	prin -> SecurityRestriction ->
-				int -> SecurityProfile
-*)
-
 val userloggedin: user:prin -> bool
 val getjavascript: string
 val decodeMessage: message:string -> AuthnRequest

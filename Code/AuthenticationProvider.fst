@@ -6,18 +6,6 @@ open Database
 open TypeFunc
 open Messaging
 
-(*
-val createAssertion: me:prin -> user:prin -> Assertion
-
-let createAssertion me user idp =
-	let assertion = MakeAssertion me user idp in
-	let myprivk = CertStore.GetPrivateKey me in
-	assume(Log me assertion);
-	let pubkidp = CertStore.GetPublicKey idp in
-	let sigAs = Sign me myprivk assertion in
-	let signAssertion = AddSignatureToAssertion assertion sigAs in
-	EncryptAssertion idp pubkidp signAssertion
-*)
 
 val relatechallenge: user:prin -> challenge:nonce -> unit
 
