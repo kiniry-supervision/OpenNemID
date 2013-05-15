@@ -4,6 +4,7 @@ open SamlProtocol
 open Crypto
 open Database
 open TypeFunc
+open Messaging
 
 (*
 val createAssertion: me:prin -> user:prin -> Assertion
@@ -89,12 +90,90 @@ let rec authenticationprovider me idp user =
 	| _ -> SendSaml idp (Failed Requester);
 		authenticationprovider me idp user
 
+
 val usercommunication: me:prin -> user:prin -> unit
 
-(*
-let rec authenticationprovider me user =
-	let req = ReceiveSaml idp in
+let rec usercommunication me user =
+	let req = ReceiveMessage user in
 	match req with
-	| UserRequest -> do something
-	| _ -> SendSaml user (DisplayError 400);
-		usercommunication me user*)
+	| RequestForLogin(userid, password) -> 
+		if createuser user userid password then
+			let challenge = GenerateNonce me in
+			relatechallenge user challenge;
+			SendMessage user (ReqLoginResponse challenge);
+			usercommunication me user
+		else
+			SendMessage user (StatusMessage Unsuccessful);
+			usercommunication me user
+	| CreateLogin(generatedpassword, challenge) ->
+		if (verifychallenge user challenge) && (usercreation user generatedpassword) then
+			let challenge = GenerateNonce me in
+			relatechallenge user challenge;
+			SendMessage user (StatusMessage Successful);
+			usercommunication me user
+		else
+			SendMessage user (StatusMessage Unsuccessful);
+			usercommunication me user
+	| ChangePassword(userid, password, newPassword) ->
+		if changeuserpassword userid password newPassword then
+			SendMessage user (StatusMessage Successful);
+			usercommunication me user
+		else
+			SendMessage user (StatusMessage Unsuccessful);
+			usercommunication me user
+	| ChangeUserId(userid, newUserId, password) ->
+		if changeuserid userid newUserId password then
+			SendMessage user (StatusMessage Successful);
+			usercommunication me user
+		else
+			SendMessage user (StatusMessage Unsuccessful);
+			usercommunication me user
+	| UserRevokeIdp(userid, password, idp) ->
+		if revokeidp userid password idp then
+			SendMessage user (StatusMessage Successful);
+			usercommunication me user
+		else
+			SendMessage user (StatusMessage Unsuccessful);
+			usercommunication me user
+	| AddNfactor(userid, password, nfact) ->
+		if addnfactor userid password nfact then
+			SendMessage user (StatusMessage Successful);
+			usercommunication me user
+		else
+			SendMessage user (StatusMessage Unsuccessful);
+			usercommunication me user
+	| RemoveNfactor(userid, password, nfact) ->
+		if removenfactor userid password nfact then
+			SendMessage user (StatusMessage Successful);
+			usercommunication me user
+		else
+			SendMessage user (StatusMessage Unsuccessful);
+			usercommunication me user
+	| _ -> SendMessage user (StatusMessage Unsuccessful);
+		usercommunication me user
+
+val getsignedjavascript: string
+
+val establishidp: me:prin -> idp:prin -> unit
+
+let rec establishidp me idp =
+	let req = ReceiveMessage idp in
+	match req with
+	| NewSiteRequest(idp) ->
+		let challenge = GenerateNonce me in
+		relatechallenge idp challenge;
+		SendMessage idp (ChallengeResponse challenge);
+		establishidp me idp
+	| IdpChalResponse(challenge) ->
+		if (verifychallenge idp challenge) && (addidp idp) then
+			let idppubkey = CertStore.GetPublicKey idp in
+			let mypubk = CertStore.GetPublicKey me in
+			let signedjs = getsignedjavascript in
+			let resp = AcceptedIdp idp idppubkey me mypubk signedjs in
+			SendMessage idp resp;
+			establishidp me idp
+		else
+			SendMessage idp (StatusMessage Unsuccessful);
+			establishidp me idp
+	| _ -> SendMessage idp (StatusMessage Unsuccessful);
+		establishidp me idp
