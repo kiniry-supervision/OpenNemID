@@ -3,16 +3,7 @@ module Identityprovider
 open SamlProtocol
 open Crypto
 open TypeFunc
-
-(*type SecurityRestriction = 
-	| Session: 1
-	| User: 2
-	| IdP: 4
-
-type SecurityProfile =
-	| Profile:	prin -> SecurityRestriction ->
-				int -> SecurityProfile
-*)
+open Messaging
 
 val userloggedin: user:prin -> bool
 val getjavascript: string
@@ -116,3 +107,25 @@ let rec identityprovider me user authp =
 		identityprovider me user authp
 	| _ -> SendSaml user (DisplayError 400);
 		identityprovider me user authp
+
+val savejavascript: javascript:string -> unit
+val savepublickey: owner:prin -> publickey:pubkey owner -> unit
+
+val connectwithauthp: me:prin -> authp:prin -> unit
+
+let connectwithauthp me authp =
+	let req = NewSiteRequest me in
+	let _ = SendMessage authp req in
+	let resp = ReceiveMessage authp in
+	match resp with
+	| ChallengeResponse(challenge) ->
+		let _ = SendMessage authp (IdpChalResponse challenge) in
+		let res = ReceiveMessage authp in
+		match res with
+		| AcceptedIdp(idp, idppubkey, authp, authppubkey, signedjs) ->
+			(*Established secure connection*)
+			savejavascript signedjs;
+			savepublickey authp authppubkey;
+			savepublickey idp idppubkey
+		| _ -> res; ()
+	| _ -> resp; ()

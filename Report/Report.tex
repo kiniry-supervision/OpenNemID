@@ -134,12 +134,23 @@ This project has had it focus towards specifying a new protocol that could repla
 \section{Background}
 $\ldots$
  
-\chapter{Static analysis}
-Smart stuff here
+\chapter{Technical Background}
+
+\section{SAML Protocol}
+
+\section{Static Analysis}
+
+\section{Selection of verification tool}
+F* - formal specification language that is also executable
+\section{N Factor Authentication}
+Videreudvikling af two factor authentication
 
 
 %%%%%%%%%% CHAPTER %%%%%%%%%%
 \chapter{Remodelling the protocol}
+\section{How It Is Today}
+
+\section{How It Could Be}
 
 \section{Communication Model}
 The communication model displays a graphical overview of how data should be communicated between the involved parties.
@@ -151,8 +162,15 @@ TEXT DESCRIBING ALGORITHM 1
 	\caption{Process 1}
 	\begin{algorithmic}
 	\REQUIRE{GET is well-formed \AND IdP.Public \AND SP.Private}
-	\IF{R exists}		\STATE AR $\leftarrow$ CreateAuthnRequest()		\STATE SAR $\leftarrow$ SIGN(AR, SP.Private)		\STATE MA $\leftarrow$ UrlEnc(Base64Enc(DeflateCompress(AR)))
-		\STATE RS $\leftarrow$ UrlEnc(Base64Enc(R))		\RETURN REDIRECT(IdP, MA, SAR, RS)	\ELSE		\RETURN RESPONSE(400, Bad−Request)	\ENDIF
+	\IF{R exists}
+		\STATE AR $\leftarrow$ CreateAuthnRequest()
+		\STATE SAR $\leftarrow$ SIGN(AR, SP.Private)
+		\STATE MA $\leftarrow$ UrlEnc(Base64Enc(DeflateCompress(AR)))
+		\STATE RS $\leftarrow$ UrlEnc(Base64Enc(R))
+		\RETURN REDIRECT(IdP, MA, SAR, RS)
+	\ELSE
+		\RETURN RESPONSE(400, Bad−Request)
+	\ENDIF
 	\end{algorithmic}
 \end{algorithm}
 
@@ -160,10 +178,22 @@ TEXT DESCRIBING ALGORITHM 2
 \begin{algorithm}[H]
 	\caption{Process 3}
 	\begin{algorithmic}
-		\REQUIRE{GET is well-formed \AND IdP.Private \AND SP.Public \AND IdPJsCert.Public \AND IdP has JavaScript from AuthP}		\STATE AR $\leftarrow$ DeflateDecompress(Base64Dec(UrlDec(MA)))		\IF{VERIFY(AR, SAR, SP.Public)}			\STATE C1 $\leftarrow$ GenChallenge()			\STATE JS $\leftarrow$ StoredJavaScript()			\STATE JS.SigParams.Challenge $\leftarrow$ C1			\STATE JS.SigParams.Certificate $\leftarrow$ IdPJsCert.Public
-			\STATE JS.SigParams.Signature $\leftarrow$ SIGN(JS.SigParams, IdPJsCert.Private)			\RETURN RESPONSE(JS)		\ELSE			\STATE RE $\leftarrow$ CreateResponse()
+		\REQUIRE{GET is well-formed \AND IdP.Private \AND SP.Public \AND IdPJsCert.Public \AND IdP has JavaScript from AuthP}
+		\STATE AR $\leftarrow$ DeflateDecompress(Base64Dec(UrlDec(MA)))
+		\IF{VERIFY(AR, SAR, SP.Public)}
+			\STATE C1 $\leftarrow$ GenChallenge()
+			\STATE JS $\leftarrow$ StoredJavaScript()
+			\STATE JS.SigParams.Challenge $\leftarrow$ C1
+			\STATE JS.SigParams.Certificate $\leftarrow$ IdPJsCert.Public
+			\STATE JS.SigParams.Signature $\leftarrow$ SIGN(JS.SigParams, IdPJsCert.Private)
+			\RETURN RESPONSE(JS)
+		\ELSE
+			\STATE RE $\leftarrow$ CreateResponse()
 			\STATE RE.InResponseTo $\leftarrow$ AR
-			\STATE RE.Status $\leftarrow$ ”Requester”			\STATE MRE $\leftarrow$ Base64Enc(RE)			\RETURN REDIRECT(SP, MRE, RS)		\ENDIF
+			\STATE RE.Status $\leftarrow$ ”Requester”
+			\STATE MRE $\leftarrow$ Base64Enc(RE)
+			\RETURN REDIRECT(SP, MRE, RS)
+		\ENDIF
 	\end{algorithmic}
 \end{algorithm}
 
@@ -171,8 +201,14 @@ TEXT DESCRIBING ALGORITHM 3
 \begin{algorithm}[H]
 	\caption{Process 4}
 	\begin{algorithmic}
-		\REQUIRE{U \AND P \AND Browser allows JavaScript}		\STATE SigParams $\leftarrow$ Js.SigParams		\IF{VERIFY(SigParams, SigParams.Signature, SigParams.Certificate)}			\STATE C1 $\leftarrow$ SigParams.Challenge
-			\RETURN POST(U, P, C1)		\ELSE			\PRINT ERROR		\ENDIF
+		\REQUIRE{U \AND P \AND Browser allows JavaScript}
+		\STATE SigParams $\leftarrow$ Js.SigParams
+		\IF{VERIFY(SigParams, SigParams.Signature, SigParams.Certificate)}
+			\STATE C1 $\leftarrow$ SigParams.Challenge
+			\RETURN POST(U, P, C1)
+		\ELSE
+			\PRINT ERROR
+		\ENDIF
 	\end{algorithmic}
 \end{algorithm}
 
@@ -201,8 +237,10 @@ TEXT DESCRIBING ALGORITHM 5
 			\STATE NF.SigParam.User $\leftarrow$ USER
 			\STATE NF.SigParam.Challenge $\leftarrow$ C2
 			\STATE NF.SigParam.Certificate $\leftarrow$ USER.Public
-			\STATE NF.SigParam.Signature $\leftarrow$ SIGN(NF.SigParam, USER.Private)			\RETURN RESPONSE(NF)
-		\ELSE			\RETURN RESPONSE(ERROR)
+			\STATE NF.SigParam.Signature $\leftarrow$ SIGN(NF.SigParam, USER.Private)
+			\RETURN RESPONSE(NF)
+		\ELSE
+			\RETURN RESPONSE(ERROR)
 		\ENDIF
 	\end{algorithmic}
 \end{algorithm}
@@ -258,8 +296,10 @@ TEXT DESCRIBING ALGORITHM 9
 					\STATE NF.SigParams.User $\leftarrow$ USER
 					\STATE NF.SigParams.Challenge $\leftarrow$ C2
 					\STATE NF.SigParams.Certificate $\leftarrow$ USER.Public
-					\STATE NF.SigParams.Signature $\leftarrow$ SIGN(NF.SigParams, USER.Private)					\RETURN RESPONSE(NF)
-				\ELSE					\STATE LID $\leftarrow$ CreateLogInData()
+					\STATE NF.SigParams.Signature $\leftarrow$ SIGN(NF.SigParams, USER.Private)
+					\RETURN RESPONSE(NF)
+				\ELSE
+					\STATE LID $\leftarrow$ CreateLogInData()
 					\STATE ST $\leftarrow$ ”OK”
 					\RETURN RESPONSE(ST, LID)
 				\ENDIF
@@ -330,10 +370,221 @@ TEXT DESCRIBING ALGORITHM 11
 	\end{algorithmic}
 \end{algorithm}
 
-\chapter{F*}
+\chapter{Modelling with F*}
+This chapter will introduce the language F* that can be used to model a security protocol. Despite being a formal specification language F* is also executable. F* is described as a \emph{A Verifying Compiler for Distributed Programming}. This chapter will describe how we have used F* to build a formal specification of our protocol shown in the previous chapter.
 
-This is F* code, doesn't it look pretty?
-\newpage
+\section{Introducing F*}
+F* is a research language from Microsoft Research. F* primarily subsumes two research languages from Microsoft Research, F7\footnote{http://research.microsoft.com/en-us/projects/f7/} and Fine\footnote{http://research.microsoft.com/en-us/projects/fine/}. F* is at this time considered to be an $\alpha$-release.The purpose of designing F* is to enable the construction and communication of proofs of program properties and of properties of a program's environment in a verifiable secure way. F* is a dialect of ML and compiles to .NET bytecode in type-preserving style. This means that it can interop with other .NET languages and the types defined in F* can be used by other .NET lanuages without loosing type information. Furthermore there also exists a fully abstract compiler from F* to JavaScript. This makes it possible to deploy F* programs on web pages as JavaScript meanwhile there is a formal guarantee that the program still behaves just as they would according to F* semantics. The compiling and type-checking of F* code utilizes the Z3\footnote{http://z3.codeplex.com/} SMT solver for proving assumptions made with refinement types. F* has been formalized and verified using Coq\footnote{Coq is an interactive theorem prover written in OCaml}.
+
+\section{Syntax and semantics}
+F* inherits syntax and semantics from ML. F* is a functional language which means that it has features like immutability by default, polymorphic types and type inference. In Listing 4.1 we have shown the classic Hello World example in F*. This is the simplest way this example could have been written. This example shows how to specify a main method 
+%\begin{shaded}
+\begin{lstlisting}[style=fstar, caption={Hello World example in F*}]
+	module HelloWorld
+	
+	let _ = print "Hello world!"
+\end{lstlisting}
+%\end{shaded}
+
+\section{Refinement types}
+
+\section{Protocol specification in F*}
+hello world
+The code in this section represents the state of the project now. This is in no way a complete implementation of the protocol. Implementation was carried out in an incremental manner. First the focus was on understanding Jacob's work and expanding that with the authentication part (Authentication Provider) of the protocol, which before was done by NemID, and then adding the functionality of creating login, establishing connection between Identity Provider and the Authentication Provider and so on. All of the code 
+\subsection{Specification of the type functionality module}
+%\begin{shaded}
+\begin{lstlisting}[style=fstar, caption={TypeFunc module}]
+	module TypeFunc
+
+	type Authentication =
+ 	 | Facebook: id:int -> Authentication
+ 	 | SMS: generated:int -> Authentication
+	 | Google: id:int -> Authentication
+	 | OpenId: id:int -> Authentication
+\end{lstlisting}
+%\end{shaded}
+
+\subsection{Specification of the SAML Protocol}
+%\begin{shaded}
+\begin{lstlisting}[style=fstar, caption={SAML Protocol module}]
+	module SamlProtocol
+	
+	open Crypto
+	open TypeFunc
+
+	type assertiontoken = string (*Add refinements*)
+	type signedtoken = string (*Add refinements*)
+	type id = string
+	type endpoint = string
+	type uri = string
+
+
+	type AuthnRequest = 
+	  | MkAuthnRequest: IssueInstant:string ->
+			    Destination:endpoint -> Issuer:prin ->
+			    message:string -> sig:dsig ->
+			    AuthnRequest
+
+	type LoginData = 
+	  | MkLoginData:  user:prin -> signature:dsig ->
+			  cert:pubkey user -> challenge:nonce ->
+			  site:string -> data:string ->
+			  LoginData
+
+	type LoginInfo =
+	  | UserLogin:  userid:string -> password:string ->
+			LoginInfo
+
+	type AuthInfo =
+	  | UserAuth:   userid:string -> authmethod:Authentication ->
+			authresponse:Authentication -> AuthInfo
+
+	type Assertion =
+	  | SignedAssertion: assertiontoken -> dsig -> Assertion
+	  | EncryptedAssertion: cypher -> Assertion
+
+	type SamlStatus =
+	  | Success: SamlStatus
+	  | Requester: SamlStatus
+	  | Responder: SamlStatus
+	  | User: SamlStatus
+
+	type SamlMessage =
+	  | SPLogin: uri -> SamlMessage
+	  | Login: loginInfo:LoginInfo -> challenge:nonce -> SamlMessage
+	  | LoginResponse: string -> SamlMessage
+	  | AuthnRequestMessage: issuer:prin ->  destination:endpoint -> message:string -> dsig -> SamlMessage
+	  | LoginRequestMessage: issuer:prin ->  destination:endpoint -> loginInfo:LoginInfo -> SamlMessage 
+	  | NfactAuthRequest: issuer:prin -> destination:endpoint -> authInfo:AuthInfo -> challenge:nonce -> dsig -> SamlMessage
+	  | AuthResponseMessage: issuer:prin -> destination:endpoint -> Assertion -> SamlMessage
+	  | LoginResponseMessage: issuer:prin -> destination:endpoint -> auth:Authentication -> challenge:nonce -> dsig -> SamlMessage
+	  | UserAuthenticated: status:string -> logindata:LoginData -> authnReq:AuthnRequest -> SamlMessage
+	  | UserCredRequest: javascript:string -> challenge:nonce -> dsig -> SamlMessage
+	  | UserAuthRequest: authmethod:Authentication -> challenge:nonce -> dsig -> SamlMessage
+	  | UserAuthResponse: authInfo:AuthInfo -> challenge:nonce -> dsig -> SamlMessage
+	  | LoginSuccess: status:string -> issuer:prin -> destination:endpoint -> SamlMessage
+	  | Failed: SamlStatus -> SamlMessage
+	  | DisplayError: int -> SamlMessage
+
+
+	val SendSaml: prin -> SamlMessage -> unit
+	val ReceiveSaml: prin -> SamlMessage 
+
+	val CreateAuthnRequestMessage: issuer:prin -> destination:prin -> string
+	val CreateLoginRequestMessage: issuer:prin -> destination:prin -> string
+	val CreateNfactAuthReqMessage: issuer:prin -> destination:prin -> string
+	val IssueAssertion: issuer:prin -> subject:prin -> audience:prin -> inresto:AuthnRequest -> assertiontoken
+	val MakeAssertion: issuer:prin -> subject:prin -> audience:prin -> assertiontoken
+	val AddSignatureToAssertion: assertiontoken -> dsig -> signedtoken
+	val EncryptAssertion: receiver:prin -> pubkey receiver -> signedtoken -> Assertion
+	val DecryptAssertion: receiver:prin -> privkey receiver -> Assertion -> (signedtoken * dsig)
+\end{lstlisting}
+%\end{shaded}
+\subsection{Specification of cryptographic elements}
+%\begin{shaded}
+\begin{lstlisting}[style=fstar, caption={Crypto module}]
+	module Crypto
+	
+	open Protocol
+	open TypeFunc
+
+	type prin = string
+	type pubkey :: prin => *
+	type privkey :: prin => *
+	type dsig
+	type nonce = string
+	type cypher
+
+	(*Verification*)
+	type Log :: prin => string => E
+
+	type LogAuth :: prin => Authentication => E
+
+	val Keygen: p:prin
+		  -> (pubkey p * privkey p)
+
+	val Sign: p:prin
+		-> privkey p
+		-> msg:string{Log p msg}
+		-> dsig
+
+	val SignAuth: p:prin
+		-> privkey p
+		-> msg:Authentication{LogAuth p msg}
+		-> dsig
+
+	val VerifySignature: p:prin
+		-> pubkey p 
+		-> msg:string
+		-> dsig
+		-> b:bool{b=true ==> Log p msg}
+
+	val VerifySignatureAuth: p:prin
+		-> pubkey p 
+		-> msg:Authentication
+		-> dsig
+		-> b:bool{b=true ==> LogAuth p msg}
+
+	val Encrypt: p:prin
+		-> pubkey p
+		-> string
+		-> cypher
+
+	val Decrypt: p:prin
+		-> privkey p
+		-> cypher
+		-> string
+
+	val GenerateNonce: prin -> nonce (*Add refinement to ensure unqueness*)
+\end{lstlisting}
+%\end{shaded}
+\subsection{Specification of certificate store module}
+%\begin{shaded}
+\begin{lstlisting}[style=fstar, caption={CertStore module}]
+	module CertStore
+	
+	open Crypto
+
+	val GetPublicKey: p:prin -> pubkey p
+	val GetJSPublicKey: p:prin -> pubkey p
+	(*Prin needs to be updated to include credentials*)
+	val GetPrivateKey: p:prin -> privkey p 
+	val GetJSPrivateKey: p:prin -> privkey p
+\end{lstlisting}
+%\end{shaded}
+\subsection{Specification of the messaging protocol}
+%\begin{shaded}
+\begin{lstlisting}[style=fstar, caption={Messaging module}]
+	module Messaging
+	
+	open Crypto
+	open TypeFunc
+
+	type Status =
+		| Successful: Status
+		| Unsuccessful: Status
+
+	type Message =
+		| NewSiteRequest: idp:prin -> Message
+		| ChallengeResponse: challenge:nonce -> Message
+		| IdpChalResponse: challenge:nonce -> Message
+		| AcceptedIdp: idp:prin -> pubkey:pubkey idp -> authp:prin -> authpubkey:pubkey authp -> signedjavascript:string -> Message
+		| RequestForLogin: userid:string -> password:string -> Message
+		| ReqLoginResponse: challenge:nonce -> Message
+		| CreateLogin: generatedpassword:string -> challenge:nonce -> Message
+		| ChangeUserId: userid:string -> newUserId:string -> password:string -> Message
+		| ChangePassword: userid:string -> password:string -> newPassword:string -> Message
+		| UserRevokeIdp: userid:string -> password:string -> idp:string -> Message
+		| AddNfactor: userid:string -> password:string -> nfact:Authentication -> Message
+		| RemoveNfactor: userid:string -> password:string -> nfact:Authentication -> Message
+		| StatusMessage: Status -> Message
+
+
+	val SendMessage: prin -> Message -> unit
+	val ReceiveMessage: prin -> Message
+\end{lstlisting}
+%\end{shaded}
+\subsection{Specification of the Service Provider}
 %\begin{shaded}
 \begin{lstlisting}[style=fstar, caption={ServiceProvider Module}]
 	module Serviceprovider
@@ -354,7 +605,6 @@ This is F* code, doesn't it look pretty?
 	    let resp = AuthnRequestMessage me idp authnReq sigSP in 
 	    SendSaml client resp;
 	    serviceprovider me client idp
-		(* This is awesome comment *)
 	  | AuthResponseMessage (issuer, destination, encassertion) -> 
 	    let myprivk = CertStore.GetPrivateKey me in
 	    let assertion = DecryptAssertion me myprivk encassertion in
@@ -373,5 +623,568 @@ This is F* code, doesn't it look pretty?
 	        serviceprovider me client idp
 \end{lstlisting}
 %\end{shaded}
+\subsection{Specification of the Identity Provider}
+%\begin{shaded}
+\begin{lstlisting}[style=fstar, caption={Identity Provider module}]
+	module Identityprovider
+
+	open SamlProtocol
+	open Crypto
+	open TypeFunc
+	open Messaging
+
+	val userloggedin: user:prin -> bool
+	val getjavascript: string
+	val decodeMessage: message:string -> AuthnRequest
+	val getauthnrequest: user:prin -> challenge:nonce -> AuthnRequest
+	val getuserchallenge: user:prin -> nonce
+	val relatechallenge: user:prin -> challenge:nonce -> unit
+	val verifychallenge: user:prin -> challenge:nonce -> bool
+	val relate: user:prin -> challenge:nonce -> authnReq:AuthnRequest -> unit
+
+	val handleUserAuthenticated: me:prin -> user:prin -> authnReq:AuthnRequest -> unit
+
+	let handleUserAuthenticated me user authnReq = 
+		match authnReq with
+		| MkAuthnRequest(issueinst,dest,sp,msg,sigSP) ->
+			let pubksp = CertStore.GetPublicKey sp in
+				if (VerifySignature sp pubksp msg sigSP) then
+			(assert (Log sp msg);
+			let assertion = IssueAssertion me user sp authnReq in
+			let myprivk = CertStore.GetPrivateKey me in
+			assume(Log me assertion);
+			let sigAs = Sign me myprivk assertion in
+			let signAssertion = AddSignatureToAssertion assertion sigAs in
+			let encryptedAssertion = EncryptAssertion sp pubksp signAssertion in
+			let resp = AuthResponseMessage me sp encryptedAssertion in
+			SendSaml user resp)
+	      else
+		SendSaml user (Failed Requester)
+
+	val handleauthresponse: me:prin -> user:prin -> authp:prin -> unit
+
+	let handleauthresponse me user authp =
+		let resp = ReceiveSaml authp in
+		match resp with
+		| LoginResponseMessage(issuer, destination, authmethod, challenge, sigUser) ->
+			let pubkeyuser = CertStore.GetPublicKey user in
+			if VerifySignatureAuth user pubkeyuser authmethod sigUser then
+				(assert (LogAuth user authmethod);
+				relatechallenge user challenge;
+				let resp = UserAuthRequest authmethod challenge sigUser in
+				SendSaml user resp)
+			else
+				SendSaml user (DisplayError 403)
+		| LoginSuccess(status, issuer, destination) ->
+			if (status = "OK") then
+				let challenge = getuserchallenge user in
+				let authnReq = getauthnrequest user challenge in
+				handleUserAuthenticated me user authnReq
+			else 
+				SendSaml user (DisplayError 403)
+		| _ -> SendSaml user (DisplayError 400)
+
+	val identityprovider: me:prin -> user:prin -> authp:prin -> unit
+
+	let rec identityprovider me user authp =
+		let request = ReceiveSaml user in
+		match request with
+		| AuthnRequestMessage(issuer, destination, message, sigSP) ->
+			let pubkissuer = CertStore.GetPublicKey issuer in
+		if (VerifySignature issuer pubkissuer message sigSP) then
+			(assert (Log issuer message);
+			let authnReq = decodeMessage message in
+			let myprivk = CertStore.GetPrivateKey me in
+			if not (userloggedin user) then
+				let challenge = GenerateNonce me in
+				relate user challenge authnReq;
+				relatechallenge user challenge;
+				let js = getjavascript in
+				assume(Log me js);
+				let myprivk = CertStore.GetJSPrivateKey me in
+				let sigIdP = Sign me myprivk js in
+				let resp = UserCredRequest js challenge sigIdP in
+				SendSaml user resp;
+				identityprovider me user authp
+			else
+				let assertion = IssueAssertion me user issuer authnReq in
+				assume(Log me assertion);
+				let myprivk = CertStore.GetPrivateKey me in
+				let pubksp = CertStore.GetPublicKey issuer in
+				let sigAs = Sign me myprivk assertion in
+				let signAssertion = AddSignatureToAssertion assertion sigAs in
+				let encryptedAssertion = EncryptAssertion issuer pubksp signAssertion in
+				let resp = AuthResponseMessage me issuer encryptedAssertion in
+				SendSaml user resp)
+		else
+			SendSaml user (Failed Requester);
+			identityprovider me user authp
+		| Login (loginInfo, challenge) ->
+			if (verifychallenge user challenge) then
+				let req = LoginRequestMessage me authp loginInfo in
+				SendSaml authp req;
+				handleauthresponse me user authp;
+				identityprovider me user authp
+			else
+				SendSaml user (DisplayError 400);
+				identityprovider me user authp
+		| UserAuthResponse(authInfo, challenge, sigAuth) ->
+			let req = NfactAuthRequest me authp authInfo challenge sigAuth in
+			SendSaml authp req;
+			handleauthresponse me user authp;
+			identityprovider me user authp
+		| _ -> SendSaml user (DisplayError 400);
+			identityprovider me user authp
+
+	val savejavascript: javascript:string -> unit
+	val savepublickey: owner:prin -> publickey:pubkey owner -> unit
+
+	val connectwithauthp: me:prin -> authp:prin -> unit
+
+	let connectwithauthp me authp =
+		let req = NewSiteRequest me in
+		let _ = SendMessage authp req in
+		let resp = ReceiveMessage authp in
+		match resp with
+		| ChallengeResponse(challenge) ->
+			let _ = SendMessage authp (IdpChalResponse challenge) in
+			let res = ReceiveMessage authp in
+			match res with
+			| AcceptedIdp(idp, idppubkey, authp, authppubkey, signedjs) ->
+				(*Established secure connection*)
+				savejavascript signedjs;
+				savepublickey authp authppubkey;
+				savepublickey idp idppubkey
+			| _ -> res; ()
+		| _ -> resp; ()
+\end{lstlisting}
+%\end{shaded}
+\subsection{Specification of the Database Handler}
+%\begin{shaded}
+\begin{lstlisting}[style=fstar, caption={Database module}]
+	module Database
+	
+	open Crypto
+	open CertStore
+	open TypeFunc
+
+	(*Identity provider functionality*)
+	val whitelist: idp:prin -> unit
+	val blacklist: idp:prin -> unit
+	val addidp: idp:prin -> bool
+	val whitelisted: idp:prin -> bool
+
+	(*User functionality*)
+	val createuser: user:prin -> userid:string -> password:string -> bool
+	val usercreation: user:prin -> generatedPassword:string -> bool
+	val changeuserid: user:string -> newuser:string -> password:string -> bool
+	val changeuserpassword: user:string -> password:string -> newpassword:string -> bool
+
+	val addnfactor: user:string -> password:string -> nfactor:Authentication -> bool
+	val removenfactor: user:string -> password:string -> nfactor:Authentication -> bool
+
+	val getnfactor: user:string -> Authentication
+	val checknfactor: user:string -> Authentication -> bool
+	val allnfactauthed: user:string -> bool
+	val resetnfact: user:string -> unit
+
+	val checklogin: user:string -> password:string -> bool
+
+	val revokeidp: user:string -> password:string -> idp:string -> bool
+
+	val revokedidp: user:string -> idp:prin -> bool
+\end{lstlisting}
+%\end{shaded}
+\subsection{Specification of the Authentication Provider}
+%\begin{shaded}
+\begin{lstlisting}[style=fstar, caption={Authentication Provider module}]
+	module Authenticationprovider
+
+	open SamlProtocol
+	open Crypto
+	open Database
+	open TypeFunc
+	open Messaging
+
+	val relatechallenge: user:prin -> challenge:nonce -> unit
+
+	val verifychallenge: user:prin -> challenge:nonce -> bool
+
+	val nfactauth: me:prin -> idp:prin -> user:prin -> userid:string -> unit
+
+	let nfactauth me idp user userid =
+		if (allnfactauthed userid) then
+			resetnfact userid;
+			let status = "OK" in
+			let resp = LoginSuccess status me idp in
+			SendSaml idp resp
+		else
+			let challenge = GenerateNonce me in
+			let authmethod = getnfactor userid in
+			assume(LogAuth user authmethod);
+			let userprivkey = CertStore.GetPrivateKey user in
+			let sigUser = SignAuth user userprivkey authmethod in
+			let resp = LoginResponseMessage me idp authmethod challenge sigUser in
+			SendSaml idp resp
+
+	val authenticationprovider: me:prin -> idp:prin -> user:prin -> unit
+
+	let rec authenticationprovider me idp user =
+		let req = ReceiveSaml idp in
+		match req with
+		| LoginRequestMessage (issuer, destination, loginInfo) ->
+			if (whitelisted idp) then
+				match loginInfo with
+				| UserLogin(userid, password) ->
+					if not (revokedidp userid idp) && (checklogin userid password) then
+						let challenge = GenerateNonce me in
+						let authmethod = getnfactor userid in
+						assume(LogAuth user authmethod);
+						let userprivkey = CertStore.GetPrivateKey user in
+						let sigUser = SignAuth user userprivkey authmethod in
+						relatechallenge user challenge;
+						let resp = LoginResponseMessage me idp authmethod challenge sigUser in
+						SendSaml idp resp;
+						authenticationprovider me idp user
+					else
+						SendSaml idp (Failed User);
+						authenticationprovider me idp user
+				| _ -> SendSaml idp (Failed Requester);
+					authenticationprovider me idp user
+			else
+				SendSaml idp (Failed Requester);
+				authenticationprovider me idp user
+		| NfactAuthRequest(issuer, destination, authInfo, challenge, sigAuth) ->
+			if (whitelisted idp) then
+				match authInfo with
+				| UserAuth(userid, authmethod, authresponse) ->
+					let userpubkey = CertStore.GetPublicKey user in
+					if VerifySignatureAuth user userpubkey authmethod sigAuth && verifychallenge user challenge then
+						if not (revokedidp userid idp) && (checknfactor userid authresponse) then
+							nfactauth me idp user userid;
+							authenticationprovider me idp user
+						else
+							SendSaml idp (Failed User);
+							authenticationprovider me idp user
+					else
+						SendSaml idp (Failed User);
+						authenticationprovider me idp user
+				| _ -> SendSaml idp (Failed Requester);
+					authenticationprovider me idp user
+			else
+				SendSaml idp (Failed Requester);
+				authenticationprovider me idp user
+		| _ -> SendSaml idp (Failed Requester);
+			authenticationprovider me idp user
+
+
+	val usercommunication: me:prin -> user:prin -> unit
+
+	let rec usercommunication me user =
+		let req = ReceiveMessage user in
+		match req with
+		| RequestForLogin(userid, password) -> 
+			if createuser user userid password then
+				let challenge = GenerateNonce me in
+				relatechallenge user challenge;
+				SendMessage user (ReqLoginResponse challenge);
+				usercommunication me user
+			else
+				SendMessage user (StatusMessage Unsuccessful);
+				usercommunication me user
+		| CreateLogin(generatedpassword, challenge) ->
+			if (verifychallenge user challenge) && (usercreation user generatedpassword) then
+				let challenge = GenerateNonce me in
+				relatechallenge user challenge;
+				SendMessage user (StatusMessage Successful);
+				usercommunication me user
+			else
+				SendMessage user (StatusMessage Unsuccessful);
+				usercommunication me user
+		| ChangePassword(userid, password, newPassword) ->
+			if changeuserpassword userid password newPassword then
+				SendMessage user (StatusMessage Successful);
+				usercommunication me user
+			else
+				SendMessage user (StatusMessage Unsuccessful);
+				usercommunication me user
+		| ChangeUserId(userid, newUserId, password) ->
+			if changeuserid userid newUserId password then
+				SendMessage user (StatusMessage Successful);
+				usercommunication me user
+			else
+				SendMessage user (StatusMessage Unsuccessful);
+				usercommunication me user
+		| UserRevokeIdp(userid, password, idp) ->
+			if revokeidp userid password idp then
+				SendMessage user (StatusMessage Successful);
+				usercommunication me user
+			else
+				SendMessage user (StatusMessage Unsuccessful);
+				usercommunication me user
+		| AddNfactor(userid, password, nfact) ->
+			if addnfactor userid password nfact then
+				SendMessage user (StatusMessage Successful);
+				usercommunication me user
+			else
+				SendMessage user (StatusMessage Unsuccessful);
+				usercommunication me user
+		| RemoveNfactor(userid, password, nfact) ->
+			if removenfactor userid password nfact then
+				SendMessage user (StatusMessage Successful);
+				usercommunication me user
+			else
+				SendMessage user (StatusMessage Unsuccessful);
+				usercommunication me user
+		| _ -> SendMessage user (StatusMessage Unsuccessful);
+			usercommunication me user
+
+	val getsignedjavascript: string
+
+	val establishidp: me:prin -> idp:prin -> unit
+
+	let rec establishidp me idp =
+		let req = ReceiveMessage idp in
+		match req with
+		| NewSiteRequest(idp) ->
+			let challenge = GenerateNonce me in
+			relatechallenge idp challenge;
+			SendMessage idp (ChallengeResponse challenge);
+			establishidp me idp
+		| IdpChalResponse(challenge) ->
+			if (verifychallenge idp challenge) && (addidp idp) then
+				let idppubkey = CertStore.GetPublicKey idp in
+				let mypubk = CertStore.GetPublicKey me in
+				let signedjs = getsignedjavascript in
+				let resp = AcceptedIdp idp idppubkey me mypubk signedjs in
+				SendMessage idp resp;
+				establishidp me idp
+			else
+				SendMessage idp (StatusMessage Unsuccessful);
+				establishidp me idp
+		| _ -> SendMessage idp (StatusMessage Unsuccessful);
+			establishidp me idp
+\end{lstlisting}
+%\end{shaded}
+\subsection{Specification of the Browser}
+%\begin{shaded}
+\begin{lstlisting}[style=fstar, caption={Browser module}]
+	module Browser
+
+	open SamlProtocol
+	open Crypto
+	open CertStore
+	open TypeFunc
+	open Messaging
+
+	val loginWithFb: Authentication
+	val loginWithGoogle: Authentication
+	val loginWithSMS: Authentication
+	val loginWithOpenId: Authentication
+	val userid: string
+	val password: string
+	val fakeprint: str:string -> unit
+	val newUserId: string
+	val newPassword: string
+	val idpToRevoke:string
+	val nfactToRemove: Authentication
+	val nfactToAdd: Authentication
+	(*Handle the two-factor authentication*)
+	
+	val handleAuthMethod: auth:Authentication -> Authentication
+	
+	let handleAuthMethod auth = 
+		match auth with
+		| Facebook(fbid) -> loginWithFb
+		| Google(gid) -> loginWithGoogle
+		| SMS(gen) -> loginWithSMS
+		| OpenId(oid) -> loginWithOpenId
+					
+	val loop: user:string -> idp:prin -> sp:prin -> unit
+	
+	let rec loop userid idp sp =
+		let loginresp = ReceiveSaml idp in
+			match loginresp with
+			| UserAuthRequest(authmethod, challenge, sigAuth) ->
+				let authresponse = handleAuthMethod authmethod in
+				let authInfo = UserAuth userid authmethod authresponse in
+				let authresp = UserAuthResponse authInfo challenge sigAuth in
+				SendSaml idp authresp;
+				loop userid idp sp
+			| AuthResponseMessage(idenp, dest, assertion) ->
+				SendSaml sp loginresp
+			| _ -> loginresp; ()
+
+	val browser: sp:prin -> res:uri -> unit
+	
+	let browser sp resource =
+		let req = SPLogin resource in
+		let _ = SendSaml sp req in
+			let res = ReceiveSaml sp in
+			match res with
+			| AuthnRequestMessage(sp, idp, message, sigSP) ->
+				let _ = SendSaml idp res in
+				let idpResp = ReceiveSaml idp in
+				match idpResp with
+				| UserCredRequest(javascript, challenge, sigIdP) ->
+					let pubkissuer = CertStore.GetJSPublicKey idp in
+					if VerifySignature idp pubkissuer javascript sigIdP then 
+						(assert (Log idp javascript);
+						let loginInfo = UserLogin userid password in
+						let loginreq = Login loginInfo challenge in
+						SendSaml idp loginreq;
+						loop userid idp sp;
+						let spResp = ReceiveSaml sp in
+						match spResp with
+						| LoginResponse(str) ->
+								fakeprint str
+						| _ -> spResp; ())
+					else
+						fakeprint "Validation Error"
+				| _ -> idpResp; ()
+			| _ -> res; ()
+
+	val retrieveGeneratedPassword: string
+
+	val createUser: authp:prin -> unit
+	
+	let createUser authp =
+		let name = userid in
+		let pw = password in
+		let req = RequestForLogin name pw in
+		let _ = SendMessage authp req in
+			let resp = ReceiveMessage authp in
+			match resp with
+			| ReqLoginResponse(challenge) ->
+				let reqlresp = CreateLogin retrieveGeneratedPassword challenge in
+				let _ = SendMessage authp reqlresp in
+				let createloginresp = ReceiveMessage authp in
+				match createloginresp with
+				| StatusMessage(status) ->
+					match status with
+					| Successful -> fakeprint "You have created an account"
+					| Unsuccessful -> fakeprint "Something went wrong. No account has been created"
+				| _ -> createloginresp; ()
+			| _ -> resp; ()
+
+	val changeUserPassword: authp:prin -> unit
+
+	let changeUserPassword authp =
+		let name = userid in
+		let pw = password in
+		let newpw = newPassword in
+		let req = ChangePassword name pw newpw in
+		let _ = SendMessage authp req in
+			let resp = ReceiveMessage authp in
+			match resp with
+			| StatusMessage(status) ->
+					match status with
+					| Successful -> fakeprint "You have change your password"
+					| Unsuccessful -> fakeprint "Something went wrong. You have not changed your password"
+			| _ -> resp; ()
+
+	val changeUserUserId: authp:prin -> unit
+
+	let changeUserUserId authp =
+		let name = userid in
+		let pw = password in
+		let newid = newUserId in
+		let req = ChangeUserId name newid pw in
+		let _ = SendMessage authp req in
+		let resp = ReceiveMessage authp in
+			match resp with
+			| StatusMessage(status) ->
+					match status with
+					| Successful -> fakeprint "You have change your userid"
+					| Unsuccessful -> fakeprint "Something went wrong. You have not changed your userid"
+			| _ -> resp; ()
+
+	val identityrevoke: authp:prin -> unit
+
+	let identityrevoke authp =
+		let name = userid in
+		let pw = password in
+		let idp = idpToRevoke in
+		let req = UserRevokeIdp name pw idp in
+		let _ = SendMessage authp req in
+		let resp = ReceiveMessage authp in
+			match resp with
+			| StatusMessage(status) ->
+					match status with
+					| Successful -> fakeprint "You have revoked the identityprovider"
+					| Unsuccessful -> fakeprint "Something went wrong. You have not revoked the identityprovider"
+			| _ -> resp; ()
+
+	val addNfact: authp:prin -> unit
+
+	let addNfact authp =
+		let name = userid in
+		let pw = password in
+		let nfact = nfactToAdd in
+		let req = AddNfactor name pw nfact in
+		let _ = SendMessage authp req in
+		let resp = ReceiveMessage authp in
+			match resp with
+			| StatusMessage(status) ->
+					match status with
+					| Successful -> fakeprint "You have added this authentication method"
+					| Unsuccessful -> fakeprint "Something went wrong. You have not added this authentication method"
+			| _ -> resp; ()
+
+	val removeNfact: authp:prin -> unit
+
+	let removeNfact authp =
+		let name = userid in
+		let pw = password in
+		let nfact = nfactToRemove in
+		let req = RemoveNfactor name pw nfact in
+		let _ = SendMessage authp req in
+		let resp = ReceiveMessage authp in
+			match resp with
+			| StatusMessage(status) ->
+					match status with
+					| Successful -> fakeprint "You have removed this authentication method"
+					| Unsuccessful -> fakeprint "Something went wrong. You have not removed this authentication method"
+			| _ -> resp; ()
+\end{lstlisting}
+%\end{shaded}
+\section{Introducing adversaries}
+%\begin{shaded}
+\begin{lstlisting}[style=fstar, caption={Main module for introducing adversaries}]
+	module Main
+
+	open SamlProtocol
+	open Crypto
+	open Serviceprovider
+	open Identityprovider
+	open Authenticationprovider
+
+	val Fork: list (unit -> unit) -> unit	
+
+	let main attacker =	
+		Fork [	attacker;
+			(fun () -> serviceprovider "serviceprovider.org" "browser" "identityprovider.org");
+			(fun () -> identityprovider "identityprovider.org" "browser" "authenticationprovider.org");
+			(fun () -> authenticationprovider "authenticationprovider.org" "identityprovider.org" "browser")]
+\end{lstlisting}
+%\end{shaded}
+\chapter{Evaluation}
+
+\begin{thebibliography}{9}
+
+\bibitem{jacob}
+  Jakob Højgaard:
+  \emph{Securing Single Sign-On System With Executable Models}.
+  Master Project, IT University of Copenhagen,
+  2013.
+
+\bibitem{lamport94}
+  David Basin, Patrick Schaller, Michael Schläpfer:
+  \emph{Applied Information Security - A Hands-on Approach}.
+  Springer, Berlin Heidelberg,
+  2011.
+
+
+\end{thebibliography}
 
 \end{document}

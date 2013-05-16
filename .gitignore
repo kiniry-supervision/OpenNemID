@@ -28,3 +28,7 @@ _ReSharper*/
 *.vssscc
 $tf*/
 *.sublime-workspace
+Report.aux
+Report.log
+Report.synctex.gz
+Report.toc
