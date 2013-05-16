@@ -8,7 +8,6 @@
 \usepackage{listings}
 \usepackage{algorithm}
 \usepackage{algorithmic}
-\usepackage{framed}
 
 % Stylings %
 \pagestyle{fancy}
@@ -22,19 +21,12 @@
 }
 
 % Colors %
-\definecolor{darkgreen}{RGB}{60, 100, 60}
-\definecolor{purple}{RGB}{170, 0, 210}
-\definecolor{lightyellow}{RGB}{255, 251, 204}
-\definecolor{navy}{RGB}{40, 55, 170} 
-\definecolor{myblue}{rgb}{0.25, 0.25, 0.645} 
-\definecolor{darkred}{rgb}{0.845, 0.125, 0.125} 
-\definecolor{grey}{RGB}{100, 100, 100}
+\definecolor{sblgray}{RGB}{100, 100, 100}
 \definecolor{sblbackground}{RGB}{39, 40, 34}
 \definecolor{sblkeyword}{RGB}{246, 39, 113}
 \definecolor{sbltext}{RGB}{248, 242, 242}
 \definecolor{sblcomment}{RGB}{94, 109, 94}
 \definecolor{sblstring}{RGB}{230, 219, 101}
-\definecolor{shadecolor}{named}{sblbackground} 
 
 % Footer/Header %
 \fancyhead[LE,RO]{\slshape Chapter \thechapter}
@@ -59,7 +51,7 @@
 	showtabs=false,
   	numbers=left,
   	numbersep=5pt,
-  	numberstyle=\tiny\ttfamily\color{grey},
+  	numberstyle=\tiny\ttfamily\color{sblgray},
 	xleftmargin=\parindent,
   	basicstyle=\footnotesize\ttfamily\color{sbltext},
   	keywordstyle=\bfseries\color{sblkeyword},
