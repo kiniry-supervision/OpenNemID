@@ -116,8 +116,10 @@ Your abstract goes here...
 \chapter{Introduction}
 
 $\ldots$
-\par
+\\\par
 We're extending the work done by Jacob Højgaard in his Masters Thesis 'Securing Single Sign-On Systems With Executable Models'. Jacobs research has focused on the current implementation of NemID and therefore describes, outlines and models the current system used in Denmark as of May 2013.
+\\\par
+Jacobs report sums up some of the problems with the current implementation of NemID, these problems include but are not limited to the system being very opaque. We're in the age of information, we want to be able to get information about everything regardless if it's in our best interest or not. NemID is not sharing any information about the internals of the system. If a person wanted to test some part of the NemID system, they would first have to analyze the public parts of the system to figure out how to communicate with the NemID system, afterwards all they would be able to do, would be black box testing. We need a system that is transparent, testable by everyone and doesn't cost a whole lot. For the sake of being able to reference this system through out the report, we'd call it OpenNemID.
 
 \section{Objectives}
 Some explaining text here
@@ -138,19 +140,58 @@ $\ldots$
 
 \section{SAML Protocol}
 
+\subsection{OIOSAML}
+
 \section{Static Analysis}
 
 \section{Selection of verification tool}
 F* - formal specification language that is also executable
 \section{N Factor Authentication}
-Videreudvikling af two factor authentication
+Viderudvikling af two factor authentication
 
 
 %%%%%%%%%% CHAPTER %%%%%%%%%%
-\chapter{Remodelling the protocol}
-\section{How It Is Today}
+\chapter{Modelling the protocol}
+Before formalizing the protocol, it's required to specify and explain some of the words, concepts and meanings used within the protocol. This will be done by using graphical representation of the message flow including small chunks of code to fully explain the basic functionality.
 
-\section{How It Could Be}
+\section{Protocol Prerequisites}
+It's important to have some requirements as to how the systems should function. The requirements helps define certain properties the involved participants must have or obey to.
+
+\subsection{Shared}
+The NemLog-in specification mandates the use of OIOSAML, this will most likely not be excluded, therefore we assume that OpenNemID also has to use it. Further OIOSAML mandates the use of one-way SSL/TLS for all bindings, the mandate does not specify a specific version, though it can be assumed that a minimum version of SSL 3.0 due to the fact that SSL 2.0 is in general considered deprecated. We assume the use of SSL 3.0 or TLS 1.0 in this report.
+\par
+As mentioned before, SAML uses the browser to transfer messages from one principal to the other. The way to do this is through HTTP REDIRECTs, which could be either a HTTP-GET REDIRECT or a HTTP-POST REDIRECT. The HTTP protocol accepts a Location head in the HTTP RESPONSE which indicates where the browser should redirect to. The location header redirect will act as a HTTP-GET REQUEST which excludes the usage of POST data, thereby limiting the amount of data that can be transferred. To overcome this problem HTTP-POST REDIRECTs are used, these are not a part of the HTTP protocol, but is synthesized by using JavaScript to emulate a regular HTTP-POST REQUEST. Therefore it is required for the users browser to follow redirects and to have JavaScript enabled.
+\par
+For there to be any actual messages to flow between the service provider and identity provider, it's assumed that they reside in different domains and are different entities.
+\par
+The identity provider is only to issue assertions to known service providers, this requires that SAML metadata has been changed beforehand. Any certificates used for signing and encrypting must be OCES certificates. The certificates has to be checked for revocation and validity whenever used.
+\par
+\textbf{To summarize:}
+\begin{enumerate}
+	\item OIOSAML mandates the use of SSL(3.0)/TLS(1.0).
+	\item The browser must follow redirects.
+	\item The browser must have JavaScript enabled.
+	\item Service provider and identity provider are different entities residing in different domains.
+	\item SAML metadata must have been exchanged between the service provider and identity provider.
+	\item Signature check and encryption requires validity/revocation check of the certificate.
+\end{enumerate}
+
+\subsection{NemID Specifics}
+It's required for the OCES certificates used for signing and encrypting to have been issued by DanID.
+
+\subsection{OpenNemID Specifics}
+For the communication between the authentication provider and the identity provider, a secure tunnel must have been set up. Further the user must have registered at the authentication provider.
+
+\section{Formalizing Protocol Messages}
+The UML communication diagrams depicting the protocols are made up of two or more participants, henceforth principals, and the messages flowing through the system. The line between two principals indicates a channel where communication can flow, this channel is assumed to be a secure channel, meaning for HTTP messages, the HTTPS protocol would be used. An arrow indicates the direction of the message and the text on top of the arrow is the message being sent. The messages does not conform to any specific formalism, but follows a simple syntax. Messages are, very applicable, named in accordance with their HTTP protocol verb. The messages are to be interpreted the following way:
+\begin{enumerate}
+	\item[] \textbf{GET} means a HTTP-GET request, the parameter is the resource being requested.
+	\item[] \textbf{POST} means a HTTP-POST request, the parameters are the destination for the request followed by the data being submitted.
+	\item[] \textbf{REDIRECT} means either a HTTP-REDIRECT or a JavaScript redirect, whichever is used is not important for the purpose of the description. The parameters are the destination for the redirect followed by the parameters to include in the redirect.
+	\item \textbf{RESPONSE} means a HTTP-RESPONSE messages, the parameters are the data included in the response.
+	\item \textbf{DELEGATE} means forwarding the data from the previous request, the parameters are the parameters from the previous request that were to be delegated.
+	\item \textbf{AUTHENTICATE} is to be interpreted as the sequence of actions required to be authenticated at the specified NFactorChallenge. The AUTHENTICATE message is defined this generically on purpose, as the way a user would authenticate for a NFactorChallenge can vary a lot depending on which technology is used (SMS, Facebook, phone call etc.).
+\end{enumerate}
 
 \section{Communication Model}
 The communication model displays a graphical overview of how data should be communicated between the involved parties.
@@ -378,21 +419,19 @@ F* is a research language from Microsoft Research. F* primarily subsumes two res
 
 \section{Syntax and semantics}
 F* inherits syntax and semantics from ML. F* is a functional language which means that it has features like immutability by default, polymorphic types and type inference. In Listing 4.1 we have shown the classic Hello World example in F*. This is the simplest way this example could have been written. This example shows how to specify a main method 
-%\begin{shaded}
 \begin{lstlisting}[style=fstar, caption={Hello World example in F*}]
 	module HelloWorld
 	
 	let _ = print "Hello world!"
 \end{lstlisting}
-%\end{shaded}
+
 
 \section{Refinement types}
 
 \section{Protocol specification in F*}
-hello world
 The code in this section represents the state of the project now. This is in no way a complete implementation of the protocol. Implementation was carried out in an incremental manner. First the focus was on understanding Jacob's work and expanding that with the authentication part (Authentication Provider) of the protocol, which before was done by NemID, and then adding the functionality of creating login, establishing connection between Identity Provider and the Authentication Provider and so on. All of the code 
 \subsection{Specification of the type functionality module}
-%\begin{shaded}
+
 \begin{lstlisting}[style=fstar, caption={TypeFunc module}]
 	module TypeFunc
 
@@ -402,10 +441,10 @@ The code in this section represents the state of the project now. This is in no 
 	 | Google: id:int -> Authentication
 	 | OpenId: id:int -> Authentication
 \end{lstlisting}
-%\end{shaded}
+
 
 \subsection{Specification of the SAML Protocol}
-%\begin{shaded}
+
 \begin{lstlisting}[style=fstar, caption={SAML Protocol module}]
 	module SamlProtocol
 	
@@ -479,9 +518,9 @@ The code in this section represents the state of the project now. This is in no 
 	val EncryptAssertion: receiver:prin -> pubkey receiver -> signedtoken -> Assertion
 	val DecryptAssertion: receiver:prin -> privkey receiver -> Assertion -> (signedtoken * dsig)
 \end{lstlisting}
-%\end{shaded}
+
 \subsection{Specification of cryptographic elements}
-%\begin{shaded}
+
 \begin{lstlisting}[style=fstar, caption={Crypto module}]
 	module Crypto
 	
@@ -537,9 +576,9 @@ The code in this section represents the state of the project now. This is in no 
 
 	val GenerateNonce: prin -> nonce (*Add refinement to ensure unqueness*)
 \end{lstlisting}
-%\end{shaded}
+
 \subsection{Specification of certificate store module}
-%\begin{shaded}
+
 \begin{lstlisting}[style=fstar, caption={CertStore module}]
 	module CertStore
 	
@@ -551,9 +590,9 @@ The code in this section represents the state of the project now. This is in no 
 	val GetPrivateKey: p:prin -> privkey p 
 	val GetJSPrivateKey: p:prin -> privkey p
 \end{lstlisting}
-%\end{shaded}
+
 \subsection{Specification of the messaging protocol}
-%\begin{shaded}
+
 \begin{lstlisting}[style=fstar, caption={Messaging module}]
 	module Messaging
 	
@@ -583,9 +622,9 @@ The code in this section represents the state of the project now. This is in no 
 	val SendMessage: prin -> Message -> unit
 	val ReceiveMessage: prin -> Message
 \end{lstlisting}
-%\end{shaded}
+
 \subsection{Specification of the Service Provider}
-%\begin{shaded}
+
 \begin{lstlisting}[style=fstar, caption={ServiceProvider Module}]
 	module Serviceprovider
 	
@@ -622,9 +661,9 @@ The code in this section represents the state of the project now. This is in no 
 	  | _ -> SendSaml client (DisplayError 400);
 	        serviceprovider me client idp
 \end{lstlisting}
-%\end{shaded}
+
 \subsection{Specification of the Identity Provider}
-%\begin{shaded}
+
 \begin{lstlisting}[style=fstar, caption={Identity Provider module}]
 	module Identityprovider
 
@@ -758,9 +797,9 @@ The code in this section represents the state of the project now. This is in no 
 			| _ -> res; ()
 		| _ -> resp; ()
 \end{lstlisting}
-%\end{shaded}
+
 \subsection{Specification of the Database Handler}
-%\begin{shaded}
+
 \begin{lstlisting}[style=fstar, caption={Database module}]
 	module Database
 	
@@ -794,9 +833,9 @@ The code in this section represents the state of the project now. This is in no 
 
 	val revokedidp: user:string -> idp:prin -> bool
 \end{lstlisting}
-%\end{shaded}
+
 \subsection{Specification of the Authentication Provider}
-%\begin{shaded}
+
 \begin{lstlisting}[style=fstar, caption={Authentication Provider module}]
 	module Authenticationprovider
 
@@ -965,9 +1004,9 @@ The code in this section represents the state of the project now. This is in no 
 		| _ -> SendMessage idp (StatusMessage Unsuccessful);
 			establishidp me idp
 \end{lstlisting}
-%\end{shaded}
+
 \subsection{Specification of the Browser}
-%\begin{shaded}
+
 \begin{lstlisting}[style=fstar, caption={Browser module}]
 	module Browser
 
@@ -1147,9 +1186,9 @@ The code in this section represents the state of the project now. This is in no 
 					| Unsuccessful -> fakeprint "Something went wrong. You have not removed this authentication method"
 			| _ -> resp; ()
 \end{lstlisting}
-%\end{shaded}
+
 \section{Introducing adversaries}
-%\begin{shaded}
+
 \begin{lstlisting}[style=fstar, caption={Main module for introducing adversaries}]
 	module Main
 
@@ -1167,7 +1206,7 @@ The code in this section represents the state of the project now. This is in no 
 			(fun () -> identityprovider "identityprovider.org" "browser" "authenticationprovider.org");
 			(fun () -> authenticationprovider "authenticationprovider.org" "identityprovider.org" "browser")]
 \end{lstlisting}
-%\end{shaded}
+
 \chapter{Evaluation}
 
 \begin{thebibliography}{9}
