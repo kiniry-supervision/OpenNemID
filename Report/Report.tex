@@ -149,7 +149,7 @@ $\ldots$
 \section{Static Analysis}
 
 \section{Selection of verification tool}
-
+F* - formal specification language that is also executable
 \section{N Factor Authentication}
 Videreudvikling af two factor authentication
 
@@ -379,15 +379,26 @@ TEXT DESCRIBING ALGORITHM 11
 \end{algorithm}
 
 \chapter{Modelling with F*}
+This chapter will introduce the language F* that can be used to model a security protocol. Despite being a formal specification language F* is also executable. F* is described as a \emph{A Verifying Compiler for Distributed Programming}. This chapter will describe how we have used F* to build a formal specification of our protocol shown in the previous chapter.
 
 \section{Introducing F*}
+F* is a research language from Microsoft Research. F* primarily subsumes two research languages from Microsoft Research, F7\footnote{http://research.microsoft.com/en-us/projects/f7/} and Fine\footnote{http://research.microsoft.com/en-us/projects/fine/}. F* is at this time considered to be an $\alpha$-release.The purpose of designing F* is to enable the construction and communication of proofs of program properties and of properties of a program's environment in a verifiable secure way. F* is a dialect of ML and compiles to .NET bytecode in type-preserving style. This means that it can interop with other .NET languages and the types defined in F* can be used by other .NET lanuages without loosing type information. Furthermore there also exists a fully abstract compiler from F* to JavaScript. This makes it possible to deploy F* programs on web pages as JavaScript meanwhile there is a formal guarantee that the program still behaves just as they would according to F* semantics. The compiling and type-checking of F* code utilizes the Z3\footnote{http://z3.codeplex.com/} SMT solver for proving assumptions made with refinement types. F* has been formalized and verified using Coq\footnote{Coq is an interactive theorem prover written in OCaml}.
 
 \section{Syntax and semantics}
+F* inherits syntax and semantics from ML. F* is a functional language which means that it has features like immutability by default, polymorphic types and type inference. In Listing 4.1 we have shown the classic Hello World example in F*. This is the simplest way this example could have been written. This example shows how to specify a main method 
+%\begin{shaded}
+\begin{lstlisting}[style=fstar, caption={Hello World example in F*}]
+	module HelloWorld
+	
+	let _ = print "Hello world!"
+\end{lstlisting}
+%\end{shaded}
 
 \section{Refinement types}
 
 \section{Protocol specification in F*}
 hello world
+The code in this section represents the state of the project now. This is in no way a complete implementation of the protocol. Implementation was carried out in an incremental manner. First the focus was on understanding Jacob's work and expanding that with the authentication part (Authentication Provider) of the protocol, which before was done by NemID, and then adding the functionality of creating login, establishing connection between Identity Provider and the Authentication Provider and so on. All of the code 
 \subsection{Specification of the type functionality module}
 %\begin{shaded}
 \begin{lstlisting}[style=fstar, caption={TypeFunc module}]
@@ -1166,5 +1177,22 @@ hello world
 \end{lstlisting}
 %\end{shaded}
 \chapter{Evaluation}
+
+\begin{thebibliography}{9}
+
+\bibitem{jacob}
+  Jakob Højgaard:
+  \emph{Securing Single Sign-On System With Executable Models}.
+  Master Project, IT University of Copenhagen,
+  2013.
+
+\bibitem{lamport94}
+  David Basin, Patrick Schaller, Michael Schläpfer:
+  \emph{Applied Information Security - A Hands-on Approach}.
+  Springer, Berlin Heidelberg,
+  2011.
+
+
+\end{thebibliography}
 
 \end{document}
