@@ -152,7 +152,7 @@ Viderudvikling af two factor authentication
 
 %%%%%%%%%% CHAPTER %%%%%%%%%%
 \chapter{Modelling the protocol}
-Before formalizing the protocol, it's required to specify and explain some of the words, concepts and meanings used within the protocol. This will be done by using graphical representation of the message flow including small chunks of code to fully explain the basic functionality.
+Before formalizing the protocol, it's required to specify and explain some of the words, concepts and meanings used within the protocol. This will be done by using graphical representation of the message flow.
 
 \section{Protocol Prerequisites}
 It's important to have some requirements as to how the systems should function. The requirements helps define certain properties the involved participants must have or obey to.
@@ -188,15 +188,15 @@ The UML communication diagrams depicting the protocols are made up of two or mor
 	\item[] \textbf{GET} means a HTTP-GET request, the parameter is the resource being requested.
 	\item[] \textbf{POST} means a HTTP-POST request, the parameters are the destination for the request followed by the data being submitted.
 	\item[] \textbf{REDIRECT} means either a HTTP-REDIRECT or a JavaScript redirect, whichever is used is not important for the purpose of the description. The parameters are the destination for the redirect followed by the parameters to include in the redirect.
-	\item \textbf{RESPONSE} means a HTTP-RESPONSE messages, the parameters are the data included in the response.
-	\item \textbf{DELEGATE} means forwarding the data from the previous request, the parameters are the parameters from the previous request that were to be delegated.
-	\item \textbf{AUTHENTICATE} is to be interpreted as the sequence of actions required to be authenticated at the specified NFactorChallenge. The AUTHENTICATE message is defined this generically on purpose, as the way a user would authenticate for a NFactorChallenge can vary a lot depending on which technology is used (SMS, Facebook, phone call etc.).
+	\item[] \textbf{RESPONSE} means a HTTP-RESPONSE messages. The parameters are either the data included in the response or a HTTP status code indicating the type of the response along with a message, this is used for indicating when error happen.
+	\item[] \textbf{DELEGATE} means forwarding the data from the previous request, the parameters are the parameters from the previous request that were to be delegated.
+	\item[] \textbf{AUTHENTICATE} is to be interpreted as the sequence of actions required to be authenticated at the specified NFactorChallenge. The AUTHENTICATE message is defined this generically on purpose, as the way a user would authenticate for a NFactorChallenge can vary a lot depending on which technology is used (SMS, Facebook, phone call etc.).
 \end{enumerate}
 
 \section{Communication Model}
-The communication model displays a graphical overview of how data should be communicated between the involved parties.
+To enhance the 
 \newpage
-\includegraphics[scale=0.6]{images/Communication.png}
+\includegraphics[scale=0.6, caption={OpenNemID communication}]{images/Communication.png}
 
 TEXT DESCRIBING ALGORITHM 1
 \begin{algorithm}[H]
