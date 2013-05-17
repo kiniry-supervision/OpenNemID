@@ -26,7 +26,7 @@
 }
 
 % Colors %
-\definecolor{sblgray}{RGB}{100, 100, 100}
+\definecolor{sblgrey}{RGB}{100, 100, 100}
 \definecolor{sblbackground}{RGB}{39, 40, 34}
 \definecolor{sblkeyword}{RGB}{246, 39, 113}
 \definecolor{sbltext}{RGB}{248, 242, 242}
@@ -481,15 +481,15 @@ F* is a research language from Microsoft Research. F* primarily subsumes two res
 
 \section{Syntax and semantics}
 F* inherits syntax and semantics from ML. F* is a functional language which means that it has features like immutability by default, polymorphic types and type inference. In Listing 4.1 we have shown the classic Hello World example in F*. This is the simplest way this example could have been written. This example shows how to specify a main method by defining a function \_ (underscore) at the end of a module. This will instruct the compiler to make an .exe file instead of a dll.
-%\begin{shaded}
+
 \begin{lstlisting}[style=fstar, caption={Hello World example in F*}]
 	module HelloWorld
 	
 	let _ = print "Hello world!"
 \end{lstlisting}
-%\end{shaded}
+
 The example in listing 4.2 shows how to explicitly specify types with the \emph{colon} operator and the \emph{val} declaration for defining function signatures. This example defines the function multiply that takes two ints as parameters and returns an int. After that it defines the corresponding \emph{let} binding which defines multiplies the 2 arguments. It is important to note that not defining the corresponding let binding will not cause the compilation to fail but give the following warning: \emph{Warning: Admitting value declaration Multiplication.multiply as an axiom without a corresponding definition}. So the value declaration was valid but there is no concrete implementation supporting this claim.
-%\begin{shaded}
+
 \begin{lstlisting}[style=fstar, caption={Multiplication example in F*}]
 	module Multiplication
 
@@ -499,7 +499,7 @@ The example in listing 4.2 shows how to explicitly specify types with the \emph{
 	
 	let mul = multiply 3 4
 \end{lstlisting}
-%\end{shaded}
+
 \section{Refinement types}
 F* has derived the feature refinement types from the Microsoft Research projects, F7 and Fine. Refinement types are used to make type safe refinements of existing types. Thus it is possible to restrict or refine values more than their original type. Listing 4.3 shows an example with the refinement \emph{nat} of int that states that \emph{nat} will always be zero of larger, i.e. a natural number. The example also shows an attempt to assign -1 to a type of nat which will fail typechecking.
 \begin{lstlisting}[style=fstar, caption={Simple refinement types in F*}]
@@ -510,7 +510,7 @@ F* has derived the feature refinement types from the Microsoft Research projects
 	let y:nat = 0
 	let z:nat = 1 - 2 (*Will fail typecheck*)
 \end{lstlisting}
-%\end{shaded}
+
 Refinement types have the form $x:t\{t'\}$ as shown above. So a refinement type is created by taking an existing type and decorate it with an expression in curly brackets. In the example above the refinement type is a simple boolean expression but refinements are not limited to boolean expression. This is extended in F* by its kind-system. Kinds can be seen as an abstraction over types - types can either \emph{have} or be \emph{of} a kind. The *-kind indicates 'regular types' in F*. This covers all the possible types to create in a regular type system for a programming language like Java. Refinement types are of the E-kind and not of the *-kind. The E(rasable)-kinds have no significance at runtime. They only have an effect at the compiling time during type checking.
 
 \section{Formalizing OpenNemID by using Jacob's work}
@@ -521,7 +521,7 @@ Since we are extending Jacob's work with the authentication part of the protocol
 \item a principal for identifying the client.
 \end{enumerate}
 \emph{Unit} means the same as void in Java.
-%\begin{shaded}
+
 \begin{lstlisting}[style=fstar, caption={Jacob's Identity Provider 
 Implementation}]
 	module Identityprovider
@@ -579,7 +579,7 @@ signAssertion in
  	 | _ -> SendSaml client (DisplayError 400);(*10.1*)
   	      identityprovider me client (*Start over*)
 \end{lstlisting}
-%\end{shaded}
+
 The recursive function \emph{identityprovider} starts by receiving a SAML message from the client. It then matches the request with a \emph{SamlMessage.AuthnRequestMessage} or\emph{SamlMessage.UserAuthenticated} type. When matched with an AuthnRequest message it verifies the Service Provider's signature of the message by the function \emph{VerifySignature} which is shown in listing 4.5. The function takes a principal, the principals public key, a message and a signature. It returns a boolean indicating if the check passed. The return type however has a refinement type that relates the message to the principal if the verification passes. $==>$ should be as implication therefore stating that the predicate is valid. If the verification of the Service Provider's signature of the AuthnRequestMessage passes it creates a nonce to be related to this user when the user has authenticated himself/herself by NemID and sends the response to the user. When the user has authenticated through NemID the function \emph{handleUserAuthenticated} is called. The function's purpose is to issue a signed assertion and sending the AuthResponseMessage to the user. The signature for signing messages takes 4 arguments - the principal, the signer, the private key of the principal and the message to be signed. The message is annotated with a refinement type \emph{\{Log p msg\}}. This refinement type is an E-kinded type that takes a principal and a string as constructor elements. The val declaration for a method Sign in listing 4.5 requires the predicate \{Log p msg\} to be true before it can typecheck. This means that the message to sign is related to the principal signing the message. Securing this is done by calling \emph{assume\{Log me assertion\}} before signing the message. The predicate is by virtue of this "verified". After this the assertion is encrypted by using the Service Provider's public key and sent within an AuthResponseMessage to the user.
 
 %\begin{shaded}
