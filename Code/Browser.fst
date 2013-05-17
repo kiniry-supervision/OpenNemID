@@ -12,13 +12,13 @@ val loginWithSMS: Authentication
 val loginWithOpenId: Authentication
 val userid: string
 val password: string
+val email: string
 val fakeprint: str:string -> unit
 val newUserId: string
 val newPassword: string
 val idpToRevoke:string
 val nfactToRemove: Authentication
 val nfactToAdd: Authentication
-(*Handle the two-factor authentication*)
 
 val handleAuthMethod: auth:Authentication -> Authentication
 
@@ -80,7 +80,7 @@ val createUser: authp:prin -> unit
 let createUser authp =
 	let name = userid in
 	let pw = password in
-	let req = RequestForLogin name pw in
+	let req = RequestForLogin name pw email in
 	let _ = SendMessage authp req in
 		let resp = ReceiveMessage authp in
 		match resp with

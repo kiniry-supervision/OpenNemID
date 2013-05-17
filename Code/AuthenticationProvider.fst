@@ -84,8 +84,8 @@ val usercommunication: me:prin -> user:prin -> unit
 let rec usercommunication me user =
 	let req = ReceiveMessage user in
 	match req with
-	| RequestForLogin(userid, password) -> 
-		if createuser user userid password then
+	| RequestForLogin(userid, password, email) -> 
+		if createuser user userid password email then
 			let challenge = GenerateNonce me in
 			relatechallenge user challenge;
 			SendMessage user (ReqLoginResponse challenge);

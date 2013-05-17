@@ -6,6 +6,7 @@ open TypeFunc
 open Messaging
 
 val userloggedin: user:prin -> bool
+val userlogin: user:prin -> unit
 val getjavascript: string
 val decodeMessage: message:string -> AuthnRequest
 val getauthnrequest: user:prin -> challenge:nonce -> AuthnRequest
@@ -25,6 +26,7 @@ let handleUserAuthenticated me user authnReq =
         	let assertion = IssueAssertion me user sp authnReq in
         	let myprivk = CertStore.GetPrivateKey me in
         	assume(Log me assertion);
+        	userlogin user;
         	let sigAs = Sign me myprivk assertion in
         	let signAssertion = AddSignatureToAssertion assertion sigAs in
         	let encryptedAssertion = EncryptAssertion sp pubksp signAssertion in
