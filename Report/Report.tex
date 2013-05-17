@@ -420,13 +420,12 @@ F* has derived the feature refinement types from the Microsoft Research projects
 Refinement types have the form $x:t\{t'\}$ as shown above. So a refinement type is created by taking an existing type and decorate it with an expression in curly brackets. In the example above the refinement type is a simple boolean expression but refinements are not limited to boolean expression. This is extended in F* by its kind-system. Kinds can be seen as an abstraction over types - types can either \emph{have} or be \emph{of} a kind. The *-kind indicates 'regular types' in F*. This covers all the possible types to create in a regular type system for a programming language like Java. Refinement types are of the E-kind and not of the *-kind. The E(rasable)-kinds have no significance at runtime. They only have an effect at the compiling time during type checking.
 
 \section{Formalizing OpenNemID by using Jacob's work}
-Since we are extending Jacob's work with the authentication part of the protocol we used his code as a reference for implementing the rest of the OpenNemID protocol. In listing 4.4 we show Jacob's implementaton of the Identity Provider. He has implemented a recursive function \emph{identityprovider} declared with the \emph{val} binding just above it. The function declared takes 2 arguments and returns \emph{unit}.\\
+Since we are extending Jacob's work with the authentication part of the protocol we used his code as a reference for implementing the rest of the OpenNemID protocol. In listing 4.4 we show Jacob's implementaton of the Identity Provider. He has implemented a recursive function \emph{identityprovider} declared with the \emph{val} binding just above it. The function declared takes 2 arguments and returns \emph{unit} which is the same as void in Java and C\#.\\
 \textbf{The arguments}
 \begin{enumerate}
 \item a principal for identifying the identity provider
 \item a principal for identifying the client.
 \end{enumerate}
-\emph{Unit} means the same as void in Java.
 %\begin{shaded}
 \begin{lstlisting}[style=fstar, caption={Jacob's Identity Provider 
 Implementation}]
@@ -1139,7 +1138,7 @@ This part of the Authentication Provider is responsible for creating and changin
 %\end{shaded}
 This part of the Authentication Provider will handle the establishing of a secure connection between the Identity Provider and the Authentication Provider. As we mentioned when we described the Identity Provider's specification of this model there needs to be some investigation of the Identity Provider and not just a generated nonce. This is just specified to give an idea of how the model is designed.
 \subsection{Specification of the Browser}
-The specification of the Browser is divided into twol listings for the sake of understandability. Note that we can not model the user's input therefore the input from the user is specified by a bunch of \emph{val} declaration.
+The specification of the Browser is divided into two listings for the sake of understandability. Note that we can not model the user's input therefore the input from the user is specified by a bunch of \emph{val} declarations.
 %\begin{shaded}
 \begin{lstlisting}[style=fstar, caption={Browser's side of logging in}]
 	module Browser
