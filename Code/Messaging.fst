@@ -12,7 +12,7 @@ type Message =
 	| ChallengeResponse: challenge:nonce -> Message
 	| IdpChalResponse: challenge:nonce -> Message
 	| AcceptedIdp: idp:prin -> pubkey:pubkey idp -> authp:prin -> authpubkey:pubkey authp -> signedjavascript:string -> Message
-	| RequestForLogin: userid:string -> password:string -> Message
+	| RequestForLogin: userid:string -> password:string -> email:string -> Message
 	| ReqLoginResponse: challenge:nonce -> Message
 	| CreateLogin: generatedpassword:string -> challenge:nonce -> Message
 	| ChangeUserId: userid:string -> newUserId:string -> password:string -> Message

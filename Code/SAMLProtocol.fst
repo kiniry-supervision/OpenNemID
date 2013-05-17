@@ -62,10 +62,7 @@ val SendSaml: prin -> SamlMessage -> unit
 val ReceiveSaml: prin -> SamlMessage 
 
 val CreateAuthnRequestMessage: issuer:prin -> destination:prin -> string
-val CreateLoginRequestMessage: issuer:prin -> destination:prin -> string
-val CreateNfactAuthReqMessage: issuer:prin -> destination:prin -> string
 val IssueAssertion: issuer:prin -> subject:prin -> audience:prin -> inresto:AuthnRequest -> assertiontoken
-val MakeAssertion: issuer:prin -> subject:prin -> audience:prin -> assertiontoken
 val AddSignatureToAssertion: assertiontoken -> dsig -> signedtoken
 val EncryptAssertion: receiver:prin -> pubkey receiver -> signedtoken -> Assertion
 val DecryptAssertion: receiver:prin -> privkey receiver -> Assertion -> (signedtoken * dsig)

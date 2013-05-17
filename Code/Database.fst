@@ -11,7 +11,7 @@ val addidp: idp:prin -> bool
 val whitelisted: idp:prin -> bool
 
 (*User functionality*)
-val createuser: user:prin -> userid:string -> password:string -> bool
+val createuser: user:prin -> userid:string -> password:string -> email:string -> bool
 val usercreation: user:prin -> generatedPassword:string -> bool
 val changeuserid: user:string -> newuser:string -> password:string -> bool
 val changeuserpassword: user:string -> password:string -> newpassword:string -> bool
