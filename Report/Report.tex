@@ -10,6 +10,9 @@
 \usepackage{algorithmic}
 \usepackage{framed}
 \usepackage{enumerate}
+\usepackage{hyperref}
+
+\hypersetup{linktoc=all}
 
 % Stylings %
 \pagestyle{fancy}
@@ -23,19 +26,12 @@
 }
 
 % Colors %
-\definecolor{darkgreen}{RGB}{60, 100, 60}
-\definecolor{purple}{RGB}{170, 0, 210}
-\definecolor{lightyellow}{RGB}{255, 251, 204}
-\definecolor{navy}{RGB}{40, 55, 170} 
-\definecolor{myblue}{rgb}{0.25, 0.25, 0.645} 
-\definecolor{darkred}{rgb}{0.845, 0.125, 0.125} 
-\definecolor{grey}{RGB}{100, 100, 100}
+\definecolor{sblgrey}{RGB}{100, 100, 100}
 \definecolor{sblbackground}{RGB}{39, 40, 34}
 \definecolor{sblkeyword}{RGB}{246, 39, 113}
 \definecolor{sbltext}{RGB}{248, 242, 242}
 \definecolor{sblcomment}{RGB}{94, 109, 94}
-\definecolor{sblstring}{RGB}{230, 219, 101}
-\definecolor{shadecolor}{named}{sblbackground} 
+\definecolor{sblstring}{RGB}{230, 219, 101} 
 
 % Footer/Header %
 \fancyhead[LE,RO]{\slshape Chapter \thechapter}
@@ -60,7 +56,7 @@
 	showtabs=false,
   	numbers=left,
   	numbersep=5pt,
-  	numberstyle=\tiny\ttfamily\color{grey},
+  	numberstyle=\tiny\ttfamily\color{sblgrey},
 	xleftmargin=\parindent,
   	basicstyle=\footnotesize\ttfamily\color{sbltext},
   	keywordstyle=\bfseries\color{sblkeyword},
@@ -80,6 +76,7 @@
 \textsc{\LARGE IT University of Copenhagen}\\[1.5cm]
 
 \textsc{\Large Bachelor Project}\\[0.5cm]
+
 
 % Title
 \HRule \\[0.4cm]
@@ -104,6 +101,11 @@ Morten Chabert \textsc{Eskesen}\\
 \\[10pt]
 Joseph Roland \textsc{KINIRY}\\
 \emph{josr@itu.dk}
+\\[10pt]
+\emph{Co-supervisor:}
+\\[10pt]
+Hannes \textsc{Mehnert}\\
+\emph{hame@itu.dk}
 \end{flushright}
 \end{minipage}
 
@@ -120,13 +122,25 @@ Joseph Roland \textsc{KINIRY}\\
 Your abstract goes here...
 \end{abstract}
 
-\tableofcontents
+\renewcommand{\abstractname}{Acknowledgements}
+\begin{abstract}
+Thanks Joe! Thanks Hannes! Party on!
+\end{abstract}
+
+\begingroup
+    \let\clearpage\relax
+	\tableofcontents
+    \listoffigures
+	\lstlistoflistings
+\endgroup
 
 \chapter{Introduction}
 
 $\ldots$
-\par
-We're extending the work done by Jacob Hoejgaard in his Masters Thesis 'Securing Single Sign-On Systems With Executable Models'. Jacobs research has focused on the current implementation of NemID and therefore describes, outlines and models the current system used in Denmark as of May 2013.
+\\\par
+We're extending the work done by Jacob H{\o}jgaard in his Masters Thesis 'Securing Single Sign-On Systems With Executable Models'. Jacobs research has focused on the current implementation of NemID and therefore describes, outlines and models the current system used in Denmark as of May 2013.
+\\\par
+Jacobs report sums up some of the problems with the current implementation of NemID, these problems include but are not limited to the system being very opaque. We're in the age of information, we want to be able to get information about everything regardless if it's in our best interest or not. NemID is not sharing any information about the internals of the system. If a person wanted to test some part of the NemID system, they would first have to analyze the public parts of the system to figure out how to communicate with the NemID system, afterwards all they would be able to do, would be black box testing. We need a system that is transparent, testable by everyone and doesn't cost a whole lot. For the sake of being able to reference this system through out the report, we will refer to it as \emph{OpenNemID}.
 
 \section{Objectives}
 Some explaining text here
@@ -143,36 +157,108 @@ This project has had it focus towards specifying a new protocol that could repla
 \section{Background}
 $\ldots$
  
-\chapter{Technical Background}
+\chapter{Technical background}
 
-\section{SAML Protocol}
+\section{SAML protocol}
 
-\section{Static Analysis}
+\subsection{OIOSAML}
+
+\section{Static analysis}
 
 \section{Selection of verification tool}
 F* - formal specification language that is also executable
-\section{N Factor Authentication}
-Videreudvikling af two factor authentication
+
+\section{N-factor authentication}
+Viderudvikling af two factor authentication
 
 
 %%%%%%%%%% CHAPTER %%%%%%%%%%
-\chapter{Remodelling the protocol}
-\section{How It Is Today}
+\chapter{Modelling the protocol}
+Before formalizing the protocol, it's required to specify and explain some of the words, concepts and meanings used within the protocol. This will be done by using graphical representation of the message flow.
 
-\section{How It Could Be}
+\section{Protocol prerequisites}
+It's important to have some requirements as to how the systems should function. The requirements helps define certain properties the involved participants must have or obey to.
+It's important to have some requirements as to how the systems should function. The requirements helps define certain properties the involved participants must have or obey to.
 
-\section{Communication Model}
-The communication model displays a graphical overview of how data should be communicated between the involved parties.
-\newpage
-\includegraphics[scale=0.6]{images/Communication.png}
+\subsection{Shared}
+The NemLog-in specification mandates the use of OIOSAML, this will most likely not be excluded, therefore we assume that OpenNemID also has to use it. Further OIOSAML mandates the use of one-way SSL/TLS for all bindings, the mandate does not specify a specific version, though it can be assumed that a minimum version of SSL 3.0 due to the fact that SSL 2.0 is in general considered deprecated. We assume the use of SSL 3.0 or TLS 1.0 in this report.
+\par
+As mentioned before, SAML uses the browser to transfer messages from one principal to the other. The way to do this is through HTTP REDIRECTs, which could be either a HTTP-GET REDIRECT or a HTTP-POST REDIRECT. The HTTP protocol accepts a Location head in the HTTP RESPONSE which indicates where the browser should redirect to. The location header redirect will act as a HTTP-GET REQUEST which excludes the usage of POST data, thereby limiting the amount of data that can be transferred. To overcome this problem HTTP-POST REDIRECTs are used, these are not a part of the HTTP protocol, but is synthesized by using JavaScript to emulate a regular HTTP-POST REQUEST. Therefore it is required for the users browser to follow redirects and to have JavaScript enabled.
+\par
+For there to be any actual messages to flow between the service provider and identity provider, it's assumed that they reside in different domains and are different entities.
+\par
+The identity provider is only to issue assertions to known service providers, this requires that SAML metadata has been changed beforehand. The certificates used for signing and encrypting has to be checked for revocation and validity whenever used.
+\par
+\textbf{To summarize:}
+\begin{enumerate}
+	\item OIOSAML mandates the use of SSL(3.0)/TLS(1.0).
+	\item The browser must follow redirects.
+	\item The browser must have JavaScript enabled.
+	\item Service provider and identity provider are different entities residing in different domains.
+	\item SAML metadata must have been exchanged between the service provider and identity provider.
+	\item Signature check and encryption requires validity/revocation check of the certificate.
+\end{enumerate}
 
-TEXT DESCRIBING ALGORITHM 1
+\subsection{NemID specifics}
+It's required for the OCES certificates used for signing and encrypting to have been issued by DanID.
+
+\subsection{OpenNemID specifics}
+For the communication between the authentication provider and the identity provider, a secure tunnel must have been set up. Further the user must have registered at the authentication provider.
+\par
+We have assume the availability of a web cryptography API in this report. A web cryptography API has not yet been standardized, but a standardization is being worked on, a draft is available \cite{webcrypto}. 
+
+\section{Formalizing protocol messages}
+The UML communication diagrams depicting the protocols are made up of two or more participants, henceforth principals, and the messages flowing through the system. The line between two principals indicates a channel where communication can flow, this channel is assumed to be a secure channel, meaning for HTTP messages, the HTTPS protocol would be used. An arrow indicates the direction of the message and the text on top of the arrow is the message being sent. The messages does not conform to any specific formalism, but follows a simple syntax. Messages are, very applicable, named in accordance with their HTTP protocol verb. The messages are to be interpreted the following way:
+\begin{enumerate}
+	\item[] \textbf{GET} means a HTTP-GET request, the parameter is the resource being requested.
+	\item[] \textbf{POST} means a HTTP-POST request, the parameters are the destination for the request followed by the data being submitted.
+	\item[] \textbf{REDIRECT} means either a HTTP-REDIRECT or a JavaScript redirect, whichever is used is not important for the purpose of the description. The parameters are the destination for the redirect followed by the parameters to include in the redirect.
+	\item[] \textbf{RESPONSE} means a HTTP-RESPONSE messages. The parameters are either the data included in the response or a HTTP status code indicating the type of the response along with a message, this is used for indicating when error happen.
+	\item[] \textbf{DELEGATE} means forwarding the data from the previous request, the parameters are the parameters from the previous request that were to be delegated.
+	\item[] \textbf{AUTHENTICATE} is to be interpreted as the sequence of actions required to be authenticated at the specified NFactorChallenge. The AUTHENTICATE message is defined this generically on purpose, as the way a user would authenticate for a NFactorChallenge can vary a lot depending on which technology is used (SMS, Facebook, phone call etc.).
+\end{enumerate}
+
+\section{Communication model}
+To make the changes from NemID to OpenNemID clear, we will first show the communication diagram for NemID, afterwards we will show the communication diagram for OpenNemID. Both diagrams make use of abbreviations, these abbreviations are listed at the top of the diagram along the word or phrase they abbreviate. We have tried to comply with Jacobs data as much as possible, due to the fact that his report conforms to the requirements mandated by Digitaliseringsstyrrelsen.
+
+\subsection{Message processing}
+Information regarding the processing of messages have not been included in the diagrams, this is to prevent cluttering of the diagrams. To circumvent this, the processing rules will be described afterwards. The descriptions will be linked to a specific process number, meaning Process 3 would be the handling and response of message 3 in the diagram. Messages that are self-explanatory will not be further described.
+
+\subsection{Communication diagram for NemID}
+Description of the message processing for this diagram has been left out of our report, they can however be found in Jacob H{\o}jgaards report \cite{jacob}.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics{images/Communication-Jacob.jpg}
+	\caption{Communication diagram for the complete NemID protocol \cite{jacob}}
+	\label{fig:jacobCommunication}
+\end{figure}
+
+\subsection{Communication diagram for OpenNemID}
+In this diagram, we have chosen to leave out the additional request to another service provider than the one initially used, this is due to the communication flow being exactly the same as in Jacobs diagram, see Figure \ref{fig:jacobCommunication}, message 13 to 18.
+\par
+In the communication diagram for OpenNemID, DanID have been replaced by AuthenticationProvider, for the sake of our protocol it is of no greater importance which company handles the authentication.
+\par
+We have strived to minimize the amount of messages flowing through the system to limit the amount of possible attack points for a potential adversary. We have also eliminated the need for transporting sensitive data, such as the users login data, from the authentication provider to the identity provider, by mandating that the identity provider and the authentication provider exchange information using a secure tunnel without the user being able to interfere.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.6]{images/Communication.png}
+	\caption{Communication diagram for the OpenNemID protocol}
+	\label{fig:ourCommunication}
+\end{figure}
+
+\subsubsection{Message descriptions}
+Process 1 describes the creation of the AuthRequest at the service provider when a resource has been requested. Is the request resource not found a 400 Bad-Request message is returned. The use of url encoding (UrlEnc) and base64 encoding (Base64Enc) is to ensure that the data can be transferred as parameters in the URL.
+\par
+SAML and OIOSAML has a substantial amount of processing rules that dictates the processing of messages, disobeying these will cause an error. For the sake of communication the descriptions have been kept to a minimum, not listening all scenarios that would cause an error.
+
 \begin{algorithm}[H]
 	\caption{Process 1}
 	\begin{algorithmic}
 	\REQUIRE{GET is well-formed \AND IdP.Public \AND SP.Private}
 	\IF{R exists}
-		\STATE AR $\leftarrow$ CreateAuthnRequest()
+		\STATE AR $\leftarrow$ CreateAuthRequest()
 		\STATE SAR $\leftarrow$ SIGN(AR, SP.Private)
 		\STATE MA $\leftarrow$ UrlEnc(Base64Enc(DeflateCompress(AR)))
 		\STATE RS $\leftarrow$ UrlEnc(Base64Enc(R))
@@ -183,7 +269,11 @@ TEXT DESCRIBING ALGORITHM 1
 	\end{algorithmic}
 \end{algorithm}
 
-TEXT DESCRIBING ALGORITHM 2
+Process 3 describes the handling of a \emph{AuthRequest} at the identity provider. The request will be handled in one of two ways depending on whether the AuthRequest could be verified. In the case of verification failing, a SAML response will be returned indicating an error. Otherwise a page for requesting the users credentials is returned. The page returned will also contains the signed JavaScript for handling the OpenNemID specific actions. The JavaScript is signed using a certificate, \emph{IdPJsCert}, this certificate has to have been issued by the authentication provider.
+\par
+A challenge (nonce) is generated, this is to prevent an attack where an adversary would submit an identical request to one that has already been submitted, also known as a \emph{replay attack}. If the challenge wasn't introduced the second identical request would also be accepted.
+\par
+A cookie is created containing the AuthRequest, signed AuthRequest along with the relay state. This is done to free the identity provider from having to store the data, thereby granting more statelessness.
 \begin{algorithm}[H]
 	\caption{Process 3}
 	\begin{algorithmic}
@@ -191,22 +281,23 @@ TEXT DESCRIBING ALGORITHM 2
 		\STATE AR $\leftarrow$ DeflateDecompress(Base64Dec(UrlDec(MA)))
 		\IF{VERIFY(AR, SAR, SP.Public)}
 			\STATE C1 $\leftarrow$ GenChallenge()
-			\STATE JS $\leftarrow$ StoredJavaScript()
+			\STATE JS $\leftarrow$ GetStoredJavaScript()
 			\STATE JS.SigParams.Challenge $\leftarrow$ C1
 			\STATE JS.SigParams.Certificate $\leftarrow$ IdPJsCert.Public
 			\STATE JS.SigParams.Signature $\leftarrow$ SIGN(JS.SigParams, IdPJsCert.Private)
-			\RETURN RESPONSE(JS)
+			\STATE ARC $\leftarrow$ CreateCookie(MA, SAR, RS)
+			\RETURN RESPONSE(JS, ARC)
 		\ELSE
 			\STATE RE $\leftarrow$ CreateResponse()
 			\STATE RE.InResponseTo $\leftarrow$ AR
-			\STATE RE.Status $\leftarrow$ ”Requester”
+			\STATE RE.Status $\leftarrow$ ”VerificationFailied”
 			\STATE MRE $\leftarrow$ Base64Enc(RE)
 			\RETURN REDIRECT(SP, MRE, RS)
 		\ENDIF
 	\end{algorithmic}
 \end{algorithm}
 
-TEXT DESCRIBING ALGORITHM 3
+As specified in the formalization, it's required for the browser to allow JavaScript. The username, \emph{U} and password, \emph{P} for the user is not stored and fetched directly, but will be input by the user manually, though for the description of process 4 it will be assumed that they are both ready right away. Before the user is prompted for username and password, the JavaScript is verified. The challenge is submitted together with the username and password. Hashing of the username and password has been omitted as it holds no functional enhancement towards the protocol.
 \begin{algorithm}[H]
 	\caption{Process 4}
 	\begin{algorithmic}
@@ -221,21 +312,20 @@ TEXT DESCRIBING ALGORITHM 3
 	\end{algorithmic}
 \end{algorithm}
 
-TEXT DESCRIBING ALGORITHM 4
+In process 5 the identity provider confirms that the challenge received matches a previously issued challenge, and that is has not already been used. A SAML response indicating an error is returned if the challenge is not accepted, otherwise the username and password will be delegated to the authentication provider.
 \begin{algorithm}[H]
 	\caption{Process 5}
 	\begin{algorithmic}
 		\REQUIRE{POST is well formed}
-		\IF{C1 matches challenge issued by IdP}
+		\IF{C1 matches challenge issued by IdP \AND C1 is valid}
 			\STATE \textbf{Delegate} U \AND P \TO AuthP
 		\ELSE
 			\RETURN RESPONSE(ERROR)
 		\ENDIF
-		\REQUIRE{C1 matches challenge issued by IdP}
 	\end{algorithmic}
 \end{algorithm}
 
-TEXT DESCRIBING ALGORITHM 5
+Process 5.1 describes how the username and password submitted is used to identify a user at the authentication provider. If a user is found and is valid, a challenge will be generated and the next N-Factor challenge for the user will be fetched. The N-Factor challenge is signed and then returned. Were no valid user found based on the supplied username and password, a SAML response message indicating an error will be returned.
 \begin{algorithm}[H]
 	\caption{Process 5.1}
 	\begin{algorithmic}
@@ -254,13 +344,13 @@ TEXT DESCRIBING ALGORITHM 5
 	\end{algorithmic}
 \end{algorithm}
 
-TEXT DESCRIBING ALGORITHM 6
+Process 6 show how the identity provider has to delegate messages from the browser to the authentication provider and vice versa. In this case the N-Factor challenge is to be delegated. If the authentication provider returned an error or the identity provider cannot verify the N-Factor challenge received, a SAML response message indicating an error will be returned to the browser. If the N-Factor challenge is verified, it is then delegated to the browser.
 \begin{algorithm}[H]
 	\caption{Process 6}
 	\begin{algorithmic}
 		\STATE SigParams $\leftarrow$ NF.SigParams
 		\IF{VERIFY(SigParams, SigParams.Signature, SigParams.Certificate)}
-			\STATE RELATE(SigParams.User, SigParams.Challenge)
+			%\STATE RELATE(SigParams.User, SigParams.Challenge)
 			\STATE \textbf{Delegate} NF \TO Browser
 		\ELSE
 			\STATE \textbf{Delegate} ERROR \TO Browser
@@ -268,7 +358,7 @@ TEXT DESCRIBING ALGORITHM 6
 	\end{algorithmic}
 \end{algorithm}
 
-TEXT DESCRIBING ALGORITHM 7
+The browser also verifies that the N-Factor challenge is valid in process 6.1. An attempt to authenticate the N-Factor challenge is then performed. Due to the challenges genericity, the authentication process will not be further described.
 \begin{algorithm}[H]
 	\caption{Process 6.1}
 	\begin{algorithmic}
@@ -281,7 +371,7 @@ TEXT DESCRIBING ALGORITHM 7
 	\end{algorithmic}
 \end{algorithm}
 
-TEXT DESCRIBING ALGORITHM 8
+In process 6.2, the genericity of the N-Factor challenges once more results in a minimal description. The way the authentication attempts will be handled depends on the N-Factor challenge, therefore to simplify the description, it is assumed that a result conforming to a specific template is returned.
 \begin{algorithm}[H]
 	\caption{Process 6.2}
 	\begin{algorithmic}
@@ -290,11 +380,11 @@ TEXT DESCRIBING ALGORITHM 8
 	\end{algorithmic}
 \end{algorithm}
 
-TEXT DESCRIBING ALGORITHM 9
+Process 6.5 describes the handling of a N-Factor challenge result. First off, the N-Factor challenge is verified to make sure that it has not been altered. Then it is checked whether or not the N-Factor challenge result is acceptable for the N-Factor challenge. In the case of acceptance the user is fetched. If the user has not yet completed all N-Factor challenges required to authenticate at the authentication provider, then the next challenge is fetched, signed and returned to the user. Process 6 to 6.5 is then repeated until no more N-Factor challenges are required, in which case login data for the user is created and returned to the identity provider. In case of the N-Factor challenge not passing verification or the N-Factor challenge result is not accepted a SAML message indicating an error is returned.
 \begin{algorithm}[H]
 	\caption{Process 6.5}
 	\begin{algorithmic}
-		\REQUIRE{Stored relation for (NF.SigParams.USER, NF.SigParams.Certificate)}
+		\REQUIRE{User identifiable by (NF.SigParams.USER, NF.SigParams.Certificate)}
 		\STATE SigParams $\leftarrow$ NF.SigParams
 		\IF{VERIFY(SigParams, SigParams.Signature, SigParams.Certificate)}
 			\IF{NFR is acceptable result of NF}
@@ -308,8 +398,8 @@ TEXT DESCRIBING ALGORITHM 9
 					\STATE NF.SigParams.Signature $\leftarrow$ SIGN(NF.SigParams, USER.Private)
 					\RETURN RESPONSE(NF)
 				\ELSE
-					\STATE LID $\leftarrow$ CreateLogInData()
-					\STATE ST $\leftarrow$ ”OK”
+					\STATE LID $\leftarrow$ CreateLogInData(USER)
+					\STATE ST $\leftarrow$ "OK"
 					\RETURN RESPONSE(ST, LID)
 				\ENDIF
 			\ELSE
@@ -321,13 +411,17 @@ TEXT DESCRIBING ALGORITHM 9
 	\end{algorithmic}
 \end{algorithm}
 
-TEXT DESCRIBING ALGORITHM 10
+In process 7 it is described how the identity provider handles when a user has been authenticated at the authentication provider. If the returned status does not equal an acceptance criteria, the status is returned to the browser to indicate an error, the status would further describe the error. When the status is accepted the cookie created in process 3 is fetched and the contents on the cookie are extracted.
+\par
+The initial AuthRequest extracted from the cookie is verified. Failed verification results in the user being redirected to the service provider with information indicating that the AuthRequest could not be granted.
+\par
+When verification succeeds, an assertion is build based on the login data received from the authentication provider. 
 \begin{algorithm}[H]
-	\caption{Process 7}
+	\title{negermand}
+	\caption{\textbf{Process 7}}
 	\begin{algorithmic}
-		\REQUIRE{SP.Public \AND LID is well-formed \AND stored AuthRequest for (LID.User, LID.Challenge)}
+		\REQUIRE{SP.Public \AND LID is well-formed \AND ARC cookie present}
 		\IF{ST = "OK"}
-			\STATE ARC $\leftarrow$ GetAuthRequest(LID.User, LID.Challenge)
 			\STATE MA $\leftarrow$ ARC.AR
 			\STATE SAR $\leftarrow$ ARC.SAR
 			\STATE RS $\leftarrow$ ARC.RS
@@ -387,15 +481,15 @@ F* is a research language from Microsoft Research. F* primarily subsumes two res
 
 \section{Syntax and semantics}
 F* inherits syntax and semantics from ML. F* is a functional language which means that it has features like immutability by default, polymorphic types and type inference. In Listing 4.1 we have shown the classic Hello World example in F*. This is the simplest way this example could have been written. This example shows how to specify a main method by defining a function \_ (underscore) at the end of a module. This will instruct the compiler to make an .exe file instead of a dll.
-%\begin{shaded}
+
 \begin{lstlisting}[style=fstar, caption={Hello World example in F*}]
 	module HelloWorld
 	
 	let _ = print "Hello world!"
 \end{lstlisting}
-%\end{shaded}
+
 The example in listing 4.2 shows how to explicitly specify types with the \emph{colon} operator and the \emph{val} declaration for defining function signatures. This example defines the function multiply that takes two ints as parameters and returns an int. After that it defines the corresponding \emph{let} binding which defines multiplies the 2 arguments. It is important to note that not defining the corresponding let binding will not cause the compilation to fail but give the following warning: \emph{Warning: Admitting value declaration Multiplication.multiply as an axiom without a corresponding definition}. So the value declaration was valid but there is no concrete implementation supporting this claim.
-%\begin{shaded}
+
 \begin{lstlisting}[style=fstar, caption={Multiplication example in F*}]
 	module Multiplication
 
@@ -405,7 +499,7 @@ The example in listing 4.2 shows how to explicitly specify types with the \emph{
 	
 	let mul = multiply 3 4
 \end{lstlisting}
-%\end{shaded}
+
 \section{Refinement types}
 F* has derived the feature refinement types from the Microsoft Research projects, F7 and Fine. Refinement types are used to make type safe refinements of existing types. Thus it is possible to restrict or refine values more than their original type. Listing 4.3 shows an example with the refinement \emph{nat} of int that states that \emph{nat} will always be zero of larger, i.e. a natural number. The example also shows an attempt to assign -1 to a type of nat which will fail typechecking.
 \begin{lstlisting}[style=fstar, caption={Simple refinement types in F*}]
@@ -416,17 +510,18 @@ F* has derived the feature refinement types from the Microsoft Research projects
 	let y:nat = 0
 	let z:nat = 1 - 2 (*Will fail typecheck*)
 \end{lstlisting}
-%\end{shaded}
+
 Refinement types have the form $x:t\{t'\}$ as shown above. So a refinement type is created by taking an existing type and decorate it with an expression in curly brackets. In the example above the refinement type is a simple boolean expression but refinements are not limited to boolean expression. This is extended in F* by its kind-system. Kinds can be seen as an abstraction over types - types can either \emph{have} or be \emph{of} a kind. The *-kind indicates 'regular types' in F*. This covers all the possible types to create in a regular type system for a programming language like Java. Refinement types are of the E-kind and not of the *-kind. The E(rasable)-kinds have no significance at runtime. They only have an effect at the compiling time during type checking.
 
 \section{Formalizing OpenNemID by using Jacob's work}
-Since we are extending Jacob's work with the authentication part of the protocol we used his code as a reference for implementing the rest of the OpenNemID protocol. In listing 4.4 we show Jacob's implementaton of the Identity Provider. He has implemented a recursive function \emph{identityprovider} declared with the \emph{val} binding just above it. The function declared takes 2 arguments and returns \emph{unit} which is the same as void in Java and C\#.\\
+Since we are extending Jacob's work with the authentication part of the protocol we used his code as a reference for implementing the rest of the OpenNemID protocol. In listing 4.4 we show Jacob's implementaton of the Identity Provider. He has implemented a recursive function \emph{identityprovider} declared with the \emph{val} binding just above it. The function declared takes 2 arguments and returns \emph{unit}.\\
 \textbf{The arguments}
 \begin{enumerate}
 \item a principal for identifying the identity provider
 \item a principal for identifying the client.
 \end{enumerate}
-%\begin{shaded}
+\emph{Unit} means the same as void in Java.
+
 \begin{lstlisting}[style=fstar, caption={Jacob's Identity Provider 
 Implementation}]
 	module Identityprovider
@@ -484,7 +579,7 @@ signAssertion in
  	 | _ -> SendSaml client (DisplayError 400);(*10.1*)
   	      identityprovider me client (*Start over*)
 \end{lstlisting}
-%\end{shaded}
+
 The recursive function \emph{identityprovider} starts by receiving a SAML message from the client. It then matches the request with a \emph{SamlMessage.AuthnRequestMessage} or\emph{SamlMessage.UserAuthenticated} type. When matched with an AuthnRequest message it verifies the Service Provider's signature of the message by the function \emph{VerifySignature} which is shown in listing 4.5. The function takes a principal, the principals public key, a message and a signature. It returns a boolean indicating if the check passed. The return type however has a refinement type that relates the message to the principal if the verification passes. $==>$ should be as implication therefore stating that the predicate is valid. If the verification of the Service Provider's signature of the AuthnRequestMessage passes it creates a nonce to be related to this user when the user has authenticated himself/herself by NemID and sends the response to the user. When the user has authenticated through NemID the function \emph{handleUserAuthenticated} is called. The function's purpose is to issue a signed assertion and sending the AuthResponseMessage to the user. The signature for signing messages takes 4 arguments - the principal, the signer, the private key of the principal and the message to be signed. The message is annotated with a refinement type \emph{\{Log p msg\}}. This refinement type is an E-kinded type that takes a principal and a string as constructor elements. The val declaration for a method Sign in listing 4.5 requires the predicate \{Log p msg\} to be true before it can typecheck. This means that the message to sign is related to the principal signing the message. Securing this is done by calling \emph{assume\{Log me assertion\}} before signing the message. The predicate is by virtue of this "verified". After this the assertion is encrypted by using the Service Provider's public key and sent within an AuthResponseMessage to the user.
 
 %\begin{shaded}
@@ -1138,7 +1233,7 @@ This part of the Authentication Provider is responsible for creating and changin
 %\end{shaded}
 This part of the Authentication Provider will handle the establishing of a secure connection between the Identity Provider and the Authentication Provider. As we mentioned when we described the Identity Provider's specification of this model there needs to be some investigation of the Identity Provider and not just a generated nonce. This is just specified to give an idea of how the model is designed.
 \subsection{Specification of the Browser}
-The specification of the Browser is divided into two listings for the sake of understandability. Note that we can not model the user's input therefore the input from the user is specified by a bunch of \emph{val} declarations.
+The specification of the Browser is divided into twol listings for the sake of understandability. Note that we can not model the user's input therefore the input from the user is specified by a bunch of \emph{val} declaration.
 %\begin{shaded}
 \begin{lstlisting}[style=fstar, caption={Browser's side of logging in}]
 	module Browser
@@ -1356,7 +1451,7 @@ We have implemented the Identity, Service and Authentication Provider in the Ope
 \begin{thebibliography}{9}
 
 \bibitem{jacob}
-  Jakob Hoejgaard:
+  Jakob H{\o}jgaard:
   \emph{Securing Single Sign-On System With Executable Models}.
   Master Project, IT University of Copenhagen,
   2013.
@@ -1367,6 +1462,8 @@ We have implemented the Identity, Service and Authentication Provider in the Ope
   Springer, Berlin Heidelberg,
   2011.
 
+\bibitem{webcrypto}
+	W3.org: \emph{Web Cryptography API}. \url{http://www.w3.org/TR/WebCryptographyAPI/}
 
 \end{thebibliography}
 
