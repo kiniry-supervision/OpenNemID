@@ -75,6 +75,7 @@
 
 \textsc{\Large Bachelor Project}\\[0.5cm]
 
+
 % Title
 \HRule \\[0.4cm]
 {\huge \bfseries Verifiable Secure Open Source Alternative to NemID}\\[0.1cm]
@@ -215,7 +216,7 @@ The UML communication diagrams depicting the protocols are made up of two or mor
 \end{enumerate}
 
 \section{Communication model}
-To make the changes from NemID to OpenNemID clear, we will first show the communication diagram for NemID, afterwards we will show the communication diagram for OpenNemID. Both diagrams make use of abbreviations, these abbreviations are listed at the top of the diagram along the word or phrase they abbreviate.
+To make the changes from NemID to OpenNemID clear, we will first show the communication diagram for NemID, afterwards we will show the communication diagram for OpenNemID. Both diagrams make use of abbreviations, these abbreviations are listed at the top of the diagram along the word or phrase they abbreviate. We have tried to comply with Jacobs data as much as possible, due to the fact that his report conforms to the requirements mandated by Digitaliseringsstyrrelsen.
 
 \subsection{Message processing}
 Information regarding the processing of messages have not been included in the diagrams, this is to prevent cluttering of the diagrams. To circumvent this, the processing rules will be described afterwards. The descriptions will be linked to a specific process number, meaning Process 3 would be the handling and response of message 3 in the diagram. Messages that are self-explanatory will not be further described.
@@ -411,9 +412,10 @@ In process 7 it is described how the identity provider handles when a user has b
 \par
 The initial AuthRequest extracted from the cookie is verified. Failed verification results in the user being redirected to the service provider with information indicating that the AuthRequest could not be granted.
 \par
-When verification succeeds, an assertion is
+When verification succeeds, an assertion is build based on the login data received from the authentication provider. 
 \begin{algorithm}[H]
-	\caption{Process 7}
+	\title{negermand}
+	\caption{\textbf{Process 7}}
 	\begin{algorithmic}
 		\REQUIRE{SP.Public \AND LID is well-formed \AND ARC cookie present}
 		\IF{ST = "OK"}
