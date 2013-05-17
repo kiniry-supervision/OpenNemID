@@ -503,7 +503,7 @@ This concludes the formalizing of the OpenNemID protocol and processing, the sub
 This chapter will introduce the language F* that can be used to model a security protocol. Despite being a formal specification language F* is also executable. F* is described as a \emph{A Verifying Compiler for Distributed Programming}. This chapter will describe how we have used F* to build a formal specification of OpenNemID.
 
 \section{Introducing F*}
-F* is a research language from Microsoft Research. F* primarily subsumes two research languages from Microsoft Research, F7\footnote{http://research.microsoft.com/en-us/projects/f7/} and Fine\footnote{http://research.microsoft.com/en-us/projects/fine/}. F* is at this time considered to be an $\alpha$-release.The purpose of designing F* is to enable the construction and communication of proofs of program properties and of properties of a program's environment in a verifiable secure way. F* is a dialect of ML and compiles to .NET bytecode in type-preserving style. This means that it can interop with other .NET languages and the types defined in F* can be used by other .NET lanuages without loosing type information. Furthermore there also exists a fully abstract compiler from F* to JavaScript. This makes it possible to deploy F* programs on web pages as JavaScript meanwhile there is a formal guarantee that the program still behaves just as they would according to F* semantics. The compiling and type-checking of F* code utilizes the Z3\footnote{http://z3.codeplex.com/} SMT solver for proving assumptions made with refinement types. F* has been formalized and verified using Coq\footnote{Coq is an interactive theorem prover written in OCaml}.
+F* is a research language from Microsoft Research. F* primarily subsumes two research languages from Microsoft Research, F7\footnote{http://research.microsoft.com/en-us/projects/f7/} and Fine\footnote{http://research.microsoft.com/en-us/projects/fine/}. F* is at this time considered to be an $\alpha$-release.The purpose of designing F* is to enable the construction and communication of proofs of program properties and of properties of a program's environment in a verifiable secure way. F* is a dialect of ML and compiles to .NET bytecode in type-preserving style. This means that it can inter op with other .NET languages and the types defined in F* can be used by other .NET languages without loosing type information. Furthermore there also exists a fully abstract compiler from F* to JavaScript. This makes it possible to deploy F* programs on web pages as JavaScript meanwhile there is a formal guarantee that the program still behaves just as they would according to F* semantics. The compiling and type-checking of F* code utilizes the Z3\footnote{http://z3.codeplex.com/} SMT solver for proving assumptions made with refinement types. F* has been formalized and verified using Coq\footnote{Coq is an interactive theorem prover written in OCaml}.
 
 \section{Syntax and semantics}
 F* inherits syntax and semantics from ML. F* is a functional language which means that it has features like immutability by default, polymorphic types and type inference. In Listing 4.1 we have shown the classic Hello World example in F*. This is the simplest way this example could have been written. This example shows how to specify a main method by defining a function \_ (underscore) at the end of a module. This will instruct the compiler to make an .exe file instead of a dll.
@@ -534,13 +534,13 @@ F* has derived the feature refinement types from the Microsoft Research projects
 	
 	let x:nat = 1
 	let y:nat = 0
-	let z:nat = 1 - 2 (*Will fail typecheck*)
+	let z:nat = 1 - 2 (*Will fail type check*)
 \end{lstlisting}
 
 Refinement types have the form $x:t\{t'\}$ as shown above. So a refinement type is created by taking an existing type and decorate it with an expression in curly brackets. In the example above the refinement type is a simple boolean expression but refinements are not limited to boolean expression. This is extended in F* by its kind-system. Kinds can be seen as an abstraction over types - types can either \emph{have} or be \emph{of} a kind. The *-kind indicates 'regular types' in F*. This covers all the possible types to create in a regular type system for a programming language like Java. Refinement types are of the E-kind and not of the *-kind. The E(rasable)-kinds have no significance at runtime. They only have an effect at the compiling time during type checking.
 
 \section{Formalizing OpenNemID by using Jacob's work}
-Since we are extending Jacob's work with the authentication part of the protocol we used his code as a reference for implementing the rest of the OpenNemID protocol. In listing 4.4 we show Jacob's implementaton of the Identity Provider. He has implemented a recursive function \emph{identityprovider} declared with the \emph{val} binding just above it. The function declared takes 2 arguments and returns \emph{unit}.\\
+Since we are extending Jacob's work with the authentication part of the protocol we used his code as a reference for implementing the rest of the OpenNemID protocol. In listing 4.4 we show Jacob's implementation of the Identity Provider. He has implemented a recursive function \emph{identityprovider} declared with the \emph{val} binding just above it. The function declared takes 2 arguments and returns \emph{unit}.\\
 \textbf{The arguments}
 \begin{enumerate}
 \item a principal for identifying the identity provider
@@ -643,7 +643,7 @@ The code in this section represents the state of the project now. This is in no 
 	\item The Authentication Provider module
 	\item The Browser module
 \end{enumerate}
-The modelling follows the principles for cryptographic protocol modelling outlined by Dolev \& Yao\footnote{Cryptographic primitives are assumed perfect and cyphers cannot be decrypted without the the proper decryption key}. In the following we will explain the important principles for each module and the relation to the algorithms outlined in chapter 3.
+The modeling follows the principles for cryptographic protocol modeling outlined by Dolev \& Yao\footnote{Cryptographic primitives are assumed perfect and cyphers cannot be decrypted without the the proper decryption key}. In the following we will explain the important principles for each module and the relation to the algorithms outlined in chapter 3.
 \subsection{Specification of the type functionality module}
 
 \begin{lstlisting}[style=fstar, caption={TypeFunc module}]
@@ -836,8 +836,8 @@ The \emph{CertStore} module is taken from Jacob's code and expanded with functio
 	val SendMessage: prin -> Message -> unit
 	val ReceiveMessage: prin -> Message
 \end{lstlisting}
-
-The \emph{Messaging} module is responsible for 2 things - the specification of messages and providing functions for sending and receiving these messages. As the \emph{SamlProtocol} module the functions for sending and receiving are specified only by the \emph{val} declaration and has no concrecte runtime implementation. This module is used to model the communication between Identity Provider / user and the Authentication Provider when wanting to establish a secure connection and creating and/or changing an user's login.
+%\end{shaded}
+The \emph{Messaging} module is responsible for 2 things - the specification of messages and providing functions for sending and receiving these messages. As the \emph{SamlProtocol} module the functions for sending and receiving are specified only by the \emph{val} declaration and has no concrete runtime implementation. This module is used to model the communication between Identity Provider / user and the Authentication Provider when wanting to establish a secure connection and creating and/or changing an user's login.
 \subsection{Specification of the Service Provider}
 
 \begin{lstlisting}[style=fstar, caption={Specification of service provider}]
@@ -876,8 +876,8 @@ The \emph{Messaging} module is responsible for 2 things - the specification of m
 	  | _ -> SendSaml client (DisplayError 400);
 	        serviceprovider me client idp
 \end{lstlisting}
-
-The service provider is taken and directly from Jacob's code and it is not modified in any way. The service provider implements algorithm 1 and 11 in section 3.3. The module is constructed to accept SAML messages of type \emph{SPLogin} and \emph{AuthResponseMessage}. If the service provider recieves another type of message it will return a HTTP error. Contrary to algorithms 1 and 11 the service provider does not implement encoding and decoding because this is expected to be handled by the \emph{SamlProtocol} module.
+%\end{shaded}
+The service provider is taken and directly from Jacob's code and it is not modified in any way. The service provider implements algorithm 1 and 11 in section 3.3. The module is constructed to accept SAML messages of type \emph{SPLogin} and \emph{AuthResponseMessage}. If the service provider receives another type of message it will return a HTTP error. Contrary to algorithms 1 and 11 the service provider does not implement encoding and decoding because this is expected to be handled by the \emph{SamlProtocol} module.
 \subsection{Specification of the Identity Provider}
 The specification of the Identity Provider is divided into several listings for the sake of understandability.
 
@@ -955,7 +955,7 @@ The specification of the Identity Provider is divided into several listings for 
 This part of the identity provider implements the algorithms (INDSÆT NR på algoritmerne). The identity provider accepts the three SAML messages \emph{AuthnRequestMessage}, \emph{Login} and \emph{UserAuthResponse} from the user.
 \begin{enumerate}
 \item The \emph{AuthnRequestMessage} branch decodes the message and if the user has not logged in previously it sends a \emph{UserCredRequest} back with the JavaScript and a nonce to be used for relating the login at the Identity Provider prompting the user to give his or her login information. If the user has already logged in previously it issues an assertion to the user.
-\item The \emph{Login} branch handles the user's login information which is the response the user provides after receiving the \emph{UserCredRequest}. This branch verifies that the nonce from the user is the correct one and if it is correct it delegates the login information to the Authentication Provider and then calls the function handleauthresponse which we will explain later in this section. If the nonce is incorrect it returns a HTTP error.
+\item The \emph{Login} branch handles the user's login information which is the response the user provides after receiving the \emph{UserCredRequest}. This branch verifies that the nonce from the user is the correct one and if it is correct it delegates the login information to the Authentication Provider and then calls the function \emph{handleauthresponse} which we will explain later in this section. If the nonce is incorrect it returns a HTTP error.
 \item The \emph{UserAuthResponse} branch handles the user's n factor authentication information and delegates the information to the Authentication Provider.
 \end{enumerate}
 
@@ -1033,8 +1033,8 @@ If the user has been successfully logged in the user will be issued an assertion
 			| _ -> res; ()
 		| _ -> resp; ()
 \end{lstlisting}
-
-This part of the Identity Provider is the establishing of the secure connection between the Identity Provider and the Authentication Provider. Right now the challenge response from the Authentication Provider is just a nonce to illustrate that the Identity Provider needs to be investigated thoroughly  by the Authentication Provider for the purpose of finding out if it is a non-evil Identity Provider.
+%\end{shaded}
+This part of the Identity Provider is the establishing of the secure connection between the Identity Provider and the Authentication Provider. Right now the challenge response from the Authentication Provider is just a nonce to illustrate that the Identity Provider needs to be investigated thoroughly by the Authentication Provider for the purpose of finding out if it is a non-evil Identity Provider.
 \subsection{Specification of the Database Handler}
 
 \begin{lstlisting}[style=fstar, caption={Specification of the database}]
@@ -1258,7 +1258,7 @@ This part of the Authentication Provider is responsible for creating and changin
 %\end{shaded}
 This part of the Authentication Provider will handle the establishing of a secure connection between the Identity Provider and the Authentication Provider. As we mentioned when we described the Identity Provider's specification of this model there needs to be some investigation of the Identity Provider and not just a generated nonce. This is just specified to give an idea of how the model is designed.
 \subsection{Specification of the Browser}
-The specification of the Browser is divided into two listings for the sake of understandability. Note that we can not model the user's input therefore the input from the user is specified by a bunch of \emph{val} declaration.
+The specification of the Browser is divided into two listings for the sake of understandability. Note that we can not model the user's input therefore the input from the user is specified by a bunch of \emph{val} declarations.
 %\begin{shaded}
 \begin{lstlisting}[style=fstar, caption={Browser's side of logging in}]
 	module Browser
@@ -1445,7 +1445,7 @@ This part of the \emph{Browser} module is used to model the client's side of a l
 			| _ -> resp; ()
 \end{lstlisting}
 %\end{shaded}
-This part of the \emph{Browser} module is pretty straightforward. It specifies a lot of functions that will create the user's account and update the account by the user's wish. The nonce created when a user creates an account is used to relate the creation of account to a user.
+This part of the \emph{Browser} module is pretty straightforward. It specifies a lot of functions that will create the user's account and update the account by the user's wish. The nonce created when a user creates an account is used to relate the creation of an account to a user.
 \section{Introducing adversaries}
 In the previous section we have been focused on implementation of the protocol according to the specification. This section will introduce adversaries into the protocol verification however we have not managed in this project to incorporate dedicated adversaries. Jacob introduced adversaries in his protocol verification through an abstract program and a main function to execute a protocol run. We have adopted this way of introducing an adversary and applied it to the OpenNemID protocol as shown in listing 4.21. The difference between our way of introducing an adversary and Jacob's is ours have the Authentication Provider also. The abstract \emph{attacker} function is a parameter to the \emph{main} function. This means that it is able to use any function defined in the modules. However it will not be able to call any assume command, i.e. every assertion in the Service Provider, Identity Provider and Authentication Provider will succeed.
 %\begin{shaded}
@@ -1472,6 +1472,22 @@ It would be possible to model and mitigate known attacks on the protocol like \e
 \section{State of the implementation}
 We have implemented the Identity, Service and Authentication Provider in the OpenNemID protocol and defined their abstract implementation but they are all missing session handling. Furthermore the implementations of the cryptographic elements and networking are abstract signatures only at the moment. If time had allowed it we could have incorporated the crypto and networking experiments done by Jacob into the model. As the previous section explained we have not modeled dedicated adversaries as a part of the present implementation either.
 \chapter{Evaluation}
+This chapter is an evaluation of the entire project. It will describe what has been accomplished during the project and what the work in this project can contribute with. It will also outline the most sensible areas to research further and discuss what related work have been done.
+\section{Project evaluation}
+In this report we have outlined the work of this project. The primary work in this project has been the specification of the OpenNemID protocol including a service provider, identity provider and authentication provider written in F*.
+\par
+Even though F* is a research project from Microsoft Research which can be a difficult challenge itself it has still been a challenge to work with but it has been an enjoyable challenge. This is because of the fact that we have extended the work done by Jacob and the F*-project is well documented with a tutorial. This means that we could always use Jacob's work as a reference and the compiler was easily to set up because of his work. We both have experience with ML and the functional oriented language F\# which F* is based on - these facts also helped us during the development of this project. Furthermore we both also have a strong background in C\# and .NET.
+\par
+Evaluating the project from a software development perspective
+\par
+
+\section{Related work}
+We have extended the work done by Jacob H{\o}jgaard \cite{jacob} from his master project \emph{Securing Single Sign-On System With Executable Models}. His work has had a huge impact on this project as we have stated throughout the report. The impact has been both in understanding the language F* and designing and specifying the OpenNemID protocol.
+\section{Threats to validity}
+
+\section{Further research}
+
+\section{Conclusion}
 
 \begin{thebibliography}{9}
 
@@ -1489,6 +1505,72 @@ We have implemented the Identity, Service and Authentication Provider in the Ope
 
 \bibitem{webcrypto}
 	W3.org: \emph{Web Cryptography API}. \url{http://www.w3.org/TR/WebCryptoAPI/}
+
+\bibitem{HansenSkriver}
+  Steffen M. Hansen, Jakob Skriver and Hanne Riis Nielson:
+  \emph{Using Static Analysis to Validate the SAML Single Sign-on Protocol}.
+  \\Master Project, Technical University of Denmark,
+  2004.
+
+\bibitem{fstar-msr}
+ Microsoft Research:
+ \emph{F*: A Verifying ML Compiler for Distributed Programming}.
+ \url{http://research.microsoft.com/en-us/projects/fstar/}
+
+\bibitem{rise4fun}
+ Microsoft Research:
+ \emph{F* guide}
+ \url{http://rise4fun.com/FStar/tutorial/guide}
+
+\bibitem{wayf}
+ The WAYF secretariat:
+ \emph{Trusted third party based ID federation, lowering the bar for
+ connecting and enhancing privacy}.
+ Explanation of WAYF,
+ 2009.
+
+\bibitem{proverif}
+ ProVerif:
+ \emph{Cryptographic protocol verifier in the formal model}.
+ \url{http://prosecco.gforge.inria.fr/personal/bblanche/proverif/}
+ 
+\bibitem{jscert}
+ JSCert:
+ \emph{Certified JavaScript}.
+ \url{http://jscert.org/index.html}
+
+\bibitem{other-tools}
+ Alternative tools:
+ \emph{Tools for analyzing protocols}
+ \url{http://www.infsec.uni-trier.de/tools.html}
+
+\bibitem{maffeis}
+ Sergio Maffeis:
+ \emph{An expert in computer security}.
+ Various publications on web security, security protocols and so on.
+ \url{http://www.doc.ic.ac.uk/~maffeis/}
+
+\bibitem{nacl}
+ NaCl:
+ \emph{Networking and Cryptography library}.
+ \url{nacl.cr.yp.to}
+
+\bibitem{sodium}
+ Sodium:
+ \emph{A new cross-compilable Cryptography library}.
+ A variation of the NaCl library,
+ \url{http://labs.umbrella.com/2013/03/06/announcing-sodium-a-new-cryptographic-library/}
+
+\bibitem{nemid-guide}
+ Nets-Danid:
+ \emph{NemID guide}
+ \url{https://www.nets-danid.dk/produkter/for_tjenesteudbydere/nemid_tjenesteudbyder/nemid_tjenesteudbyder_support/tjenesteudbyderpakken/}
+
+\bibitem{dolev-yao}
+ Danny Dolev and Andrew C. Yao:
+ \emph{On the security of public key protocols}.
+ Technical report, Stanford, CA, USA
+ 1981.
 
 \end{thebibliography}
 
