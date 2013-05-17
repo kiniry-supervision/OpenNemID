@@ -124,7 +124,7 @@ Your abstract goes here...
 
 \renewcommand{\abstractname}{Acknowledgements}
 \begin{abstract}
-Thanks Joe! Thanks Hannes! Party on!
+Thanks Joe! Thanks Hannes! Rock on!
 \end{abstract}
 
 \begingroup
@@ -138,9 +138,9 @@ Thanks Joe! Thanks Hannes! Party on!
 
 $\ldots$
 \\\par
-We're extending the work done by Jacob H{\o}jgaard in his Masters Thesis 'Securing Single Sign-On Systems With Executable Models'. Jacobs research has focused on the current implementation of NemID and therefore describes, outlines and models the current system used in Denmark as of May 2013.
+We're extending the work done by Jacob H{\o}jgaard in his Masters thesis 'Securing Single Sign-On Systems With Executable Models'. Jacobs research has focused on the current implementation of NemID and therefore describes, outlines and models the current system used in Denmark as of May 2013.
 \\\par
-Jacobs report sums up some of the problems with the current implementation of NemID, these problems include but are not limited to the system being very opaque. We're in the age of information, we want to be able to get information about everything regardless if it's in our best interest or not. NemID is not sharing any information about the internals of the system. If a person wanted to test some part of the NemID system, they would first have to analyze the public parts of the system to figure out how to communicate with the NemID system, afterwards all they would be able to do, would be black box testing. We need a system that is transparent, testable by everyone and doesn't cost a whole lot. For the sake of being able to reference this system through out the report, we will refer to it as \emph{OpenNemID}.
+Jacobs report sums up some of the problems with the current implementation of NemID, these problems include but are not limited to the system being very opaque. We're in the age of information, we want to be able to find information about everything regardless if it's in our best interest or not. NemID is not sharing any information about the internals of the system. If a person wanted to test some part of the NemID system, they would first have to analyze the public parts of the system to figure out how to communicate with the NemID system, afterwards all they would be able to do, would be black box testing. We need a system that is transparent, testable by everyone and doesn't cost a whole lot. For the sake of being able to reference this system through out the report, we will refer to it as \emph{OpenNemID}.
 
 \section{Objectives}
 Some explaining text here
@@ -169,12 +169,36 @@ $\ldots$
 F* - formal specification language that is also executable
 
 \section{N-factor authentication}
+\label{sect:nfactauth}
 Viderudvikling af two factor authentication
 
 
 %%%%%%%%%% CHAPTER %%%%%%%%%%
 \chapter{Modelling the protocol}
 Before formalizing the protocol, it's required to specify and explain some of the words, concepts and meanings used within the protocol. This will be done by using graphical representation of the message flow.
+
+\section{A protocol walkthrough}
+A sequence diagram depicting the protocol is useful for introducing the basics of the protocol. The sequence diagram is not as informative as a communication diagram, therefore we will first take a look at a couple of sequence diagrams afterwards we will have a more thorough look at the some parts of the protocol using communication diagrams.
+
+\subsection{Logon protocol}
+Jacob have depicted the NemID protocol with 12 steps. The sequence diagram shows how the browser must delegate messages from the service provider to the identity provider, while also having to delegate messages from DanId to the identity provider. A single challenge is used to authenticate the user after credentials have been submitted.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics{images/Sequence-login-Jacob.jpg}
+	\caption{Sequence diagram of authentication with NemID \cite{jacob}}
+\end{figure}
+
+In comparison to NemID, the OpenNemID protocol have modified the way messages are sent. The amount of messages the browser must delegate has been limited to few. There is not just one challenge used to authenticate the user, there is N challenges, as described in section \ref{sect:nfactauth}. The amount of steps in the protocol have been reduced to 8.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{images/Open-NemId-(User-Login).png}
+	\caption{Sequence diagram of authentication with OpenNemID}
+\end{figure}
+
+\subsection{Identity provider registration protocol}
+An identity provider has to register with an authentication provider to establish a trusted relationship and an agreement that the authentication provider will in fact act as a provider for authenticating users.
 
 \section{Protocol prerequisites}
 It's important to have some requirements as to how the systems should function. The requirements helps define certain properties the involved participants must have or obey to.
@@ -1454,7 +1478,7 @@ We have implemented the Identity, Service and Authentication Provider in the Ope
 \bibitem{jacob}
   Jakob H{\o}jgaard:
   \emph{Securing Single Sign-On System With Executable Models}.
-  Master Project, IT University of Copenhagen,
+  Masters thesis, IT University of Copenhagen,
   2013.
 
 \bibitem{AppliedInfoS}

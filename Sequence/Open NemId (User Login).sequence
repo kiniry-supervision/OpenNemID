@@ -1,16 +1,23 @@
-title Open NemId (User Login)
+Browser->+ServiceProvider: 1. Request resource
+ServiceProvider->-Browser: 2. Redirect with AuthRequest
 
-Browser->+IdentityProvider: 1. Login
-IdentityProvider->-Browser: 2. Login Page
+Browser->+IdentityProvider: 3. AuthRequest
+IdentityProvider->-Browser: 4. Login Page
 
-Browser->+IdentityProvider: 3.1 POST credentials
-IdentityProvider->+AuthenticationProvider: 3.2 Credentials delegated
-AuthenticationProvider->-IdentityProvider: 3.3 Return n-factor challenge
-IdentityProvider->-Browser: 3.4 Delegate n-factor challenge
+Browser->+IdentityProvider: 5.1 POST credentials
+IdentityProvider->+AuthenticationProvider: 5.2 Credentials delegated
+AuthenticationProvider->-IdentityProvider: 5.3 Return n-factor challenge
+IdentityProvider->-Browser: 5.4 Delegate n-factor challenge
 
-Browser->+IdentityProvider: 4.1 POST n-factor credentials
-IdentityProvider-->N-factor challenge: 4.2 Delegate n-factor credentials
-N-factor challenge-->-IdentityProvider: 4.3 Return n-factor response
-IdentityProvider->-Browser: Return Certificate (or TRUE)
+loop For each n-factor challenge
+Browser->+N-Factor challenge: 6.1 Authenticate challenge
+N-Factor challenge->-Browser: 6.2 Challenge response
 
-Browser->IdentityProvider: GET ...
+Browser->+IdentityProvider: 6.3 Delegate challenge response
+IdentityProvider->+AuthenticationProvider: 6.4 Delegate challenge response
+AuthenticationProvider->-IdentityProvider: 6.5 Return login data or next n-factor challenge
+IdentityProvider->-Browser: 6.6 Return redirect with SAML response or next n-factor challenge
+end
+
+Browser->+ServiceProvider: 7. SAML response
+ServiceProvider->-Browser: 8. Requested resource
