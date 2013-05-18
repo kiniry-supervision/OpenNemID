@@ -1,7 +1,0 @@
-http://research.microsoft.com/en-us/projects/fstar/
-
-http://rise4fun.com/FStar/tutorial/guide
-
-http://research.microsoft.com/en-us/projects/fine/
-
-http://research.microsoft.com/en-us/projects/f7/
