@@ -11,6 +11,7 @@
 \usepackage{framed}
 \usepackage{enumerate}
 \usepackage[hidelinks]{hyperref}
+\usepackage{soul}
 
 \hypersetup{linktoc=all}
 
@@ -40,7 +41,7 @@
 
 % Footer/Header %
 \fancyhead[LE,RO]{\slshape Chapter \thechapter}
-\fancyhead[LO,RE]{\slshape \rightmark}
+\fancyhead[LO,RE]{\slshape \nouppercase\rightmark}
 \fancyfoot[C]{\thepage}
 
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
@@ -104,7 +105,7 @@ Morten Chabert \textsc{Eskesen}\\
 \begin{flushright} \large
 \emph{Supervisor:}
 \\[10pt]
-Joseph Roland \textsc{KINIRY}\\
+Dr. Joseph Roland \textsc{KINIRY}\\
 \emph{josr@itu.dk}
 \\[10pt]
 \emph{Co-supervisor:}
@@ -140,15 +141,24 @@ Your abstract goes here...
 \endgroup
 
 \chapter{Introduction}
+\emph{Security through obscurity} is a principal within security engineering. It refers to the reliance on secrecy of the design or implementation of a system to provide security. Kerckhoffs's principle also dictates that a cryptographic system where the only private information is the key should be secure.
+\begin{quote}
+\textit{"There is no security by obscurity"} - Auguste Kerckhoffs \cite{kerckhoffs}
+\end{quote}
 
-We're extending the work done by Jacob H{\o}jgaard in his Masters thesis 'Securing Single Sign-On Systems With Executable Models'. Jacobs research has focused on the current implementation of NemID and therefore describes, outlines and models the current system used in Denmark as of May 2013.
-\\\par
-Jacobs report sums up some of the problems with the current implementation of NemID, these problems include but are not limited to the system being very opaque. We're in the age of information, we want to be able to find information about everything regardless if it's in our best interest or not. NemID is not sharing any information about the internals of the system. If a person wanted to test some part of the NemID system, they would first have to analyze the public parts of the system to figure out how to communicate with the NemID system, afterwards all they would be able to do, would be black box testing. We need a system that is transparent, testable by everyone and doesn't cost a whole lot. For the sake of being able to reference this system through out the report, we will refer to it as \emph{OpenNemID}.
+Based on this, it can be assumed that in the making of a secure system obscurity should not be used for improving the security.
+\begin{quote}
+\textit{"A system is secure only when it is secure in the light of day, under full public view."} - Dr. Joseph Roland Kiniry \cite{ftspeech}
+\end{quote}
+\par
+In Denmark it is required to use NemID when accessing public websites, online banks and other services requiring a digital signature (DanskeSpil e.g.). NemID claims to be a secure system, they state various reason that would give the impression that they are right \cite{omnemsikkerhed}. But looking at the system from the outside, there is no way of telling if they're right.
+\par
+Even though there is no public record of the NemID system being completely compromised, there is no way for us outsiders to verify whether or not it could happen. This is due to NemID following the security through obscurity principal. The source code for their key components are not publicly available, the Java applet they are providing has been obfuscated and the API they have made available does not reveal enough to conclude anything.
 
 \section{Objectives}
-Some explaining text here
+In this project we set out to create a replacement for NemID that is both verifiable secure and also open source. For the sake of being able to reference this new system throughout the report, we will refer to it as \emph{OpenNemID}.
 \par
-
+The goal of this project is to:
 \begin{enumerate}
 	\item Describe and outline the OpenNemID protocol, including but not limited to registration and login.
 	\item Formalize the specification of OpenNemID in F* to the extent possible.
@@ -158,13 +168,21 @@ Some explaining text here
 This project has had it focus towards specifying a new protocol that could replace NemID. The intent of this project is therefore not to develop a complete system, but to make the specification for a system that could then later be developed based on the specification.
 
 \section{Background}
-$\ldots$
- 
+We're extending the work done by Jacob H{\o}jgaard in his Masters thesis 'Securing Single Sign-On Systems With Executable Models'. Jacobs research has focused on the current implementation of NemID and therefore describes, outlines and models the current system used in Denmark as of May 2013.
+\par
+NemID is a part of NemLog-in, which is owned by the Danish government through the Agency of Digitalization, henceforth \emph{DIGST}. NemLog-in is a key component in the ambitious digitalization strategy outlined by the DIGST \cite{digst}. The digitalization strategy specifies that all interaction between residents and any public institution should be possible online from 2015. A public login federation\footnote{Login federation refers to the concept of federated identity where a user can link identities stored in different identity management systems. The term \emph{Federation} refers to a union of selfgoverning states, which is very applicable for this term \cite{jacob}.}, NemLog-in, is used for this purpose.
+\par
+Nets DanID\footnote{Nets DanID A/S is a company within the Nets group, which is owned by the danish national bank and a number of danish banks}, has developed NemID. Their contract runs from august 21st 2008 to august 20th 2015, though the contract can be extended twice, each time by a one year period \cite{nemidcontract}. When the current contract expires it is possible that a new contract mandating a replacement for NemID could be established.
+\par
+From an academic point of view it would be interesting to see if a replacement for NemID can be made by students within a very limited time frame, that does not rely on hidden and obfuscated code, but on open source and verification tools to prove the system secure.
+
+
+
 \chapter{Technical background}
-This chapter will clarify the technical concepts that has been used in this report. It will describe the SAML protocol and the Danish specialization OIOSAML. Furthermore it will describe the concept of static analysis and the reasonings behind choice of specification tool. Lastly it will introduce the concept \emph{N factor authentication} that has been used in the development of this project.
+This chapter will clarify the technical concepts that has been used in this report. It will describe the SAML protocol and the Danish specialization OIOSAML. Furthermore it will describe the concept of static analysis and the reasonings behind choice of specification tool. Lastly it will introduce the concept \emph{N-factor authentication} that has been used in the development of this project.
 
 \section{SAML protocol}
-The Security Assertion Markup Language or SAML is an XML based language created for the exchanging of authentication and authorization (security tokens) between different systems or domains, in particular between a service provider and an identity provider. The latest version of SAML is 2.0 released in 2005. SAML specifies three roles: \emph{principal}, \emph{identity provider} and \emph{service provider}. Principal refers to an entity that can be authenticated, therefore both the user and the identity provider and service provider are principals. SAML addresses the problem of web browser single-sign on (SSO). SSO means that the user only has to login once pr identity provider pr session. Practically this means that the user only has to be redirected once to the identity provider for authentication once pr session. The identity provider creates a session for the user that can be reused for any subsequent authentication request. SAML specifies 5 core elements - \emph{Assertions}, \emph{Protocols}, \emph{Bindings}, \emph{Profiles} and \emph{Metadata}. See appendix A for examples of assertion and SAML messages.
+The Security Assertion Markup Language or SAML is an XML based language created for the exchanging of authentication and authorization (security tokens) between different systems or domains, in particular between a service provider and an identity provider. The latest version of SAML is 2.0 released in 2005. SAML specifies three roles: \emph{principal}, \emph{identity provider} and \emph{service provider}. Principal refers to an entity that can be authenticated, therefore both the user and the identity provider and service provider are principals. SAML addresses the problem of web browser single-sign on (SSO). SSO means that the user only has to login once pr identity provider pr session. Practically this means that the user only has to be redirected once to the identity provider for authentication once per session. The identity provider creates a session for the user that can be reused for any subsequent authentication request. SAML specifies 5 core elements - \emph{Assertions}, \emph{Protocols}, \emph{Bindings}, \emph{Profiles} and \emph{Metadata}. See appendix A for examples of assertion and SAML messages.
 \par
 \emph{Assertions} are security tokens containing statements or claims about a principal. These statements in SAML are called attributes and they usually hold information like name, last name, email etc. The principal is referred to as the \emph{subject} in an assertion.
 \par
@@ -193,7 +211,7 @@ The Security Assertion Markup Language or SAML is an XML based language created 
 Before formalizing the protocol, it's required to specify and explain some of the words, concepts and meanings used within the protocol. This will be done by using graphical representation of the message flow.
 
 \section{A protocol walkthrough}
-A sequence diagram depicting the protocol is useful for introducing the basics of the protocol. The sequence diagram is not as informative as a communication diagram, therefore we will first take a look at a couple of sequence diagrams afterwards we will have a more thorough look at the some parts of the protocol using communication diagrams.
+A sequence diagram depicting the protocol is useful for introducing the basics of the protocol. The sequence diagrams give a brief overview of the logon protocol, identity provider registration protocol and the user registration protocol. The logon protocol will, later in this chapter, be modeled using a communication diagram, this is done to give a more thorough overview.
 
 \subsection{Logon protocol}
 Jacob have depicted the NemID protocol with 12 steps. The sequence diagram shows how the browser must delegate messages from the service provider to the identity provider, while also having to delegate messages from DanId to the identity provider. A single challenge is used to authenticate the user after credentials have been submitted.
@@ -213,10 +231,22 @@ In comparison to NemID, the OpenNemID protocol have modified the way messages ar
 \end{figure}
 
 \subsection{Identity provider registration protocol}
-An identity provider has to register with an authentication provider to establish a trusted relationship and an agreement that the authentication provider will in fact act as a provider for authenticating users.
+An identity provider has to register with an authentication provider to establish a trusted relationship and an agreement that the authentication provider will in fact act as a provider for authenticating users. A challenge will be send to the identity provider to confirm that the identity provider is who they claim to be.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.6]{images/Open-NemId-(IdentityProvider-Registration).png}
+	\caption{Sequence diagram of identity provider registration with OpenNemID}
+\end{figure}
 
 \subsection{User registration protocol}
-Before a user is able to authenticate at the authentication provider, they have to register there first. The user has to activate their account using credentials received via snail mail. Upon activation, a new password must be chosen, optionally a userid can also be chosen.
+Before a user is able to authenticate at the authentication provider, they have to register there first. The user has to activate their account using credentials received via mail. Upon activation, a new password must be chosen, optionally a userid can also be chosen. The user must be able to add and revoke N-Factor challenges while also being able to revoke previously granted identity provider permissions.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.6]{images/Open-NemId-(User-Registration).png}
+	\caption{Sequence diagram of user registration with OpenNemID}
+\end{figure}
 
 \section{Protocol prerequisites}
 It's important to have some requirements as to how the systems should function. The requirements helps define certain properties the involved participants must have or obey to.
@@ -230,6 +260,7 @@ As mentioned before, SAML uses the browser to transfer messages from one princip
 For there to be any actual messages to flow between the service provider and identity provider, it's assumed that they reside in different domains and are different entities.
 \par
 The identity provider is only to issue assertions to known service providers, this requires that SAML metadata has been changed beforehand. The certificates used for signing and encrypting has to be checked for revocation and validity whenever used.
+\\
 \par
 \textbf{To summarize:}
 \begin{enumerate}
@@ -1492,12 +1523,14 @@ It would be possible to model and mitigate known attacks on the protocol like \e
 
 \section{State of the implementation}
 We have implemented the Identity, Service and Authentication Provider in the OpenNemID protocol and defined their abstract implementation but they are all missing session handling. Furthermore the implementations of the cryptographic elements and networking are abstract signatures only at the moment. If time had allowed it we could have incorporated the crypto and networking experiments done by Jacob into the model. As the previous section explained we have not modeled dedicated adversaries as a part of the present implementation either.
+
+
 \chapter{Evaluation}
 This chapter is an evaluation of the entire project. It will describe what has been accomplished during the project and what the work in this project can contribute with. It will also outline the most sensible areas to research further and discuss what related work have been done.
 \section{Project evaluation}
 In this report we have outlined the work of this project. The primary work in this project has been the specification of the OpenNemID protocol including a service provider, identity provider and authentication provider written in F*.
 \par
-Even though F* is a research project from Microsoft Research which can be a difficult challenge itself it has still been a challenge to work with but it has been an enjoyable challenge. This is because of the fact that we have extended the work done by Jacob and the F*-project is well documented with a tutorial. This means that we could always use Jacob's work as a reference and the compiler was easily to set up because of his work. We both have a little experience with ML and the functional oriented language F\# which F* is based on - these facts also helped us during the development of this project. Furthermore we both also have a strong background in C\# and .NET.
+\hl{Even though F* is a research project from Microsoft Research which can be a difficult challenge itself it has still been a challenge to work with but it has been an enjoyable challenge.} This is because of the fact that we have extended the work done by Jacob and the F*-project is well documented with a tutorial. This means that we could always use Jacob's work as a reference and the compiler was easily to set up because of his work. We both have a little experience with ML and the functional oriented language F\# which F* is based on - these facts also helped us during the development of this project. Furthermore we both also have a strong background in C\# and .NET.
 \par
 Evaluating the project from a software development perspective
 
@@ -1513,6 +1546,8 @@ It is also important to remember that the F* compiler is still a $\alpha$-releas
 Lastly it is worth noting we have only touched the subject of modeling adversaries very briefly. This leaves room for uncertainty and therefore would be a natural course to take for further research.
 \section{Further research}
 As we have mentioned the modeling of adversaries is the natural path to take because this is required to make a more robust framework for protocol verification. In section 4.6 we described that we have modeled a browser but we have not modeled adversaries as part of the browser. This could be a way to continue the research. We mentioned briefly that F* could be compiled to JavaScript. The compilation of F* to JavaScript is interesting because NemID uses a Java applet which forces all the user to install a Java browser plug-in. Given the facts that there have been many security issues reported lately with the Java browser plug-in and that DanID are working on a version of NemID in JavaScript F*'s compilation to JavaScript is very to have in mind. This means that a specification in F* could be compiled to JavaScript and used on the web and thereby eliminate the large security risk involved with using the Java applet. Further research could also be into the server side of the Authentication Provider (as we have called it). As we have specified the Authentication Provider the next step would be to actually creating the server side of it so it could be an executable protocol on the web.
+
+\hl{m{\aa}ske noget om security profiles?}
 \section{Conclusion}
 Vi skal vel konkludere på introduktionen? Konklusionen skal vel skrives efter den? :)
 \begin{thebibliography}{9}
@@ -1584,8 +1619,18 @@ Vi skal vel konkludere på introduktionen? Konklusionen skal vel skrives efter d
 \bibitem{sodium}
  Sodium:
  \emph{A new cross-compilable Cryptography library}.
- A variation of the NaCl library,
+ A variation of the NaCl library.
  \url{http://labs.umbrella.com/2013/03/06/announcing-sodium-a-new-cryptographic-library/}
+
+\bibitem{digst}
+ Digitaliseringsstyrrelsen:
+ \emph{Den digitale vej til fremtiden velf{\ae}rd - Den f{\ae}llesoffentlige digitaliseringsstrategi 2011-2015}.
+ \url{http://www.digst.dk/Home/Digitaliseringsstrategi/~/media/Files/Digitaliseringsstrategi/Digitale_vej_til_fremtidens_velf\%C3\%A6rd.ashx}
+
+\bibitem{nemidcontract}
+ Nets DanID:
+ \emph{Forretningsbetingelser MOCES DanID april 2012}.
+ \url{https://www.nets-danid.dk/produkter/nemid_medarbejdersignatur/vilkaar/forretningsbetingelser_nemid_administrator/Forretningsbetingelser_MOCES_DanID_april_2012.pdf}
 
 \bibitem{nemid-guide}
  Nets-Danid:
@@ -1597,6 +1642,23 @@ Vi skal vel konkludere på introduktionen? Konklusionen skal vel skrives efter d
  \emph{On the security of public key protocols}.
  Technical report, Stanford, CA, USA
  1981.
+
+\bibitem{ftspeech}
+ Dr. Joseph Roland Kiniry:
+ \emph{Parliamentary Statement for Bill L-132}
+ \url{http://www.ft.dk/samling/20121/almdel/kou/bilag/70/1225808.pdf}
+
+\bibitem{omnemidsikkerhed}
+ NemID:
+ \emph{Om NemID - Sikkerhed}
+ \url{https://www.nemid.nu/dk-da/om_nemid/sikkerhed/}
+
+\bibitem{kerckhoffs}
+ Auguste Kerckhoffs:
+ \emph{La cryptographie militaire.}
+ Journal des Sciences Militaires, IX:5–38, 161–191, 1883
+
+ \url{http://arxiv.org/pdf/1109.5542.pdf}
 
 \end{thebibliography}
 

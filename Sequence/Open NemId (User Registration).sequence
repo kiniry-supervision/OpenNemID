@@ -1,5 +1,3 @@
-title Open NemId (User Settings [Per User])
-
 User->AuthenticationProvider: 1. Register for Open NemId
 AuthenticationProvider->User: 2. OTP Card
 AuthenticationProvider->User: 3. Initial Password

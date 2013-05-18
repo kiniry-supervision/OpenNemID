@@ -1,8 +1,6 @@
-title Open NemId (IdentityProvider Setup [Per IdentityProvider])
-
-IdentityProvider[I]->AuthenticationProvider: 1. Request for new site
-AuthenticationProvider->IdentityProvider[I]: 2. Challenge
-IdentityProvider[I]->AuthenticationProvider: 3. Response
-AuthenticationProvider->IdentityProvider[I]: PublicKey[I]
-AuthenticationProvider->IdentityProvider[I]: PublicKey[DanId]
-AuthenticationProvider->IdentityProvider[I]: Signed JavaScript
+IdentityProvider->+AuthenticationProvider: 1. Request for new site
+AuthenticationProvider->-IdentityProvider: 2. Challenge
+IdentityProvider->+AuthenticationProvider: 3. Response
+AuthenticationProvider->IdentityProvider: 4. PublicKey[IdentityProvider]
+AuthenticationProvider->IdentityProvider: 5. PublicKey[AuthenticationProvider]
+AuthenticationProvider->-IdentityProvider: 6. Signed JavaScript
