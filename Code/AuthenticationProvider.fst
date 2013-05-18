@@ -48,7 +48,7 @@ let rec authenticationprovider me idp user =
 					SendSaml idp resp;
 					authenticationprovider me idp user
 				else
-					SendSaml idp (Failed User);
+					SendSaml idp (LoginFailure CredentialError);
 					authenticationprovider me idp user
 			| _ -> SendSaml idp (Failed Requester);
 				authenticationprovider me idp user
@@ -65,10 +65,10 @@ let rec authenticationprovider me idp user =
 						nfactauth me idp user userid;
 						authenticationprovider me idp user
 					else
-						SendSaml idp (Failed User);
+						SendSaml idp (LoginFailure AuthError);
 						authenticationprovider me idp user
 				else
-					SendSaml idp (Failed User);
+					SendSaml idp (LoginFailure AuthError);
 					authenticationprovider me idp user
 			| _ -> SendSaml idp (Failed Requester);
 				authenticationprovider me idp user

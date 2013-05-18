@@ -156,14 +156,26 @@ This project has had it focus towards specifying a new protocol that could repla
 $\ldots$
  
 \chapter{Technical background}
+This chapter will clarify the technical concepts that has been used in this report. It will describe the SAML protocol and the Danish specialization OIOSAML. Furthermore it will describe the concept of static analysis and the reasonings behind choice of specification tool. Lastly it will introduce the concept \emph{N factor authentication} that has been used in the development of this project.
 
 \section{SAML protocol}
+The Security Assertion Markup Language or SAML is an XML based language created for the exchanging of authentication and authorization (security tokens) between different systems or domains, in particular between a service provider and an identity provider. The latest version of SAML is 2.0 released in 2005. SAML specifies three roles: \emph{principal}, \emph{identity provider} and \emph{service provider}. Principal refers to an entity that can be authenticated, therefore both the user and the identity provider and service provider are principals. SAML addresses the problem of web browser single-sign on (SSO). SSO means that the user only has to login once pr identity provider pr session. Practically this means that the user only has to be redirected once to the identity provider for authentication once pr session. The identity provider creates a session for the user that can be reused for any subsequent authentication request. SAML specifies 5 core elements - \emph{Assertions}, \emph{Protocols}, \emph{Bindings}, \emph{Profiles} and \emph{Metadata}. See appendix A for examples of assertion and SAML messages.
+\par
+\emph{Assertions} are security tokens containing statements or claims about a principal. These statements in SAML are called attributes and they usually hold information like name, last name, email etc. The principal is referred to as the \emph{subject} in an assertion.
+\par
+\emph{Protocols} describe the messages that can be exchanged between the service provider and the identity provider when exchanging \emph{assertions}. The protocol used in OpenNemID is called the Authentication Request Protocol. This protocol consists of AuthnRequest message and a response message. The AuthnRequest message has an id that must be unique and the creator of the message is responsible for ensuring it is. The response message has a field \emph{inResponseTo} that specifies the id of the AuthnRequest the response is to.
+\par
+\emph{Bindings} specifies how the messages are mapped to the underlying HTTP(s) or SOAP protocols. However in this report only HTTP POST and HTTP REDIRECT bindings will be addressed. The POST binding maps the content of messages to hidden XHTML form fields that are named SAMLRequest and SAMLResponse. The content is BASE64 encoded. For the REDIRECT binding the message content is mapped the URL query string with SAMLRequest and SAMLResponse as the identifier. Since the URL query string has limited capacity the message is compressed by the DEFLATE algorithm and after that it is BASE64 encoded and URL encoded.
+\par
+\emph{Profiles} specifies how the \emph{assertion}, \emph{protocol} and \emph{binding} are used to fulfill a specific requirement or a use case. The Danish specialization of the SAML Web Browser SSO Profile, OIOSAML, will be described in further detail in section 2.1.1.
+\par
+\emph{Metadata} is the necessary data exchanged between the involved parties in order to know each other. A service provider's metadata contains the certificate for signing messages and a message that the identity provider should use for encrypting assertion. It also contains endpoints which specifies the addresses to which the identity provider should send response messages. More than one endpoint if different bindings are available. The identity provider's metadata also contains signing and encryption certificates and endpoints that specify the addresses for sending requests to the identity provider. Again more endpoints for different bindings. The identity provider will publish the attributes it is able to serve through it's metadata.
 
 \subsection{OIOSAML}
 
 \section{Static analysis}
 
-\section{Selection of verification tool}
+\section{Selection of specification tool}
 
 
 \section{N-factor authentication}
@@ -698,7 +710,10 @@ The \emph{TypeFunc} module provides the type authentication which is used for th
 	  | Success: SamlStatus
 	  | Requester: SamlStatus
 	  | Responder: SamlStatus
-	  | User: SamlStatus
+
+	type LoginError =
+	  | AuthError: LoginError
+	  | CredentialError: LoginError
 
 	type SamlMessage =
 	  | SPLogin: uri -> SamlMessage
@@ -715,6 +730,7 @@ The \emph{TypeFunc} module provides the type authentication which is used for th
 	  | UserAuthResponse: authInfo:AuthInfo -> challenge:nonce -> dsig -> SamlMessage
 	  | LoginSuccess: status:string -> issuer:prin -> destination:endpoint -> SamlMessage
 	  | Failed: SamlStatus -> SamlMessage
+	  | LoginFailure: LoginError -> SamlMessage
 	  | DisplayError: int -> SamlMessage
 
 
@@ -875,7 +891,7 @@ The \emph{Messaging} module is responsible for 2 things - the specification of m
 	        serviceprovider me client idp
 \end{lstlisting}
 %\end{shaded}
-The service provider is taken and directly from Jacob's code and it is not modified in any way. The service provider implements algorithm 1 and 11 in section 3.3. The module is constructed to accept SAML messages of type \emph{SPLogin} and \emph{AuthResponseMessage}. If the service provider receives another type of message it will return a HTTP error. Contrary to algorithms 1 and 11 the service provider does not implement encoding and decoding because this is expected to be handled by the \emph{SamlProtocol} module.
+The service provider is taken and directly from Jacob's code and it is not modified in any way. The service provider implements algorithm 1 and 11 in section 3.4. The module is constructed to accept SAML messages of type \emph{SPLogin} and \emph{AuthResponseMessage}. If the service provider receives another type of message it will return a HTTP error. Contrary to algorithms 1 and 11 the service provider does not implement encoding and decoding because this is expected to be handled by the \emph{SamlProtocol} module.
 \subsection{Specification of the Identity Provider}
 The specification of the Identity Provider is divided into several listings for the sake of understandability.
 
@@ -1123,7 +1139,7 @@ The specification of the Authentication Provider is divided into several listing
 						SendSaml idp resp;
 						authenticationprovider me idp user
 					else
-						SendSaml idp (Failed User);
+						SendSaml idp (LoginFailure CredentialError);
 						authenticationprovider me idp user
 				| _ -> SendSaml idp (Failed Requester);
 					authenticationprovider me idp user
@@ -1140,10 +1156,10 @@ The specification of the Authentication Provider is divided into several listing
 							nfactauth me idp user userid;
 							authenticationprovider me idp user
 						else
-							SendSaml idp (Failed User);
+							SendSaml idp (LoginFailure AuthError);
 							authenticationprovider me idp user
 					else
-						SendSaml idp (Failed User);
+						SendSaml idp (LoginFailure AuthError);
 						authenticationprovider me idp user
 				| _ -> SendSaml idp (Failed Requester);
 					authenticationprovider me idp user
@@ -1474,19 +1490,24 @@ This chapter is an evaluation of the entire project. It will describe what has b
 \section{Project evaluation}
 In this report we have outlined the work of this project. The primary work in this project has been the specification of the OpenNemID protocol including a service provider, identity provider and authentication provider written in F*.
 \par
-Even though F* is a research project from Microsoft Research which can be a difficult challenge itself it has still been a challenge to work with but it has been an enjoyable challenge. This is because of the fact that we have extended the work done by Jacob and the F*-project is well documented with a tutorial. This means that we could always use Jacob's work as a reference and the compiler was easily to set up because of his work. We both have experience with ML and the functional oriented language F\# which F* is based on - these facts also helped us during the development of this project. Furthermore we both also have a strong background in C\# and .NET.
+Even though F* is a research project from Microsoft Research which can be a difficult challenge itself it has still been a challenge to work with but it has been an enjoyable challenge. This is because of the fact that we have extended the work done by Jacob and the F*-project is well documented with a tutorial. This means that we could always use Jacob's work as a reference and the compiler was easily to set up because of his work. We both have a little experience with ML and the functional oriented language F\# which F* is based on - these facts also helped us during the development of this project. Furthermore we both also have a strong background in C\# and .NET.
 \par
 Evaluating the project from a software development perspective
-\par
 
 \section{Related work}
-We have extended the work done by Jacob H{\o}jgaard \cite{jacob} in his master project \emph{Securing Single Sign-On System With Executable Models}. His work has had a huge impact on this project as we have stated throughout the report. The impact has been both in understanding the language F* and designing and specifying the OpenNemID protocol.
+We have extended the work done by Jacob H{\o}jgaard \cite{jacob} in his masters thesis \emph{Securing Single Sign-On System With Executable Models}. His work has had a huge impact on this project as we have stated throughout the report. The impact has been both in understanding the language F* and designing and specifying the OpenNemID protocol. In the masters thesis \emph{Using static analysis to validate SAML Protocols} written by Hansen and Skriver \cite{HansenSkriver} they analyze and formalize the SAML login protocol. Their analysis goes towards the older version 1.1 SAML protocol. In their analysis they recommend mandating of HTTPS network transport. This has been incorporated in the OIOSAML specification done by Jacob.
 \section{Threats to validity}
-
+When working in the area of security protocols there will be a lot of threats to validity. Therefore it is important to scrutinize the work of this report.
+\par
+As stated earlier we both have a little experience with the functional programming language F\# which F* is based on. However since we are no experts in F\# and have worked mostly with object oriented languages there is a good chance that the capabilities of F* has not been fully utilized. Furthermore we have not worked with any formal specification tools before beginning this project.
+\par
+It is also important to remember that the F* compiler is still a $\alpha$-release. Microsoft Research has used it to verify 20.000 lines of code \cite{fstar-msr} but the results should still be treated with some degree of caution. Still the concepts in F* are based on are derived from the work in the previous projects, F7 and Fine. In these projects the concepts have been investigated thoroughly.
+\par
+Lastly it is worth noting we have only touched the subject of modeling adversaries very briefly. This leaves room for uncertainty and therefore would be a natural course to take for further research.
 \section{Further research}
-
+As we have mentioned the modeling of adversaries is the natural path to take because this is required to make a more robust framework for protocol verification. In section 4.6 we described that we have modeled a browser but we have not modeled adversaries as part of the browser. This could be a way to continue the research. We mentioned briefly that F* could be compiled to JavaScript. The compilation of F* to JavaScript is interesting because NemID uses a Java applet which forces all the user to install a Java browser plug-in. Given the facts that there have been many security issues reported lately with the Java browser plug-in and that DanID are working on a version of NemID in JavaScript F*'s compilation to JavaScript is very to have in mind. This means that a specification in F* could be compiled to JavaScript and used on the web and thereby eliminate the large security risk involved with using the Java applet. Further research could also be into the server side of the Authentication Provider (as we have called it). As we have specified the Authentication Provider the next step would be to actually creating the server side of it so it could be an executable protocol on the web.
 \section{Conclusion}
-
+Vi skal vel konkludere på introduktionen? Konklusionen skal vel skrives efter den? :)
 \begin{thebibliography}{9}
 
 \bibitem{jacob}
@@ -1505,9 +1526,9 @@ We have extended the work done by Jacob H{\o}jgaard \cite{jacob} in his master p
 	W3.org: \emph{Web Cryptography API}. \url{http://www.w3.org/TR/WebCryptoAPI/}
 
 \bibitem{HansenSkriver}
-  Steffen M. Hansen, Jakob Skriver and Hanne Riis Nielson:
-  \emph{Using Static Analysis to Validate the SAML Single Sign-on Protocol}.
-  \\Master Project, Technical University of Denmark,
+  Steffen M. Hansen and Jakob Skriver:
+  \emph{Using Static Analysis to Validate SAML Protocols}.
+  \\Masters thesis, Technical University of Denmark,
   2004.
 
 \bibitem{fstar-msr}
@@ -1571,5 +1592,8 @@ We have extended the work done by Jacob H{\o}jgaard \cite{jacob} in his master p
  1981.
 
 \end{thebibliography}
+
+\appendix
+\chapter{SAML Assertion and Messages}
 
 \end{document}

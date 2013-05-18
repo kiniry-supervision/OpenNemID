@@ -38,7 +38,10 @@ type SamlStatus =
   | Success: SamlStatus
   | Requester: SamlStatus
   | Responder: SamlStatus
-  | User: SamlStatus
+
+type LoginError =
+  | AuthError: LoginError
+  | CredentialError: LoginError
 
 type SamlMessage =
   | SPLogin: uri -> SamlMessage
@@ -55,6 +58,7 @@ type SamlMessage =
   | UserAuthResponse: authInfo:AuthInfo -> challenge:nonce -> dsig -> SamlMessage
   | LoginSuccess: status:string -> issuer:prin -> destination:endpoint -> SamlMessage
   | Failed: SamlStatus -> SamlMessage
+  | LoginFailure: LoginError -> SamlMessage
   | DisplayError: int -> SamlMessage
 
 
