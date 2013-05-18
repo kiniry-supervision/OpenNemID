@@ -27,11 +27,16 @@
 
 % Colors %
 \definecolor{sblgrey}{RGB}{100, 100, 100}
-\definecolor{sblbackground}{RGB}{39, 40, 34}
-\definecolor{sblkeyword}{RGB}{246, 39, 113}
-\definecolor{sbltext}{RGB}{248, 242, 242}
+%\definecolor{sblbackground}{RGB}{39, 40, 34}
+%\definecolor{sblkeyword}{RGB}{246, 39, 113}
+%\definecolor{sbltext}{RGB}{248, 242, 242}
+%\definecolor{sblcomment}{RGB}{94, 109, 94}
+%\definecolor{sblstring}{RGB}{230, 219, 101} 
+\definecolor{sblbackground}{RGB}{241, 240, 236}
+\definecolor{sblkeyword}{RGB}{255, 39, 103}
+\definecolor{sbltext}{RGB}{7, 13, 13}
 \definecolor{sblcomment}{RGB}{94, 109, 94}
-\definecolor{sblstring}{RGB}{230, 219, 101} 
+\definecolor{sblstring}{RGB}{25, 46, 154}
 
 % Footer/Header %
 \fancyhead[LE,RO]{\slshape Chapter \thechapter}
@@ -47,7 +52,7 @@
   	belowcaptionskip=1\baselineskip,
   	breaklines=true,
   	frame=single,
-	%frameround=tttt,
+	frameround=tttt,
 	captionpos=b,
   	language=Caml,
 	morekeywords={open, module, val, assert},
@@ -184,7 +189,7 @@ Jacob have depicted the NemID protocol with 12 steps. The sequence diagram shows
 \begin{figure}[H]
 	\centering
 	\includegraphics{images/Sequence-login-Jacob.jpg}
-	\caption{Sequence diagram of authentication with NemID \cite{jacob}}
+	\caption[Sequence diagram of authentication with NemID]{Sequence diagram of authentication with NemID \cite{jacob}}
 \end{figure}
 
 In comparison to NemID, the OpenNemID protocol have modified the way messages are sent. The amount of messages the browser must delegate has been limited to few. There is not just one challenge used to authenticate the user, there is N challenges, as described in section \ref{sect:nfactauth}. The amount of steps in the protocol have been reduced to 8.
@@ -197,6 +202,9 @@ In comparison to NemID, the OpenNemID protocol have modified the way messages ar
 
 \subsection{Identity provider registration protocol}
 An identity provider has to register with an authentication provider to establish a trusted relationship and an agreement that the authentication provider will in fact act as a provider for authenticating users.
+
+\subsection{User registration protocol}
+Before a user is able to authenticate at the authentication provider, they have to register there first. The user has to activate their account using credentials received via snail mail. Upon activation, a new password must be chosen, optionally a userid can also be chosen.
 
 \section{Protocol prerequisites}
 It's important to have some requirements as to how the systems should function. The requirements helps define certain properties the involved participants must have or obey to.
@@ -252,7 +260,7 @@ Description of the message processing for this diagram has been left out of our 
 \begin{figure}[H]
 	\centering
 	\includegraphics{images/Communication-Jacob.jpg}
-	\caption{Communication diagram for the complete NemID protocol \cite{jacob}}
+	\caption[Communication diagram for the complete NemID protocol]{Communication diagram for the complete NemID protocol \cite{jacob}}
 	\label{fig:jacobCommunication}
 \end{figure}
 
@@ -537,7 +545,7 @@ F* has derived the feature refinement types from the Microsoft Research projects
 
 Refinement types have the form $x:t\{t'\}$ as shown above. So a refinement type is created by taking an existing type and decorate it with an expression in curly brackets. In the example above the refinement type is a simple boolean expression but refinements are not limited to boolean expression. This is extended in F* by its kind-system. Kinds can be seen as an abstraction over types - types can either \emph{have} or be \emph{of} a kind. The *-kind indicates 'regular types' in F*. This covers all the possible types to create in a regular type system for a programming language like Java. Refinement types are of the E-kind and not of the *-kind. The E(rasable)-kinds have no significance at runtime. They only have an effect at the compiling time during type checking.
 
-\section{Formalizing OpenNemID by using Jacob's work}
+\section{Formalizing OpenNemID by using Jacob's work - THIS IS A BAD TITLE!}
 Since we are extending Jacob's work with the authentication part of the protocol we used his code as a reference for implementing the rest of the OpenNemID protocol. In listing 4.4 we show Jacob's implementation of the Identity Provider. He has implemented a recursive function \emph{identityprovider} declared with the \emph{val} binding just above it. The function declared takes 2 arguments and returns \emph{unit}.\\
 \textbf{The arguments}
 \begin{enumerate}
@@ -546,8 +554,7 @@ Since we are extending Jacob's work with the authentication part of the protocol
 \end{enumerate}
 \emph{Unit} means the same as void in Java.
 
-\begin{lstlisting}[style=fstar, caption={Jacob's Identity Provider 
-Implementation}]
+\begin{lstlisting}[style=fstar, caption={NemID identity provider implementation \cite{jacob}}]
 	module Identityprovider
 
 	open SamlProtocol
