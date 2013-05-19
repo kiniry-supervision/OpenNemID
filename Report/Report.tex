@@ -161,7 +161,7 @@ This project has had it focus towards specifying a new protocol that could repla
 $\ldots$
  
 \chapter{Technical background}
-This chapter will clarify the technical concepts that has been used in this report. It will describe the SAML protocol and the Danish specialization OIOSAML. Furthermore it will describe the concept of static analysis and the reasonings behind choice of specification tool. Lastly it will introduce the concept \emph{N factor authentication} that has been used in the development of this project.
+This chapter will clarify the technical concepts that has been used in this report. It will describe the SAML protocol and the Danish specialization OIOSAML. Furthermore it will describe the concept of static analysis and outline different protocol verification tools and our choice of tool. Lastly it will introduce the concept \emph{N factor authentication} that has been used in the development of this project.
 
 \section{SAML protocol}
 The Security Assertion Markup Language or SAML is an XML based language created for the exchanging of authentication and authorization (security tokens) between different systems or domains, in particular between a service provider and an identity provider. The latest version of SAML is 2.0 released in 2005. SAML specifies three roles: \emph{principal}, \emph{identity provider} and \emph{service provider}. Principal refers to an entity that can be authenticated, therefore both the user and the identity provider and service provider are principals. SAML addresses the problem of web browser single-sign on (SSO). SSO means that the user only has to login once pr identity provider pr session. Practically this means that the user only has to be redirected once to the identity provider for authentication once pr session. The identity provider creates a session for the user that can be reused for any subsequent authentication request. SAML specifies 5 core elements - \emph{Assertions}, \emph{Protocols}, \emph{Bindings}, \emph{Profiles} and \emph{Metadata}. See appendix A for examples of assertion and SAML messages.
@@ -180,8 +180,27 @@ The Security Assertion Markup Language or SAML is an XML based language created 
 
 \section{Static analysis}
 
-\section{Selection of specification tool}
-
+\section{Protocol verification tools}
+A communications protocol is a system of digital message formats and rules for exchanging those messages in or between computing systems. A cryptographic protocol or security protocol is an abstract or concrete communications protocol that performs a security-related function and applies cryptographic models. Cryptographic protocol can be verified formally on an abstract level. Formal verification is an attempt at proving or disproving the correctness of intended algorithms underlying a system with regards to a certain formal specification. There exists various tools to formally verify a cryptographic protocol on an abstract level. This section will outline the tools we have investigated through the work of this project and the tools' key features.
+\par
+\emph{ProVerif} \cite{proverif} is an automatic cryptographic protocol verifier in the Dolev \& Yao model\footnote{Cryptographic primitives are assumed perfect and cyphers cannot be decrypted without the the proper decryption key}. It is based on a representation of the protocol by Horn clauses\footnote{Horn clause is a clause (a disjunction of literals) with at most one positive literal}. One of \emph{ProVerif}'s key features is its ability to handle many different cryptographic primitives, including shared- and public-key cryptographys, hash functions and Diffie-Hellman key agreements\footnote{Diffie-Hellman keyexchange is a specific method for the exchanging of cryptographic keys}. The other key feature is its ability to handle an unbounded number of sessions of the protocol (even in parallel). \emph{ProVerif} can prove secrecy\footnote{the adversary cannot obtain the secret}, authentication, strong secrecy\footnote{the adversary does not see the difference when the value of the secret changes} and equivalences between processes that differ only by terms.
+\par
+\emph{F*} \cite{fstar-msr} is a new research language from Microsoft Research. The language is dependently typed for secure distributed programming. F*'s purpose is the enabling of the construction and communication of proofs of program properties and secondly of properties of a program's environment in a verifiable secure way. F* is based on the functional programming language F\# and compiles to .NET bytecode in a type preserving style. Even though F* is formal specification language it is still executable. Furthermore F* has a fully abstract compiler from F* to JavaScript. The current version of the F* compiler is considered to be an $\alpha$-release.
+\par
+\emph{JSCert} \cite{jscert} is an ongoing project. JSCert is short for Certified JavaScript. The goal of the project is to really understand JavaScript. The project is building models of ECMAScript\footnote{ECMAScript is a scripting language often used for client-side scripting on the web} semantics in the Coq proof assistant and automated logical reasoning tools built on those semantics. The project introduces a program logic for reasoning about a broad subset of JavaScript. They have proved a strong soundness result. The libraries written in their subset and proved correct with respect to their specifications will be well-behaved - even when called by arbitrary JavaScript code.
+\par
+\emph{XOR-ProVerif} \cite{xor-proverif}
+\par
+\emph{DH-ProVerif} \cite{dh-proverif}
+\par
+\emph{CSProto} \cite{csproto}
+\\
+We have chosen to formally specify OpenNemID using F* for several reasons. We both have previous experience working with the functional programming language F\# which F* is based on and a little experience with ML. However the most contributing factors was:
+\begin{enumerate}
+\item Since we are extending the work done by Jacob it made sense to use F* as he did
+\item The fully abstract compilation from F* to JavaScript
+\item F* is executable
+\end{enumerate}
 
 \section{N-factor authentication}
 \label{sect:nfactauth}
@@ -518,7 +537,7 @@ Process 9 describes the last step in the diagram. The SAML response is received 
 This concludes the formalizing of the OpenNemID protocol and processing, the subsequent chapter will show how to transform this model into an executable modal using F*.
 
 \chapter{Modelling with F*}
-This chapter will introduce the language F* that can be used to model a security protocol. Despite being a formal specification language F* is also executable. F* is described as a \emph{A Verifying Compiler for Distributed Programming}. This chapter will describe how we have used F* to build a formal specification of OpenNemID.
+Even though we have introduced F* in chapter 2 this chapter will more detailed introduce the language F* further. F* can be used to model a security protocol. Despite being a formal specification language F* is also executable. F* is described as a \emph{A Verifying Compiler for Distributed Programming}. This chapter will describe how we have used F* to build a formal specification of OpenNemID.
 
 \section{Introducing F*}
 F* is a research language from Microsoft Research. F* primarily subsumes two research languages from Microsoft Research, F7\footnote{http://research.microsoft.com/en-us/projects/f7/} and Fine\footnote{http://research.microsoft.com/en-us/projects/fine/}. F* is at this time considered to be an $\alpha$-release.The purpose of designing F* is to enable the construction and communication of proofs of program properties and of properties of a program's environment in a verifiable secure way. F* is a dialect of ML and compiles to .NET bytecode in type-preserving style. This means that it can inter op with other .NET languages and the types defined in F* can be used by other .NET languages without loosing type information. Furthermore there also exists a fully abstract compiler from F* to JavaScript. This makes it possible to deploy F* programs on web pages as JavaScript meanwhile there is a formal guarantee that the program still behaves just as they would according to F* semantics. The compiling and type-checking of F* code utilizes the Z3\footnote{http://z3.codeplex.com/} SMT solver for proving assumptions made with refinement types. F* has been formalized and verified using Coq\footnote{Coq is an interactive theorem prover written in OCaml}.
@@ -558,13 +577,12 @@ F* has derived the feature refinement types from the Microsoft Research projects
 Refinement types have the form $x:t\{t'\}$ as shown above. So a refinement type is created by taking an existing type and decorate it with an expression in curly brackets. In the example above the refinement type is a simple boolean expression but refinements are not limited to boolean expression. This is extended in F* by its kind-system. Kinds can be seen as an abstraction over types - types can either \emph{have} or be \emph{of} a kind. The *-kind indicates 'regular types' in F*. This covers all the possible types to create in a regular type system for a programming language like Java. Refinement types are of the E-kind and not of the *-kind. The E(rasable)-kinds have no significance at runtime. They only have an effect at the compiling time during type checking.
 
 \section{Formalizing OpenNemID by using Jacob's work - THIS IS A BAD TITLE!}
-Since we are extending Jacob's work with the authentication part of the protocol we used his code as a reference for implementing the rest of the OpenNemID protocol. In listing 4.4 we show Jacob's implementation of the Identity Provider. He has implemented a recursive function \emph{identityprovider} declared with the \emph{val} binding just above it. The function declared takes 2 arguments and returns \emph{unit}.\\
+Since we are extending Jacob's work with the authentication part of the protocol we used his code as a reference for implementing the rest of the OpenNemID protocol. In listing 4.4 we show Jacob's implementation of the Identity Provider. He has implemented a recursive function \emph{identityprovider} declared with the \emph{val} binding just above it. The function declared takes 2 arguments and returns \emph{unit}, which is the same as void in Java and C\#.\\
 \textbf{The arguments}
 \begin{enumerate}
 \item a principal for identifying the identity provider
 \item a principal for identifying the client.
 \end{enumerate}
-\emph{Unit} means the same as void in Java.
 
 \begin{lstlisting}[style=fstar, caption={NemID identity provider implementation \cite{jacob}}]
 	module Identityprovider
@@ -1565,10 +1583,20 @@ Vi skal vel konkludere på introduktionen? Konklusionen skal vel skrives efter d
  \emph{Certified JavaScript}.
  \url{http://jscert.org/index.html}
 
-\bibitem{other-tools}
- Alternative tools:
- \emph{Tools for analyzing protocols}
- \url{http://www.infsec.uni-trier.de/tools.html}
+\bibitem{xor-proverif}
+ XOR-ProVerif:
+ \emph{Tool for analyzing protocols with XOR}.
+ \url{http://www.infsec.uni-trier.de/publications/paper/KuestersTruderung-CCS-2008.pdf}
+
+\bibitem{dh-proverif}
+ DH-ProVerif:
+ \emph{Tool for analyzing protocol with Diffie-Hellman exponentiation}.
+ \url{http://www.infsec.uni-trier.de/publications/paper/KuestersTruderung-CSF-2009.pdf}
+
+\bibitem{csproto}
+ CSProto:
+ \emph{Tool for analyzing contract signing protocols}
+ \url{http://www.infsec.uni-trier.de/publications/paper/KaehlerKuestersWilke-TOCL-2010.pdf}
 
 \bibitem{maffeis}
  Sergio Maffeis:
