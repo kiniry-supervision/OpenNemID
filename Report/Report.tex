@@ -125,13 +125,13 @@ Hannes \textsc{Mehnert}\\
 
 
 \begin{abstract}
-Your abstract goes here...
+Denmark currently has NemID to provide every resident of Denmark with a digital signature. NemID is an authentication application written in Java. The Java applet is used by banks in Denmark and other government institutions for identifying users. Lately there has been many security issues involved with the Java browser plug-in. This report's objective is create a replacement for NemID that is both verifiable secure and open source. We propose the use of executable models to prove the security properties of such a system. We provided a detailed the description of the protocol which is based on the SAML Single Sign-On protocols. We use the programming language F* which is a value-dependent, typed language with refinement types to formalize the protocol. We have formalized key parts of the protocol therefore proved it possible to formalize such protocols as a whole with F*. Therefore we have shown that it is possible to use a language like F* to formally specify the protocol and have an executable model at the same time.
 \end{abstract}
 
-%\renewcommand{\abstractname}{Acknowledgements}
-%\begin{abstract}
-%Thanks Joe! Thanks Hannes! Rock on!
-%\end{abstract}
+\renewcommand{\abstractname}{Acknowledgements}
+\begin{abstract}
+First of all we would like to thank Joseph Roland Kiniry for his interest in our work and for his many encouraging and helpful comments. Secondly we would also like to thank Hannes Mehnert for his help in designing the protocol and his insights. Lastly we would like to thank Jacob H{\o}jgaard for laying the ground work in his masters thesis \emph{Securing Single Sign-On System With Executable Models}.
+\end{abstract}
 
 \begingroup
     \let\clearpage\relax
@@ -179,14 +179,20 @@ From an academic point of view it would be interesting to see if a replacement f
 
 
 \chapter{Technical background}
-This chapter will clarify the technical concepts that has been used in this report. It will describe the SAML protocol and the Danish specialization OIOSAML. Furthermore it will describe the concept of static analysis and the reasonings behind choice of specification tool. Lastly it will introduce the concept \emph{N-factor authentication} that has been used in the development of this project.
+This chapter will clarify the technical concepts that has been used in this report. It will describe the SAML protocol and the Danish specialization OIOSAML. Furthermore it will describe the concept of static analysis and outline different protocol verification tools and our choice of tool. Lastly it will introduce the concept \emph{N-factor authentication} that has been used in the development of this project.
 
 \section{SAML protocol}
 The Security Assertion Markup Language or SAML is an XML based language created for the exchanging of authentication and authorization (security tokens) between different systems or domains, in particular between a service provider and an identity provider. The latest version of SAML is 2.0 released in 2005. SAML specifies three roles: \emph{principal}, \emph{identity provider} and \emph{service provider}. Principal refers to an entity that can be authenticated, therefore both the user and the identity provider and service provider are principals. SAML addresses the problem of web browser single-sign on (SSO). SSO means that the user only has to login once pr identity provider pr session. Practically this means that the user only has to be redirected once to the identity provider for authentication once per session. The identity provider creates a session for the user that can be reused for any subsequent authentication request. SAML specifies 5 core elements - \emph{Assertions}, \emph{Protocols}, \emph{Bindings}, \emph{Profiles} and \emph{Metadata}. See appendix A for examples of assertion and SAML messages.
 \par
 \emph{Assertions} are security tokens containing statements or claims about a principal. These statements in SAML are called attributes and they usually hold information like name, last name, email etc. The principal is referred to as the \emph{subject} in an assertion.
+%%%%%INDSÆT FIGUR OM SAML ASSERTION%%%%
 \par
-\emph{Protocols} describe the messages that can be exchanged between the service provider and the identity provider when exchanging \emph{assertions}. The protocol used in OpenNemID is called the Authentication Request Protocol. This protocol consists of AuthnRequest message and a response message. The AuthnRequest message has an id that must be unique and the creator of the message is responsible for ensuring it is. The response message has a field \emph{inResponseTo} that specifies the id of the AuthnRequest the response is to.
+\emph{Protocols} describe the messages that can be exchanged between the service provider and the identity provider when exchanging \emph{assertions}. The protocol used in OpenNemID is called the Authentication Request Protocol. This protocol consists of AuthnRequest message and a response message. The AuthnRequest message has an id that must be unique and the creator of the message is responsible for ensuring it is. AuthnRequest has 5 fields: 1. The \emph{Id} - unique identifier for the message. 2. \emph{IssueInstant} - time stamp from when the message was issued. 3. The \emph{Destination} - the receiver of the request. 4. \emph{Issuer} - the initiator of the authentication. 5. \emph{Conditions} - conditions of the request (audience restriction, not before this time or not after this time).
+%%%%%INDSÆT FIGUR OM SAML AUTHNREQUEST%%%%
+\par
+The response message has fields \emph{Id} and \emph{IssueInstant} that was specified in the request message. The \emph{Destination} is the endpoint address for the service provider. The \emph{Issuer} is the entity Id of the identity provider. The response message also has a field \emph{inResponseTo} that specifies the id of the AuthnRequest the response is to. The \emph{Status} field can only have one of three possible values - \emph{Requester}, \emph{Responder} or \emph{Success}. The \emph{Assertion} only be issued if the \emph{Status} field is \emph{Success}. The assertion can either be plain text or an \emph{EncryptedAssertion} which will be encrypted under the public key of the recipient of the message (service provider).
+%%%%%INDSÆT FIGUR OM SAML RESPONSE%%%%
+
 \par
 \emph{Bindings} specifies how the messages are mapped to the underlying HTTP(s) or SOAP protocols. However in this report only HTTP POST and HTTP REDIRECT bindings will be addressed. The POST binding maps the content of messages to hidden XHTML form fields that are named SAMLRequest and SAMLResponse. The content is BASE64 encoded. For the REDIRECT binding the message content is mapped the URL query string with SAMLRequest and SAMLResponse as the identifier. Since the URL query string has limited capacity the message is compressed by the DEFLATE algorithm and after that it is BASE64 encoded and URL encoded.
 \par
@@ -195,16 +201,82 @@ The Security Assertion Markup Language or SAML is an XML based language created 
 \emph{Metadata} is the necessary data exchanged between the involved parties in order to know each other. A service provider's metadata contains the certificate for signing messages and a message that the identity provider should use for encrypting assertion. It also contains endpoints which specifies the addresses to which the identity provider should send response messages. More than one endpoint if different bindings are available. The identity provider's metadata also contains signing and encryption certificates and endpoints that specify the addresses for sending requests to the identity provider. Again more endpoints for different bindings. The identity provider will publish the attributes it is able to serve through it's metadata.
 
 \subsection{OIOSAML}
-
+The Danish specialization OIOSAML ("OIO Web SSO Profile") is a dialect of the SAML profile "Web Browser SSO". This profile serves an umbrella for most standards when interacting with the government and other public institutions.
+\par
+OIOSAML has specific requirements for binding and protocol. The point of adding these measures is to secure the protocol further and some of the extensibility of the SAML "Web Browser SSO" is not necessary. An example is that in plain SAML it is possible to issue authentication requests without having a prior exchange of metadata. This is not desirable in OpenNemID since the security of the protocol will be improved by adding a controlled connection flow, where the service providers are approved beforehand. In the following there has been some concepts left out if deemed insignificant to the level of description necessary for this report.\\\\
+\textbf{OIOSAML mandates for the Service Provider}
+\begin{itemize}
+  \item The metadata of the service provider should be known to the identity provider (As mentioned there must be a formal exchange of metadata between the parties)
+  \item Binding for \emph{AuthnRequest} should be HTTP REDIRECT with the message DEFLATE encoded
+  \item Transport should be over (one-way) SSL/TLS
+  \item The \emph{AuthnRequest} must be signed and the signature placed as a query parameter identified as ''Signature''
+  \item The RelayState\footnote{RelayState is a mechanism that the service providers can use to associate any subsequent profile messages with the original request (could be the protected resource requested by the user)} must be opaque
+\end{itemize}
+\textbf{OIOSAML mandates for the Identity Provider}
+\begin{itemize}
+  \item The metadata of the service provider should be known to the identity provider (As mentioned there must be a formal exchange of metadata between the parties)
+  \item If the response is an error response the identity provider must not include any assertions
+  \item Successful responses can contain only one assertion
+  \item The assertions must state the level of authentication achieved\footnote{Authentication level refers to the level of authentication achieved by the subject on a scale from 1-5 where 5 is highest.}
+  \item Response messages should be sent to the service provider using the HTTP POST binding
+  \item Transport should be over (one-way) SSL/TLS
+  \item Response messages should not be signed but instead the embedded \emph{Assertion} should be signed and encrypted
+\end{itemize}
+\textbf{OIOSAML mandates for assertions}
+\begin{itemize}
+  \item Assertions must contain only one AuthnStatement and one AttributeStatement
+  \item The assertion must be encrypted with the certificate received from the service provider through the exchanged metadata
+  \item The issuer field which is the entity Id of the identity provider must be included in the assertion
+  \item The assertion must be signed with the certificate described in the metadata exchanged with the service provider
+\end{itemize}
 \section{Static analysis}
+Static program analysis is the opposite of dynamic analysis which is analysis performed on executing programs. Therefore static analysis is analysis of computer software that is performed without actually executing programs. Static analysis is usually the analysis performed by an automated tool. There exists tools to perform analysis on the behavior of individual statements and declarations and tools to perform analysis of the complete source code of a program. Static analysis has been successfully used to automatically validate security properties of classical protocols. The technique has been used to validate the SAML Single Sign-On protocols \cite{HansenSkriver}.
 
-\section{Selection of verification tool}
-
+\section{Protocol verification tools}
+A communications protocol is a system of digital message formats and rules for exchanging those messages in or between computing systems. A cryptographic protocol or security protocol is an abstract or concrete communications protocol that performs a security-related function and applies cryptographic models. Cryptographic protocol can be verified formally on an abstract level. Formal verification is an attempt at proving or disproving the correctness of intended algorithms underlying a system with regards to a certain formal specification. There exists various tools to formally verify a cryptographic protocol on an abstract level. This section will outline the tools we have investigated through the work of this project and the tools' key features.
+\par
+\emph{ProVerif} \cite{proverif} is an automatic cryptographic protocol verifier in the Dolev \& Yao model\footnote{Cryptographic primitives are assumed perfect and cyphers cannot be decrypted without the the proper decryption key}. It is based on a representation of the protocol by Horn clauses\footnote{Horn clause is a clause (a disjunction of literals) with at most one positive literal}. One of \emph{ProVerif}'s key features is its ability to handle many different cryptographic primitives, including shared- and public-key cryptographys, hash functions and Diffie-Hellman key agreements\footnote{Diffie-Hellman keyexchange is a specific method for the exchanging of cryptographic keys}. The other key feature is its ability to handle an unbounded number of sessions of the protocol (even in parallel). \emph{ProVerif} can prove secrecy\footnote{the adversary cannot obtain the secret}, authentication, strong secrecy\footnote{the adversary does not see the difference when the value of the secret changes} and equivalences between processes that differ only by terms.
+\par
+\emph{F*} \cite{fstar-msr} is a new research language from Microsoft Research. The language is dependently typed for secure distributed programming. F*'s purpose is the enabling of the construction and communication of proofs of program properties and secondly of properties of a program's environment in a verifiable secure way. F* is based on the functional programming language F\# and compiles to .NET bytecode in a type preserving style. Even though F* is formal specification language it is still executable. Furthermore F* has a fully abstract compiler from F* to JavaScript. The current version of the F* compiler is considered to be an $\alpha$-release.
+\par
+\emph{JSCert} \cite{jscert} is an ongoing project. JSCert is short for Certified JavaScript. The goal of the project is to really understand JavaScript. The project is building models of ECMAScript\footnote{ECMAScript is a scripting language often used for client-side scripting on the web} semantics in the Coq proof assistant and automated logical reasoning tools built on those semantics. The project introduces a program logic for reasoning about a broad subset of JavaScript. They have proved a strong soundness result. The libraries written in their subset and proved correct with respect to their specifications will be well-behaved - even when called by arbitrary JavaScript code.
+\par
+\emph{XOR-ProVerif} \cite{xor-proverif} is a tool for analyzing protocols with XOR. It is a tool with an implementation of the reduction of the derivation problem for Horn theories with XOR to the XOR-free case in combination with \emph{ProVerif}. These theories allow the modeling of a large class of intruders capabilities and protocols that employ the XOR operator.
+\par
+\emph{DH-ProVerif} \cite{dh-proverif} is a tool for analyzing protocols with the Diffie-Hellman exponentiation. The tool is an adaption of the \emph{XOR-ProVerif} approach to the case of Diffie-Hellman exponentiation. The approach is to reduce the derivation problem for Horn theories modulo algebraic properties of Diffie-Hellman exponentiation to a purely syntactical derivation problem for Horn theories. The reduction for Diffie-Hellman exponentiation is more efficient than the one for XOR.
+\par
+\emph{CSProto} \cite{csproto} is a tool for analyzing contract signing protocols. The tool is used to prove that certain game-theoretic security properties (including balance for contract signing protocols) can be decided in a Dolev \& Yao style model with a bounded number of sessions. The decision algorithm is based on constraint-solving procedures which have been successfully employed in tools for reachability properties.
+\\\\
+\par
+We have chosen to formally specify OpenNemID using F* for several reasons. We both have previous experience working with the functional programming language F\# which F* is based on and a little experience with ML. However the most contributing factors was:
+\begin{enumerate}
+\item Since we are extending the work done by Jacob it made sense to use F* as he did
+\item The fully abstract compilation from F* to JavaScript
+\item F* is executable
+\end{enumerate}
 
 \section{N-factor authentication}
 \label{sect:nfactauth}
-
-
+Two-factor authentication is the process of a requesting entity presenting some evidence of its identity to a second identity. The goal of two-factor authentication is to decrease the possibility that the requester is presenting false evidence of its identity. In a login scenario the requester would be a user requesting to login. Two-factor authentication requires the use of two of three authentication factors:
+\begin{enumerate}
+\item Something the requester knows (e.g. password)
+\item Something the user has (e.g. mobile phone)
+\item Something the requester is (e.g. biometric characteristic - such as fingerprint)
+\end{enumerate}
+\par
+NemID currently implements two-factor authentication. It uses the factor 1 which is the user's userid and password. It also uses factor 2 which is the physical cardboard that comes with creating a NemID login. This cardboard comes with values and their corresponding keys. So when a user logs in with their userid and password they will be prompted for the key that matches the value given by the Java applet.
+\par
+The OpenNemID protocol extends the two-factor authentication to \emph{n-factor authentication}. This means a \emph{n} number of authentications. The first authentication is the factor 1 - userid and password. After this there are various ways for a user to authenticate themselves further based on their registration. However it will only use either the factor 1 or factor 2. Even though it would be preferable with a biometric characteristic authentication factor for digital identities this is at the moment impossible. The OpenNemID requires that a user at least has the standard factor 1 (a userid and a password) and an authentication method. The user will authenticate themselves through all the authentication methods they have registered when logging in. The authentication methods that has been considered are:
+\begin{enumerate}
+\item \emph{Google} account
+\item \emph{Facebook} account
+\item \emph{Google authenticator}\footnote{Google's smartphone app that generates one-time passcode every 30 seconds. Used by Google for their user's two-factor authentication}
+\item SMS to the user's mobile phone that specifies a generated one-time passcode to be used
+\item Secret question (such as "What is your mother's maiden name)
+\item \emph{OpenID}
+\item \emph{Yubico} - used for generating one-time passcodes
+\end{enumerate}
+The point of \emph{n-factor authentication} in OpenNemID is to add multiple layers of security so it is harder for other people to login using another person's account.
 
 %%%%%%%%%% CHAPTER %%%%%%%%%%
 \chapter{Modelling the protocol}
@@ -549,7 +621,7 @@ Process 9 describes the last step in the diagram. The SAML response is received 
 This concludes the formalizing of the OpenNemID protocol and processing, the subsequent chapter will show how to transform this model into an executable modal using F*.
 
 \chapter{Modelling with F*}
-This chapter will introduce the language F* that can be used to model a security protocol. Despite being a formal specification language F* is also executable. F* is described as a \emph{A Verifying Compiler for Distributed Programming}. This chapter will describe how we have used F* to build a formal specification of OpenNemID.
+Even though we have introduced F* in chapter 2 this chapter will more detailed introduce the language F* further. F* can be used to model a security protocol. Despite being a formal specification language F* is also executable. F* is described as a \emph{A Verifying Compiler for Distributed Programming}. This chapter will describe how we have used F* to build a formal specification of OpenNemID.
 
 \section{Introducing F*}
 F* is a research language from Microsoft Research. F* primarily subsumes two research languages from Microsoft Research, F7\footnote{http://research.microsoft.com/en-us/projects/f7/} and Fine\footnote{http://research.microsoft.com/en-us/projects/fine/}. F* is at this time considered to be an $\alpha$-release.The purpose of designing F* is to enable the construction and communication of proofs of program properties and of properties of a program's environment in a verifiable secure way. F* is a dialect of ML and compiles to .NET bytecode in type-preserving style. This means that it can inter op with other .NET languages and the types defined in F* can be used by other .NET languages without loosing type information. Furthermore there also exists a fully abstract compiler from F* to JavaScript. This makes it possible to deploy F* programs on web pages as JavaScript meanwhile there is a formal guarantee that the program still behaves just as they would according to F* semantics. The compiling and type-checking of F* code utilizes the Z3\footnote{http://z3.codeplex.com/} SMT solver for proving assumptions made with refinement types. F* has been formalized and verified using Coq\footnote{Coq is an interactive theorem prover written in OCaml}.
@@ -588,14 +660,13 @@ F* has derived the feature refinement types from the Microsoft Research projects
 
 Refinement types have the form $x:t\{t'\}$ as shown above. So a refinement type is created by taking an existing type and decorate it with an expression in curly brackets. In the example above the refinement type is a simple boolean expression but refinements are not limited to boolean expression. This is extended in F* by its kind-system. Kinds can be seen as an abstraction over types - types can either \emph{have} or be \emph{of} a kind. The *-kind indicates 'regular types' in F*. This covers all the possible types to create in a regular type system for a programming language like Java. Refinement types are of the E-kind and not of the *-kind. The E(rasable)-kinds have no significance at runtime. They only have an effect at the compiling time during type checking.
 
-\section{Formalizing OpenNemID by using Jacob's work - THIS IS A BAD TITLE!}
-Since we are extending Jacob's work with the authentication part of the protocol we used his code as a reference for implementing the rest of the OpenNemID protocol. In listing 4.4 we show Jacob's implementation of the Identity Provider. He has implemented a recursive function \emph{identityprovider} declared with the \emph{val} binding just above it. The function declared takes 2 arguments and returns \emph{unit}.\\
+\section{Understanding F*}
+Since we are extending Jacob's work with the authentication part of the protocol we used his code as a reference for implementing the rest of the OpenNemID protocol. In listing 4.4 we show Jacob's implementation of the Identity Provider. He has implemented a recursive function \emph{identityprovider} declared with the \emph{val} binding just above it. The function declared takes 2 arguments and returns \emph{unit}, which is the same as void in Java and C\#.\\
 \textbf{The arguments}
 \begin{enumerate}
 \item a principal for identifying the identity provider
 \item a principal for identifying the client.
 \end{enumerate}
-\emph{Unit} means the same as void in Java.
 
 \begin{lstlisting}[style=fstar, caption={NemID identity provider implementation \cite{jacob}}]
 	module Identityprovider
@@ -1277,7 +1348,7 @@ The Authentication Provider implements algorithms ....... . The Authentication P
 			usercommunication me user
 \end{lstlisting}
 %\end{shaded}
-This part of the Authentication Provider is responsible for creating and changing a user's account. It is pretty intuitive what the different messages does. When creating a login the user will give an email account where they will receive an email with a one-time password to verify their account. The database will handle all the information and the checking of the information.
+This part of the Authentication Provider is responsible for creating and changing a user's account. It is pretty intuitive what the different messages does. When creating a login the user will give an email account where they will receive an email with a one-time password to verify their account. The database will handle all the information and the checking of the information. We wrote in section 2.4 about \emph{N factor authentication} and that a user must have at least one method for n factor authentication. This is not yet enforced by the Authentication Provider when a user registers an account.
 
 %\begin{shaded}
 \begin{lstlisting}[style=fstar, caption={Established a secure connection with the Identity Provider}]
@@ -1522,7 +1593,7 @@ In the previous section we have been focused on implementation of the protocol a
 It would be possible to model and mitigate known attacks on the protocol like \emph{Man In the Middle}, \emph{authentication replay} and \emph{session hijacking} by modeling a browser as part of the protocol model. We have modeled the browser but we have not modeled the aforementioned attacks due to time constraints.
 
 \section{State of the implementation}
-We have implemented the Identity, Service and Authentication Provider in the OpenNemID protocol and defined their abstract implementation but they are all missing session handling. Furthermore the implementations of the cryptographic elements and networking are abstract signatures only at the moment. If time had allowed it we could have incorporated the crypto and networking experiments done by Jacob into the model. As the previous section explained we have not modeled dedicated adversaries as a part of the present implementation either.
+We have implemented the Identity, Service and Authentication Provider in the OpenNemID protocol and defined their abstract implementation but they are all missing session handling. Furthermore the implementations of the cryptographic elements and networking are abstract signatures only at the moment. If time had allowed it we could have incorporated the crypto and networking experiments done by Jacob into the model which has been attached in appendix B. As the previous section explained we have not modeled dedicated adversaries as a part of the present implementation either.
 
 
 \chapter{Evaluation}
@@ -1530,10 +1601,9 @@ This chapter is an evaluation of the entire project. It will describe what has b
 \section{Project evaluation}
 In this report we have outlined the work of this project. The primary work in this project has been the specification of the OpenNemID protocol including a service provider, identity provider and authentication provider written in F*.
 \par
-\hl{Even though F* is a research project from Microsoft Research which can be a difficult challenge itself it has still been a challenge to work with but it has been an enjoyable challenge.} This is because of the fact that we have extended the work done by Jacob and the F*-project is well documented with a tutorial. This means that we could always use Jacob's work as a reference and the compiler was easily to set up because of his work. We both have a little experience with ML and the functional oriented language F\# which F* is based on - these facts also helped us during the development of this project. Furthermore we both also have a strong background in C\# and .NET.
+Working with a research language like F* can be a difficult challenge. However working with F* has not been quite as difficult as expected. This is because of the fact that we have extended the work done by Jacob and the F*-project is well documented with a tutorial. This means that we could always use Jacob's work as a reference and the compiler was easily to set up because of his work. We both have a little experience with ML and the functional oriented language F\# which F* is based on - these facts also helped us during the development of this project. Furthermore we both also have a strong background in C\# and .NET.
 \par
-Evaluating the project from a software development perspective
-
+The model of OpenNemID we have presented can be evaluated against common software development and software architecture principles. What should be noted as interesting is not the design of modules but the kind of style a language like F* imposes on the developer. F* enforces the principle of programming to an interface. F* takes the principle further to \emph{design by contract} known from other languages. Functional language with immutability as default makes it easier for developers to design components that holds no state. This makes the scalability of system across multiple processors or computers a lot easier.
 \section{Related work}
 We have extended the work done by Jacob H{\o}jgaard \cite{jacob} in his masters thesis \emph{Securing Single Sign-On System With Executable Models}. His work has had a huge impact on this project as we have stated throughout the report. The impact has been both in understanding the language F* and designing and specifying the OpenNemID protocol. In the masters thesis \emph{Using static analysis to validate SAML Protocols} written by Hansen and Skriver \cite{HansenSkriver} they analyze and formalize the SAML login protocol. Their analysis goes towards the older version 1.1 SAML protocol. In their analysis they recommend mandating of HTTPS network transport. This has been incorporated in the OIOSAML specification done by Jacob.
 \section{Threats to validity}
@@ -1546,10 +1616,20 @@ It is also important to remember that the F* compiler is still a $\alpha$-releas
 Lastly it is worth noting we have only touched the subject of modeling adversaries very briefly. This leaves room for uncertainty and therefore would be a natural course to take for further research.
 \section{Further research}
 As we have mentioned the modeling of adversaries is the natural path to take because this is required to make a more robust framework for protocol verification. In section 4.6 we described that we have modeled a browser but we have not modeled adversaries as part of the browser. This could be a way to continue the research. We mentioned briefly that F* could be compiled to JavaScript. The compilation of F* to JavaScript is interesting because NemID uses a Java applet which forces all the user to install a Java browser plug-in. Given the facts that there have been many security issues reported lately with the Java browser plug-in and that DanID are working on a version of NemID in JavaScript F*'s compilation to JavaScript is very to have in mind. This means that a specification in F* could be compiled to JavaScript and used on the web and thereby eliminate the large security risk involved with using the Java applet. Further research could also be into the server side of the Authentication Provider (as we have called it). As we have specified the Authentication Provider the next step would be to actually creating the server side of it so it could be an executable protocol on the web.
+\par
+Our design of OpenNemID included security profiles. Due to time constraints this has not been specified in the current specification of OpenNemID in F*. Continuing the research could be done by extending the protocol specification to support the functionality of security profiles.
 
-\hl{m{\aa}ske noget om security profiles?}
 \section{Conclusion}
-Vi skal vel konkludere på introduktionen? Konklusionen skal vel skrives efter den? :)
+In this report we have shown how the use of programming language F*  for implementing security protocols can help proving the security properties of the protocol.
+\par
+In this project we have extended the work of Jacob H{\o}jgaard whom has used the Danish governmental Single Sign-On federation - Nemlog-in as an example. Nemlog-in is a protocol based on the SAML standard for exchanging security tokens. In the Nemlog-in protocol the authentication part has been done by NemID. This project has extended and modified the protocol specification done by Jacob to specify the authentication part as well. A protocol we refer to as OpenNemID. OpenNemID has been described and outlined including the registration of users and logging in of users.
+\par
+In this report we have formally specified key parts of the OpenNemID protocol using the F* programming language to the extent possible and used it to secure key properties such as signing of the messages exchanged over the network.
+\par
+Since there has only been formally specified key security properties we have described a way forward for securing other properties. We have suggested the use of F* to model known attacks as part of the protocol test suite.
+\par
+In conclusion a programming language such as F* can be used to create an executable model of a security protocol. This ensures the security features mandated by the protocol.
+
 \begin{thebibliography}{9}
 
 \bibitem{jacob}
@@ -1611,10 +1691,20 @@ Vi skal vel konkludere på introduktionen? Konklusionen skal vel skrives efter d
  \emph{Certified JavaScript}.
  \url{http://jscert.org/index.html}
 
-\bibitem{other-tools}
- Alternative tools:
- \emph{Tools for analyzing protocols}
- \url{http://www.infsec.uni-trier.de/tools.html}
+\bibitem{xor-proverif}
+ XOR-ProVerif:
+ \emph{Tool for analyzing protocols with XOR}.
+ \url{http://www.infsec.uni-trier.de/publications/paper/KuestersTruderung-CCS-2008.pdf}
+
+\bibitem{dh-proverif}
+ DH-ProVerif:
+ \emph{Tool for analyzing protocol with Diffie-Hellman exponentiation}.
+ \url{http://www.infsec.uni-trier.de/publications/paper/KuestersTruderung-CSF-2009.pdf}
+
+\bibitem{csproto}
+ CSProto:
+ \emph{Tool for analyzing contract signing protocols}
+ \url{http://www.infsec.uni-trier.de/publications/paper/KaehlerKuestersWilke-TOCL-2010.pdf}
 
 \bibitem{maffeis}
  Sergio Maffeis:
@@ -1662,5 +1752,8 @@ Vi skal vel konkludere på introduktionen? Konklusionen skal vel skrives efter d
 
 \appendix
 \chapter{SAML Assertion and Messages}
+%INDSÆT SAML ASSERTION OG MESSAGES FRA JACOB%%%
 
+\chapter{Source code examples by Jacob H{\o}jgaard}
+%INDSÆT JACOBS APPENDIX B%
 \end{document}
