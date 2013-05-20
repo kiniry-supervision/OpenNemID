@@ -141,7 +141,7 @@ Your abstract goes here...
 \endgroup
 
 \chapter{Introduction}
-\emph{Security through obscurity} is a principal within security engineering. It refers to the reliance on secrecy of the design or implementation of a system to provide security. Kerckhoffs's principle also dictates that a cryptographic system where the only private information is the key should be secure.
+\emph{Security through obscurity} is a principal within security engineering. It refers to the reliance on secrecy of the design or implementation of a system to provide security. Kerckhoffs's principle dictates that a cryptographic system where the only private information is the key should be secure.
 \begin{quote}
 \textit{"There is no security by obscurity"} - Auguste Kerckhoffs \cite{kerckhoffs}
 \end{quote}
@@ -165,7 +165,7 @@ The goal of this project is to:
 \end{enumerate}
 
 \section{Scope}
-This project has had it focus towards specifying a new protocol that could replace NemID. The intent of this project is therefore not to develop a complete system, but to make the specification for a system that could then later be developed based on the specification.
+This project has had it focus towards specifying a new protocol that could replace NemID. The intent of this project is therefore not to develop a complete system, but to make a formal specification for a system that could then later be rigorously used to engineer a new system.
 
 \section{Background}
 We're extending the work done by Jacob H{\o}jgaard in his Masters thesis 'Securing Single Sign-On Systems With Executable Models'. Jacobs research has focused on the current implementation of NemID and therefore describes, outlines and models the current system used in Denmark as of May 2013.
@@ -198,7 +198,7 @@ The Security Assertion Markup Language or SAML is an XML based language created 
 
 \section{Static analysis}
 
-\section{Selection of specification tool}
+\section{Selection of verification tool}
 
 
 \section{N-factor authentication}
@@ -1564,14 +1564,27 @@ Vi skal vel konkludere på introduktionen? Konklusionen skal vel skrives efter d
   Springer, Berlin Heidelberg,
   2011.
 
-\bibitem{webcrypto}
-	W3.org: \emph{Web Cryptography API}. \url{http://www.w3.org/TR/WebCryptoAPI/}
-
 \bibitem{HansenSkriver}
   Steffen M. Hansen and Jakob Skriver:
   \emph{Using Static Analysis to Validate SAML Protocols}.
   \\Masters thesis, Technical University of Denmark,
   2004.
+
+\bibitem{wayf}
+ The WAYF secretariat:
+ \emph{Trusted third party based ID federation, lowering the bar for connecting and enhancing privacy}.
+ Explanation of WAYF, 2009.
+
+\bibitem{dolev-yao}
+ Danny Dolev and Andrew C. Yao:
+ \emph{On the security of public key protocols}.
+ Technical report, Stanford, CA, USA
+ 1981.
+
+\bibitem{kerckhoffs}
+ Auguste Kerckhoffs:
+ \emph{La cryptographie militaire.}
+ Journal des Sciences Militaires, IX:5–38, 161–191, 1883
 
 \bibitem{fstar-msr}
  Microsoft Research:
@@ -1583,17 +1596,15 @@ Vi skal vel konkludere på introduktionen? Konklusionen skal vel skrives efter d
  \emph{F* guide}
  \url{http://rise4fun.com/FStar/tutorial/guide}
 
-\bibitem{wayf}
- The WAYF secretariat:
- \emph{Trusted third party based ID federation, lowering the bar for
- connecting and enhancing privacy}.
- Explanation of WAYF,
- 2009.
-
 \bibitem{proverif}
  ProVerif:
  \emph{Cryptographic protocol verifier in the formal model}.
  \url{http://prosecco.gforge.inria.fr/personal/bblanche/proverif/}
+
+\bibitem{webcrypto}
+ W3.org: 
+ \emph{Web Cryptography API}.
+ \url{http://www.w3.org/TR/WebCryptoAPI/}
  
 \bibitem{jscert}
  JSCert:
@@ -1637,12 +1648,6 @@ Vi skal vel konkludere på introduktionen? Konklusionen skal vel skrives efter d
  \emph{NemID guide}
  \url{https://www.nets-danid.dk/produkter/for_tjenesteudbydere/nemid_tjenesteudbyder/nemid_tjenesteudbyder_support/tjenesteudbyderpakken/}
 
-\bibitem{dolev-yao}
- Danny Dolev and Andrew C. Yao:
- \emph{On the security of public key protocols}.
- Technical report, Stanford, CA, USA
- 1981.
-
 \bibitem{ftspeech}
  Dr. Joseph Roland Kiniry:
  \emph{Parliamentary Statement for Bill L-132}
@@ -1652,13 +1657,6 @@ Vi skal vel konkludere på introduktionen? Konklusionen skal vel skrives efter d
  NemID:
  \emph{Om NemID - Sikkerhed}
  \url{https://www.nemid.nu/dk-da/om_nemid/sikkerhed/}
-
-\bibitem{kerckhoffs}
- Auguste Kerckhoffs:
- \emph{La cryptographie militaire.}
- Journal des Sciences Militaires, IX:5–38, 161–191, 1883
-
- \url{http://arxiv.org/pdf/1109.5542.pdf}
 
 \end{thebibliography}
 
