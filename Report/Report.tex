@@ -185,14 +185,25 @@ This chapter will clarify the technical concepts that has been used in this repo
 The Security Assertion Markup Language or SAML is an XML based language created for the exchanging of authentication and authorization (security tokens) between different systems or domains, in particular between a service provider and an identity provider. The latest version of SAML is 2.0 released in 2005. SAML specifies three roles: \emph{principal}, \emph{identity provider} and \emph{service provider}. Principal refers to an entity that can be authenticated, therefore both the user and the identity provider and service provider are principals. SAML addresses the problem of web browser single-sign on (SSO). SSO means that the user only has to login once pr identity provider pr session. Practically this means that the user only has to be redirected once to the identity provider for authentication once per session. The identity provider creates a session for the user that can be reused for any subsequent authentication request. SAML specifies 5 core elements - \emph{Assertions}, \emph{Protocols}, \emph{Bindings}, \emph{Profiles} and \emph{Metadata}. See appendix A for examples of assertion and SAML messages.
 \par
 \emph{Assertions} are security tokens containing statements or claims about a principal. These statements in SAML are called attributes and they usually hold information like name, last name, email etc. The principal is referred to as the \emph{subject} in an assertion.
-%%%%%INDSÆT FIGUR OM SAML ASSERTION%%%%
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.5]{images/SAMLAssertion.png}
+	\caption{The elements in a SAML Assertion}
+\end{figure}
 \par
 \emph{Protocols} describe the messages that can be exchanged between the service provider and the identity provider when exchanging \emph{assertions}. The protocol used in OpenNemID is called the Authentication Request Protocol. This protocol consists of AuthnRequest message and a response message. The AuthnRequest message has an id that must be unique and the creator of the message is responsible for ensuring it is. AuthnRequest has 5 fields: 1. The \emph{Id} - unique identifier for the message. 2. \emph{IssueInstant} - time stamp from when the message was issued. 3. The \emph{Destination} - the receiver of the request. 4. \emph{Issuer} - the initiator of the authentication. 5. \emph{Conditions} - conditions of the request (audience restriction, not before this time or not after this time).
-%%%%%INDSÆT FIGUR OM SAML AUTHNREQUEST%%%%
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.5]{images/SAMLAuthnRequest.png}
+	\caption{The SAML AuthnRequest message}
+\end{figure}
 \par
 The response message has fields \emph{Id} and \emph{IssueInstant} that was specified in the request message. The \emph{Destination} is the endpoint address for the service provider. The \emph{Issuer} is the entity Id of the identity provider. The response message also has a field \emph{inResponseTo} that specifies the id of the AuthnRequest the response is to. The \emph{Status} field can only have one of three possible values - \emph{Requester}, \emph{Responder} or \emph{Success}. The \emph{Assertion} only be issued if the \emph{Status} field is \emph{Success}. The assertion can either be plain text or an \emph{EncryptedAssertion} which will be encrypted under the public key of the recipient of the message (service provider).
-%%%%%INDSÆT FIGUR OM SAML RESPONSE%%%%
-
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.5]{images/SAMLResponse.png}
+	\caption{The SAML Response message}
+\end{figure}
 \par
 \emph{Bindings} specifies how the messages are mapped to the underlying HTTP(s) or SOAP protocols. However in this report only HTTP POST and HTTP REDIRECT bindings will be addressed. The POST binding maps the content of messages to hidden XHTML form fields that are named SAMLRequest and SAMLResponse. The content is BASE64 encoded. For the REDIRECT binding the message content is mapped the URL query string with SAMLRequest and SAMLResponse as the identifier. Since the URL query string has limited capacity the message is compressed by the DEFLATE algorithm and after that it is BASE64 encoded and URL encoded.
 \par
@@ -260,7 +271,7 @@ We have chosen to formally specify OpenNemID using F* for several reasons. We bo
 Two-factor authentication is the process of a requesting entity presenting some evidence of its identity to a second identity. The goal of two-factor authentication is to decrease the possibility that the requester is presenting false evidence of its identity. In a login scenario the requester would be a user requesting to login. Two-factor authentication requires the use of two of three authentication factors:
 \begin{enumerate}
 \item Something the requester knows (e.g. password)
-\item Something the user has (e.g. mobile phone)
+\item Something the requester has (e.g. mobile phone)
 \item Something the requester is (e.g. biometric characteristic - such as fingerprint)
 \end{enumerate}
 \par
