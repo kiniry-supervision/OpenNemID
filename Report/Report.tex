@@ -29,11 +29,6 @@
 
 % Colors %
 \definecolor{sblgrey}{RGB}{100, 100, 100}
-%\definecolor{sblbackground}{RGB}{39, 40, 34}
-%\definecolor{sblkeyword}{RGB}{246, 39, 113}
-%\definecolor{sbltext}{RGB}{248, 242, 242}
-%\definecolor{sblcomment}{RGB}{94, 109, 94}
-%\definecolor{sblstring}{RGB}{230, 219, 101} 
 \definecolor{sblbackground}{RGB}{241, 240, 236}
 \definecolor{sblkeyword}{RGB}{255, 39, 103}
 \definecolor{sbltext}{RGB}{7, 13, 13}
@@ -69,8 +64,30 @@
   	keywordstyle=\bfseries\color{sblkeyword},
 	otherkeywords={=, :, |},
   	stringstyle=\color{sblstring},
-	commentstyle=\color{sblcomment},
-	%literate={0}{\textcolor{blue}{0}}
+	commentstyle=\color{sblcomment}
+}
+
+\lstdefinestyle{cxml}{
+	backgroundcolor=\color{sblbackground},
+	tabsize=1,
+	captionpos=b
+  	belowcaptionskip=1\baselineskip,
+  	breaklines=true,
+  	frame=single,
+	frameround=tttt,
+	captionpos=b,
+  	language=xml,
+	showspaces=false,
+  	showstringspaces=false,
+	showtabs=false,
+  	numbers=left,
+  	numbersep=5pt,
+  	numberstyle=\tiny\ttfamily\color{sblgrey},
+	xleftmargin=\parindent,
+  	basicstyle=\footnotesize\ttfamily\color{sbltext},
+  	keywordstyle=\bfseries\color{sblkeyword},
+  	stringstyle=\color{sblstring},
+	commentstyle=\color{sblcomment}
 }
 
 \begin{document}
@@ -142,6 +159,7 @@ First of all we would like to thank Joseph Roland Kiniry for his interest in our
 \endgroup
 
 \chapter{Introduction}
+\label{chap:intro}
 \emph{Security through obscurity} is a principal within security engineering. It refers to the reliance on secrecy of the design or implementation of a system to provide security. Kerckhoffs's principle dictates that a cryptographic system where only the key is kept private should be secure even in the hands of the enemy.
 \begin{quote}
 \textit{"There is no security by obscurity"} - Auguste Kerckhoffs \cite{kerckhoffs}
@@ -305,7 +323,7 @@ The authentication methods that has been considered are:
 	\item[] \textbf{Yubico}
 		Yubico has specialized in OTP hardware and software. Their flagship product, the YubiKey, is a tiny device that is inserted into the USB port on the user's device. When challenged with a OTP, the user would use the YubiKey to generate the OTP. YubiKey is already integrated with various single-sign on systems such as OpenID.
 	\item[] \textbf{SMS}\\
-		An OTP could be generated and send to the user's mobile phone.
+		A OTP could be generated and send to the user's mobile phone.
 	\item[] \textbf{Knowledge-based Authentication}\\
 		Knowledge-based authentication can either by static or dynamic.\\
 		Static knowledge-based authentication refers to predefined questions and answers, this could be a question such as "What is your mother's maiden name" and the user would have input the proper answer beforehand. For our implementation it is not specified whether or not the questions should be predefined by the authentication provider or if the user should be able to create them.\\
@@ -398,6 +416,7 @@ The UML communication diagrams depicting the protocols are made up of two or mor
 \end{enumerate}
 
 \section{Communication model}
+\label{sect:communicationmodal}
 To make the changes from NemID to OpenNemID clear, we will first show the communication diagram for NemID, afterwards we will show the communication diagram for OpenNemID. Both diagrams make use of abbreviations, these abbreviations are listed at the top of the diagram along the word or phrase they abbreviate. We have tried to comply with Jacobs data as much as possible, due to the fact that his report conforms to the requirements mandated by DIGST.
 
 \subsection{Message processing}
@@ -809,15 +828,15 @@ The modeling follows the principles for cryptographic protocol modeling outlined
 	module TypeFunc
 
 	type Authentication =
- 	 | Facebook: id:int -> Authentication
- 	 | SMS: generated:int -> Authentication
-	 | Google: id:int -> Authentication
-	 | OpenId: id:int -> Authentication
+		| OpenId: id:int -> Authentication
+		| Facebook: id:int -> Authentication
+		| SMS: generated:int -> Authentication
+		| Yubico: generated:int -> Authentication
 \end{lstlisting}
 
-The \emph{TypeFunc} module provides the type authentication which is used for the different kinds of n factor authentication. Note that currently there is only an id associate with each type of authentication for simplicity. This needs to be modified so that each type is more explicit and holds the correct information for authentication.
-\subsection{Specification of the SAML Protocol}
+The \emph{TypeFunc} module provides the type Authentication which is used for the different kinds of n-factor authentication. Note that currently there is only an id associate with each type of authentication for simplicity. This needs to be modified so that each type is more explicit and holds the correct information for authentication.
 
+\subsection{Specification of the SAML Protocol}
 \begin{lstlisting}[style=fstar, caption={Specification of the SAML Protocol elements}]
 	module SamlProtocol
 	
@@ -893,9 +912,9 @@ The \emph{TypeFunc} module provides the type authentication which is used for th
 	val DecryptAssertion: receiver:prin -> privkey receiver -> Assertion -> (signedtoken * dsig)
 \end{lstlisting}
 
-The \emph{SamlProtocol} module is taken directly from Jacob's code and only modified to support more and different \emph{SamlMessage} that are needed in our specification of OpenNemID. This module's purpose is the specification of messages and to provice functions for sending and receiving messages. Note that the functions for sending and receiving messages have no runtime implementation. They are only specified by the \emph{val} declaration. The SAML Protocol is used for the communication between the principals in the OpenNemID protocol in a login session. The intention with these functions is that they will handle the mapping of protocol elements to the network.
+The \emph{SamlProtocol} module is taken directly from Jacob's code and only modified to support more and different \emph{SamlMessages} that are needed in our specification of OpenNemID. This modules purpose is the specification of messages and to provide functions for sending and receiving messages. Note that the functions for sending and receiving messages have no runtime implementation. They are only specified by the val declaration. The SAML Protocol is used for the communication between the principals in the OpenNemID protocol in a login session. The intention with these functions are that they will handle the mapping of protocol elements to the network.
+\clearpage
 \subsection{Specification of cryptographic elements}
-
 \begin{lstlisting}[style=fstar, caption={Specification of cryptographic elements}]
 	module Crypto
 	
@@ -908,7 +927,6 @@ The \emph{SamlProtocol} module is taken directly from Jacob's code and only modi
 	type dsig
 	type nonce = string
 	type cypher
-
 	(*Verification*)
 	type Log :: prin => string => E
 
@@ -952,7 +970,7 @@ The \emph{SamlProtocol} module is taken directly from Jacob's code and only modi
 	val GenerateNonce: prin -> nonce (*Add refinement to ensure unqueness*)
 \end{lstlisting}
 
-The \emph{crypto} module is taken directly from Jacob's code and only modified to support signing and verification of the authentication type. The purpose of the \emph{crypto} is providing the cryptographic functions to sign and verify both messages and the authentication type also the encryption and decryption of messages. The \emph{crypto} module utilizes the refinement type to ensure that signed messages and authentications have typed dependency to the signing principal. It does not have a concrete implementation as of now.
+The \emph{crypto} module is taken directly from Jacob's code and only modified to support signing and verification of the authentication type. The purpose of the crypto is providing the cryptographic functions to sign and verify both messages and the authentication type also the encryption and decryption of messages. The crypto module utilizes the refinement type to ensure that signed messages and authentications have typed dependency to the signing principal. It does not have a concrete implementation as of now.
 \subsection{Specification of certificate store module}
 
 \begin{lstlisting}[style=fstar, caption={Abstract certificate store}]
@@ -967,9 +985,10 @@ The \emph{crypto} module is taken directly from Jacob's code and only modified t
 	val GetJSPrivateKey: p:prin -> privkey p
 \end{lstlisting}
 
-The \emph{CertStore} module is taken from Jacob's code and expanded with functionality to support JavaScript public and private keys. This module provides four abstract functions for retrieving certificates from a certificate store. The functions use the value dependent syntax for relating a principal to the certificate keys. As Jacob has written in a comment the principal could be updated to include credentials  because this is a quite naive implementation. It is quite naive because all you need to obtain the private key of a principal is the name of the principal.
-\subsection{Specification of the messaging protocol}
+The \emph{CertStore} module is taken from Jacob's code and expanded with functionality to support JavaScript public and private keys. This module provides four abstract functions for retrieving certificates from a certificate store. The functions use the value dependent syntax for relating a principal to the certificate keys. As Jacob has written in a comment the principal could be updated to include credentials because this is a quite naive implementation. It is naive because, all you need to obtain the private key of a principal, is the name of the principal.
 
+\clearpage
+\subsection{Specification of the messaging protocol}
 \begin{lstlisting}[style=fstar, caption={Specification of the Messaging protocol}]
 	module Messaging
 	
@@ -999,10 +1018,11 @@ The \emph{CertStore} module is taken from Jacob's code and expanded with functio
 	val SendMessage: prin -> Message -> unit
 	val ReceiveMessage: prin -> Message
 \end{lstlisting}
-%\end{shaded}
-The \emph{Messaging} module is responsible for 2 things - the specification of messages and providing functions for sending and receiving these messages. As the \emph{SamlProtocol} module the functions for sending and receiving are specified only by the \emph{val} declaration and has no concrete runtime implementation. This module is used to model the communication between Identity Provider / user and the Authentication Provider when wanting to establish a secure connection and creating and/or changing an user's login.
-\subsection{Specification of the Service Provider}
 
+The \emph{Messaging} module is responsible for 2 things, the specification of messages and providing functions for sending and receiving these messages. As the SamlProtocol module the functions for sending and receiving are specified only by the val declaration and has no concrete runtime implementation. This module is used to model the communication between the identity provider and the authentication provider and also the communication between the user and the authentication provider, when wanting to establish a secure connection and creating or changing a user's login.
+
+\clearpage
+\subsection{Specification of the Service Provider}
 \begin{lstlisting}[style=fstar, caption={Specification of service provider}]
 	module Serviceprovider
 	
@@ -1039,8 +1059,10 @@ The \emph{Messaging} module is responsible for 2 things - the specification of m
 	  | _ -> SendSaml client (DisplayError 400);
 	        serviceprovider me client idp
 \end{lstlisting}
-%\end{shaded}
-The service provider is taken and directly from Jacob's code and it is not modified in any way. The service provider implements algorithm 1 and 11 in section 3.4. The module is constructed to accept SAML messages of type \emph{SPLogin} and \emph{AuthResponseMessage}. If the service provider receives another type of message it will return a HTTP error. Contrary to algorithms 1 and 11 the service provider does not implement encoding and decoding because this is expected to be handled by the \emph{SamlProtocol} module.
+
+The service provider is taken directly from Jacob's code and it is not modified in any way. The service provider implements algorithm 1 and 11 in Section \ref{sect:communicationmodal}. The module is constructed to accept SAML messages of type \emph{SPLogin} and \emph{AuthResponseMessage}. If the service provider receives another type of message it will return a HTTP error. Contrary to algorithms 1 and 11 the service provider does not implement encoding and decoding because this is expected to be handled by the SamlProtocol module.
+
+\clearpage
 \subsection{Specification of the Identity Provider}
 The specification of the Identity Provider is divided into several listings for the sake of understandability.
 
@@ -1119,9 +1141,10 @@ This part of the identity provider implements the algorithms (INDSÆT NR på alg
 \begin{enumerate}
 \item The \emph{AuthnRequestMessage} branch decodes the message and if the user has not logged in previously it sends a \emph{UserCredRequest} back with the JavaScript and a nonce to be used for relating the login at the Identity Provider prompting the user to give his or her login information. If the user has already logged in previously it issues an assertion to the user.
 \item The \emph{Login} branch handles the user's login information which is the response the user provides after receiving the \emph{UserCredRequest}. This branch verifies that the nonce from the user is the correct one and if it is correct it delegates the login information to the Authentication Provider and then calls the function \emph{handleauthresponse} which we will explain later in this section. If the nonce is incorrect it returns a HTTP error.
-\item The \emph{UserAuthResponse} branch handles the user's n factor authentication information and delegates the information to the Authentication Provider.
+\item The \emph{UserAuthResponse} branch handles the user's n-factor authentication information and delegates the information to the Authentication Provider.
 \end{enumerate}
 
+\clearpage
 \begin{lstlisting}[style=fstar, caption={The handling of the responses from Authentication Provider}]
 	val handleUserAuthenticated: me:prin -> user:prin -> authnReq:AuthnRequest -> unit
 
@@ -1168,10 +1191,10 @@ This part of the identity provider implements the algorithms (INDSÆT NR på alg
 
 This part of the identity provider handles the information received from the Authentication Provider. It has two match branches:
 \begin{enumerate}
-\item \emph{LoginResponseMessage} which will prompt the user for a n factor authentication method while it relates the challenge generated by the Authentication Provider to the user for verification
-\item \emph{LoginSuccess} which specifies that the user has passed all the n factor authentication methods. 
+\item \emph{LoginResponseMessage} which will prompt the user for a n-factor authentication method while it relates the challenge generated by the Authentication Provider to the user for verification
+\item \emph{LoginSuccess} which specifies that the user has passed all the n-factor authentication methods. 
 \end{enumerate}
-If the user has been successfully logged in the user will be issued an assertion which is done in the \emph{handleUserAuthenticated} function. This function will also save a cookie that specifies that this user has logged in which the Identity Provider will search for when getting an \emph{AuthnRequestMessage} from a user.
+If the user has been successfully logged in the user will be issued an assertion which is done in the \emph{handleUserAuthenticated} function. This function will also save a cookie that specifies that this user has logged in which the identity provider will search for when getting an AuthnRequestMessage from a user.
 
 \begin{lstlisting}[style=fstar, caption={Establising a secure connection with Authentication Provider}]
 	val savejavascript: javascript:string -> unit
@@ -1196,10 +1219,11 @@ If the user has been successfully logged in the user will be issued an assertion
 			| _ -> res; ()
 		| _ -> resp; ()
 \end{lstlisting}
-%\end{shaded}
-This part of the Identity Provider is the establishing of the secure connection between the Identity Provider and the Authentication Provider. Right now the challenge response from the Authentication Provider is just a nonce to illustrate that the Identity Provider needs to be investigated thoroughly by the Authentication Provider for the purpose of finding out if it is a non-evil Identity Provider.
-\subsection{Specification of the Database Handler}
 
+This part of the identity provider is the establishing of the secure connection between the identity provider and the authentication provider. Right now the challenge response from the authentication provider is just a nonce to illustrate that the identity provider needs to be investigated thoroughly by the authentication provider for the purpose of finding out if it is a malicous identity provider.
+
+\clearpage
+\subsection{Specification of the Database Handler}
 \begin{lstlisting}[style=fstar, caption={Specification of the database}]
 	module Database
 	
@@ -1234,7 +1258,9 @@ This part of the Identity Provider is the establishing of the secure connection 
 	val revokedidp: user:string -> idp:prin -> bool
 \end{lstlisting}
 
-The \emph{Database} module is responsible for the communication with the database and therefore checking the information provided by the user. The database is also responsible for keeping track of how many n factor authentications the user has gone through. Note that as of now these functions are just specified by the \emph{val} declaration and therefore has no concrete implementation.
+The \emph{Database} module is responsible for the communication with the database and therefore checking the information provided by the user. The database is also responsible for keeping track of how many n-factor authentications the user has gone through. Note that as of now these functions are just specified by the val declaration and therefore has no concrete implementation.
+
+\clearpage
 \subsection{Specification of the Authentication Provider}
 The specification of the Authentication Provider is divided into several listings for the sake of understandability.
 
@@ -1318,13 +1344,13 @@ The specification of the Authentication Provider is divided into several listing
 		| _ -> SendSaml idp (Failed Requester);
 			authenticationprovider me idp user
 \end{lstlisting}
-%\end{shaded}
+
 The Authentication Provider implements algorithms ....... . The Authentication Provider accepts two SAML messages \emph{LoginRequestMessage} and \emph{NfactAuthRequest} from the Identity Provider.
 \begin{enumerate}
-\item The \emph{LoginRequestMessage} branch will check the login information. If the correct login information has been provided by the user it generates a nonce to be related to this user and specifies which type of n factor authentication the user has to go through and that will be sent to the Identity Provider.
-\item The \emph{NfactAuthRequest} branch is the receiving of n factor authentication response from the user. It verifies that the sender of the message is the correct user and the n factor information. The correct n factor information will make the function \emph{nfactauth} which will handle if the user has gone through all n factor authentication method or needs to specify more. The function will the information to the Identity Provider.
+\item The \emph{LoginRequestMessage} branch will check the login information. If the correct login information has been provided by the user it generates a nonce to be related to the user and specifies which type of n-factor authentication the user has to go through and that will be sent to the identity provider.
+\item The \emph{NfactAuthRequest} branch is the receiving of n-factor authentication response from the user. It verifies that the sender of the message is the correct user and the n-factor information. The correct n-factor information will make the function \emph{nfactauth} which will handle if the user has gone through all n-factor authentication method or needs to specify more. The function will send the information to the identity provider.
 \end{enumerate}
-%\begin{shaded}
+
 \begin{lstlisting}[style=fstar, caption={The creation and changing of a user's account}]
 	val usercommunication: me:prin -> user:prin -> unit
 
@@ -1387,10 +1413,9 @@ The Authentication Provider implements algorithms ....... . The Authentication P
 		| _ -> SendMessage user (StatusMessage Unsuccessful);
 			usercommunication me user
 \end{lstlisting}
-%\end{shaded}
-This part of the Authentication Provider is responsible for creating and changing a user's account. It is pretty intuitive what the different messages does. When creating a login the user will give an email account where they will receive an email with a one-time password to verify their account. The database will handle all the information and the checking of the information. We wrote in section 2.4 about \emph{N factor authentication} and that a user must have at least one method for n factor authentication. This is not yet enforced by the Authentication Provider when a user registers an account.
 
-%\begin{shaded}
+This part of the authentication provider is responsible for creating and changing a user's account. It is pretty straight forward what the different messages does. When creating a login the user will give an email account where they will receive an email with a one-time password to verify their account. The database will handle all the information and the checking of the information. We wrote in section \ref{sect:nfactauth} about n-factor authentication and that a user must have at least one method for n-factor authentication. This is not yet enforced by the authentication provider when a user registers an account.
+
 \begin{lstlisting}[style=fstar, caption={Established a secure connection with the Identity Provider}]
 	val getsignedjavascript: string
 
@@ -1418,11 +1443,12 @@ This part of the Authentication Provider is responsible for creating and changin
 		| _ -> SendMessage idp (StatusMessage Unsuccessful);
 			establishidp me idp
 \end{lstlisting}
-%\end{shaded}
-This part of the Authentication Provider will handle the establishing of a secure connection between the Identity Provider and the Authentication Provider. As we mentioned when we described the Identity Provider's specification of this model there needs to be some investigation of the Identity Provider and not just a generated nonce. This is just specified to give an idea of how the model is designed.
+
+This part of the authentication provider will handle the establishing of a secure connection between the identity provider and the authentication provider. As we mentioned when we described the identity providers specification of this model there needs to be some investigation of the identity irovider and not just a generated nonce. This is just specified to give an idea of how the model is designed.
+
 \subsection{Specification of the Browser}
-The specification of the Browser is divided into two listings for the sake of understandability. Note that we can not model the user's input therefore the input from the user is specified by a bunch of \emph{val} declarations.
-%\begin{shaded}
+The specification of the Browser is divided into two listings for the sake of understandability. Note that we can not model the user's input therefore the input from the user is specified by a bunch of val declarations.
+
 \begin{lstlisting}[style=fstar, caption={Browser's side of logging in}]
 	module Browser
 
@@ -1494,9 +1520,9 @@ The specification of the Browser is divided into two listings for the sake of un
 				| _ -> idpResp; ()
 			| _ -> res; ()	
 \end{lstlisting}
-%\end{shaded}
-This part of the \emph{Browser} module is used to model the client's side of a logging in session. It is worth noticing that the \emph{Browser} verifies the JavaScript is actually received from the correct Identity Provider. The function \emph{fakeprint} is used to give the user messages about errors and if they are logged in. The recursive function \emph{loop} will provide n factor authentication methods until the client receives a \emph{AuthResponseMessage} which it then will send to the Service Provider and the user is now logged in.
-%\begin{shaded}
+
+This part of the \emph{Browser} module is used to model the client's side of a logging in session. It is worth noticing that the browser verifies the JavaScript is actually received from the correct identity provider. The function \emph{fakeprint} is used to give the user messages about errors and if they are logged in. The recursive function \emph{loop} will provide n-factor authentication methods until the client receives a \emph{AuthResponseMessage} which it then will send to the service provider and the user is now logged in.
+
 \begin{lstlisting}[style=fstar, caption={The Browser's side of the account creation and changing}]
 	val newUserId: string
 	val newPassword: string
@@ -1607,12 +1633,14 @@ This part of the \emph{Browser} module is used to model the client's side of a l
 					| Unsuccessful -> fakeprint "Something went wrong. You have not removed this authentication method"
 			| _ -> resp; ()
 \end{lstlisting}
-%\end{shaded}
+
 This part of the \emph{Browser} module is pretty straightforward. It specifies a lot of functions that will create the user's account and update the account by the user's wish. The nonce created when a user creates an account is used to relate the creation of an account to a user.
+
 \section{Introducing adversaries}
-In the previous section we have been focused on implementation of the protocol according to the specification. This section will introduce adversaries into the protocol verification however we have not managed in this project to incorporate dedicated adversaries. Jacob introduced adversaries in his protocol verification through an abstract program and a main function to execute a protocol run. We have adopted this way of introducing an adversary and applied it to the OpenNemID protocol as shown in listing 4.21. The difference between our way of introducing an adversary and Jacob's is ours have the Authentication Provider also. The abstract \emph{attacker} function is a parameter to the \emph{main} function. This means that it is able to use any function defined in the modules. However it will not be able to call any assume command, i.e. every assertion in the Service Provider, Identity Provider and Authentication Provider will succeed.
-%\begin{shaded}
-\begin{lstlisting}[style=fstar, caption={Main module for introducing adversaries}]
+\label{sect:introadversary}
+In the previous section we have been focused on implementation of the protocol according to the specification. This section will introduce adversaries into the protocol verification however we have not managed in this project to incorporate dedicated adversaries. Jacob introduced adversaries in his protocol verification through an abstract program and a main function to execute a protocol run. We have adopted this way of introducing an adversary and applied it to the OpenNemID protocol as shown in Listing \ref{list:adversary}. The difference between our way of introducing an adversary and Jacob's is ours have the authentication provider also. The abstract \emph{attacker} function is a parameter to the \emph{main} function. This means that it is able to use any function defined in the modules. However it will not be able to call any assume command, i.e. every assertion in the service provider, identity provider and authentication provider will succeed.
+
+\begin{lstlisting}[style=fstar, caption={Main module for introducing adversaries}, label={list:adversary}]
 	module Main
 
 	open SamlProtocol
@@ -1629,38 +1657,42 @@ In the previous section we have been focused on implementation of the protocol a
 			(fun () -> identityprovider "identityprovider.org" "browser" "authenticationprovider.org");
 			(fun () -> authenticationprovider "authenticationprovider.org" "identityprovider.org" "browser")]
 \end{lstlisting}
-%\end{shaded}
+
 It would be possible to model and mitigate known attacks on the protocol like \emph{Man In the Middle}, \emph{authentication replay} and \emph{session hijacking} by modeling a browser as part of the protocol model. We have modeled the browser but we have not modeled the aforementioned attacks due to time constraints.
 
 \section{State of the implementation}
-We have implemented the Identity, Service and Authentication Provider in the OpenNemID protocol and defined their abstract implementation but they are all missing session handling. Furthermore the implementations of the cryptographic elements and networking are abstract signatures only at the moment. If time had allowed it we could have incorporated the crypto and networking experiments done by Jacob into the model which has been attached in appendix B. As the previous section explained we have not modeled dedicated adversaries as a part of the present implementation either.
+We have implemented the identity provider, service provider and uthentication Provider in the OpenNemID protocol and defined their abstract implementation but they are all missing session handling. Furthermore the implementations of the cryptographic elements and networking are abstract signatures only at the moment. If time had allowed it we could have incorporated the crypto and networking experiments done by Jacob into the model which haVE been attached in appendix \ref{chap:jacobcode}. As the previous section explained we have not modeled dedicated adversaries as a part of the present implementation either.
 
 
 \chapter{Evaluation}
 This chapter is an evaluation of the entire project. It will describe what has been accomplished during the project and what the work in this project can contribute with. It will also outline the most sensible areas to research further and discuss what related work have been done.
+
 \section{Project evaluation}
 In this report we have outlined the work of this project. The primary work in this project has been the specification of the OpenNemID protocol including a service provider, identity provider and authentication provider written in F*.
 \par
-Working with a research language like F* can be a difficult challenge. However working with F* has not been quite as difficult as expected. This is because of the fact that we have extended the work done by Jacob and the F*-project is well documented with a tutorial. This means that we could always use Jacob's work as a reference and the compiler was easily to set up because of his work. We both have a little experience with ML and the functional oriented language F\# which F* is based on - these facts also helped us during the development of this project. Furthermore we both also have a strong background in C\# and .NET.
+Working with a research language like F* can be a difficult challenge. However working with F* has not been quite as difficult as expected. This is due to the fact that we have extended the work done by Jacob and the F*-project is well documented with a tutorial. This means that we could always use Jacob's work as a reference and the compiler was easily to set up because of his work. We both have a little experience with ML and the functional oriented language F\# which F* is based on - these facts also helped us during the development of this project. Furthermore we both also have a strong background in C\# and .NET.
 \par
 The model of OpenNemID we have presented can be evaluated against common software development and software architecture principles. What should be noted as interesting is not the design of modules but the kind of style a language like F* imposes on the developer. F* enforces the principle of programming to an interface. F* takes the principle further to \emph{design by contract} known from other languages. Functional language with immutability as default makes it easier for developers to design components that holds no state. This makes the scalability of system across multiple processors or computers a lot easier.
+
 \section{Related work}
-We have extended the work done by Jacob H{\o}jgaard \cite{jacob} in his masters thesis \emph{Securing Single Sign-On System With Executable Models}. His work has had a huge impact on this project as we have stated throughout the report. The impact has been both in understanding the language F* and designing and specifying the OpenNemID protocol. In the masters thesis \emph{Using static analysis to validate SAML Protocols} written by Hansen and Skriver \cite{HansenSkriver} they analyze and formalize the SAML login protocol. Their analysis goes towards the older version 1.1 SAML protocol. In their analysis they recommend mandating of HTTPS network transport. This has been incorporated in the OIOSAML specification done by Jacob.
+We have extended the work done by Jacob H{\o}jgaard \cite{jacob} in his masters thesis \emph{Securing Single Sign-On System With Executable Models}. His work has had a huge impact on this project as we have stated throughout the report. The impact has been both in understanding the language F* and designing and specifying the OpenNemID protocol. In the masters thesis \emph{Using static analysis to validate SAML Protocols} written by Hansen and Skriver \cite{HansenSkriver} they analyze and formalize the SAML login protocol. Their analysis goes towards the older version 1.1 SAML protocol. In their analysis they recommend mandating of HTTPS network transport. This has been incorporated in the OIOSAML specification and Jacob had included it in his implementation.
+
 \section{Threats to validity}
 When working in the area of security protocols there will be a lot of threats to validity. Therefore it is important to scrutinize the work of this report.
 \par
-As stated earlier we both have a little experience with the functional programming language F\# which F* is based on. However since we are no experts in F\# and have worked mostly with object oriented languages there is a good chance that the capabilities of F* has not been fully utilized. Furthermore we have not worked with any formal specification tools before beginning this project.
+As stated earlier we both have a little experience with the functional programming language F\# which F* is based on. However since we are no experts in F\# and have worked mostly with object-oriented languages there is a chance that the capabilities of F* has not been fully utilized. Furthermore we have not worked with any formal specification tools before beginning this project.
 \par
-It is also important to remember that the F* compiler is still a $\alpha$-release. Microsoft Research has used it to verify 20.000 lines of code \cite{fstar-msr} but the results should still be treated with some degree of caution. Still the concepts in F* are based on are derived from the work in the previous projects, F7 and Fine. In these projects the concepts have been investigated thoroughly.
+It is also important to remember that the F* compiler is still an $\alpha$-release. Microsoft Research has used it to verify 20.000 lines of code \cite{fstar-msr} but the results should still be treated with some degree of caution. Still the concepts F* are based on, are derived from the work in the previous projects, F7 and Fine. In these projects the concepts have been investigated thoroughly.
 \par
 Lastly it is worth noting we have only touched the subject of modeling adversaries very briefly. This leaves room for uncertainty and therefore would be a natural course to take for further research.
+
 \section{Further research}
-As we have mentioned the modeling of adversaries is the natural path to take because this is required to make a more robust framework for protocol verification. In section 4.6 we described that we have modeled a browser but we have not modeled adversaries as part of the browser. This could be a way to continue the research. We mentioned briefly that F* could be compiled to JavaScript. The compilation of F* to JavaScript is interesting because NemID uses a Java applet which forces all the user to install a Java browser plug-in. Given the facts that there have been many security issues reported lately with the Java browser plug-in and that DanID are working on a version of NemID in JavaScript F*'s compilation to JavaScript is very to have in mind. This means that a specification in F* could be compiled to JavaScript and used on the web and thereby eliminate the large security risk involved with using the Java applet. Further research could also be into the server side of the Authentication Provider (as we have called it). As we have specified the Authentication Provider the next step would be to actually creating the server side of it so it could be an executable protocol on the web.
+As we have mentioned the modeling of adversaries is the natural path to take because this is required to make a more robust framework for protocol verification. In section \ref{sect:introadversary} we described that we have modeled a browser but we have not modeled adversaries as part of the browser. This could be a way to continue the research. We mentioned briefly that F* could be compiled to JavaScript. The compilation of F* to JavaScript is interesting because NemID uses a Java applet which forces all the user to install a Java browser plug-in. Given the facts that, as stated in Chapter \ref{chap:intro}, Java is one of the most frequently exploited pieces of software, and also that DanID is working on a version of NemID that uses JavaScript instead of Java, it could indicate that F*'s compilation to JavaScript capabilities would be the way to go. This means that a specification in F* could be compiled to JavaScript and used on the web and thereby eliminate the large security risk involved with using the Java applet. Further research could also be into the server side of the authentication provider. As we have specified the authentication provider the next step would be to actually creating the server side of it so it could be an executable protocol on the web.
 \par
 Our design of OpenNemID included security profiles. Due to time constraints this has not been specified in the current specification of OpenNemID in F*. Continuing the research could be done by extending the protocol specification to support the functionality of security profiles.
 
 \section{Conclusion}
-In this report we have shown how the use of programming language F*  for implementing security protocols can help proving the security properties of the protocol.
+In this report we have shown how the use of the programming language F* for implementing security protocols can help proving the security properties of the protocol.
 \par
 In this project we have extended the work of Jacob H{\o}jgaard whom has used the Danish governmental Single Sign-On federation - Nemlog-in as an example. Nemlog-in is a protocol based on the SAML standard for exchanging security tokens. In the Nemlog-in protocol the authentication part has been done by NemID. This project has extended and modified the protocol specification done by Jacob to specify the authentication part as well. A protocol we refer to as OpenNemID. OpenNemID has been described and outlined including the registration of users and logging in of users.
 \par
@@ -1812,8 +1844,265 @@ In conclusion a programming language such as F* can be used to create an executa
 
 \appendix
 \chapter{SAML Assertion and Messages}
-%INDSÆT SAML ASSERTION OG MESSAGES FRA JACOB%%%
+\begin{lstlisting}[style=cxml, caption={Sample SAML AuthnRequest message \cite{jacob}.}]
+	<samlp:AuthnRequest ID="id84be1b160a0b44d893402f993f080679" Version="2.0"IssueInstant="2012-10-23T18:36:14.5304032Z" Destination="https://login.idp.dk" IsPassive="false"xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol">
+		<Issuer xmlns="urn:oasis:names:tc:SAML:2.0:assertion">https://saml.serviceprovider.dk</Issuer>
+		<Conditions xmlns="urn:oasis:names:tc:SAML:2.0:assertion">
+			<AudienceRestriction>
+				<Audience>https://saml.serviceprovider.dk</Audience>
+			</AudienceRestriction>
+		</Conditions>
+	</samlp:AuthnRequest>
+\end{lstlisting}
 
-\chapter{Source code examples by Jacob H{\o}jgaard}
-%INDSÆT JACOBS APPENDIX B%
+\begin{lstlisting}[style=cxml, caption={Sample SAML Response message without the content of the Assertion \cite{jacob}.}]
+	<samlp:Response ID="_e0ef82f8-f8d9-4 bcc-a4da-894 a165a04c9" Version="2.0"IssueInstant="2012-10-23T18:36:37.997Z" Destination="https://login.serviceprovider.dk" Consent="urn:oasis:names:tc:SAML:2.0:consent:unspecified" InResponseTo="id84be1b160a0b44d893402f993f080679" xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol">
+		<Issuer xmlns="urn:oasis:names:tc:SAML:2.0:assertion">https://saml.idp.dk</Issuer>
+		<samlp:Status>
+			<samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success"/>
+		</samlp:Status>
+		<Assertion ID="_b3e42065-401b-4 fe6-954b-2 f485828e68b" IssueInstant="2012-10-23T18:36:37.997Z"Version="2.0" xmlns="urn:oasis:names:tc:SAML:2.0:assertion">
+			...
+		</Assertion>
+	</samlp:Response>
+\end{lstlisting}
+
+\begin{lstlisting}[style=cxml, caption={Sample SAML Assertion \cite{jacob}.}]
+	<Assertion ID="_b3e42065-401b-4 fe6-954b-2 f485828e68b" IssueInstant="2012-10-23T18:36:37.997Z"Version="2.0" xmlns="urn:oasis:names:tc:SAML:2.0:assertion">
+		<Issuer>https://saml.idp.dk</Issuer>
+		<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+			...
+		</ds:Signature>
+		<Subject>
+			<NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName">The Subject</NameID>
+			<SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
+				<SubjectConfirmationData InResponseTo="id84be1b160a0b44d893402f993f080679"NotOnOrAfter="-10-23T18:41:37.997Z"Recipient="https://saml.serviceprovider.dk"/>
+			</SubjectConfirmation>
+		</Subject>
+		<Conditions NotBefore="2012-10-23T18:36:37.997Z" NotOnOrAfter="2012-10-23T19:36:37.997Z">
+			<AudienceRestriction>
+				<Audience>https://saml.serviceprovider.dk</Audience>
+			</AudienceRestriction>
+		</Conditions>
+		<AttributeStatement>
+			<Attribute Name="urn:oid:2.5.4.3"NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic">
+				<AttributeValue>Frode Bo</AttributeValue>
+			</Attribute>
+			<Attribute Name="urn:oid:0.9.2342.19200300.100.1.3" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic">
+				<AttributeValue>fbh@mail.dk</AttributeValue>
+			</Attribute>
+		</AttributeStatement>
+		<AuthnStatement AuthnInstant="2012-10-23T18:36:36.622Z" SessionIndex="_b3e42065-401b-4 fe6-954b-2 f485828e68b">
+			<AuthnContext>
+				<AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:X509</AuthnContextClassRef>
+			</AuthnContext>
+		</AuthnStatement>
+	</Assertion>
+\end{lstlisting}
+
+\chapter{Source code examples}
+\label{chap:jacobcode}
+\section{Interop declarations}
+\begin{lstlisting}[style=fstar, caption={Example of how to interop with .NET \cite{jacob}.}]
+	module Interop
+
+	open Protocol
+	
+	(*Crypto functions*)
+	extern reference Crypto {language="F#"; dll="RuntimeExtention"; namespace=""; classname="Crypto"}
+	
+	extern Crypto val KeyGenExt: p:prin -> (pubkey p * privkey p)
+	
+	(*Saml functions*)
+	extern reference Saml {language="F#"; dll="RuntimeExtention"; namespace=""; classname="Saml"}
+	
+	extern Saml val CreateAuthnRequest: issuer:prin -> destination:prin -> samlmessage
+	extern Saml val CreateChallenge: prin -> nonce
+	extern Saml val CreateSamlAssertion: user:string -> issuer:prin -> destination:prin -> assertion
+	extern Saml val CreateSamlResponse: issuer:prin -> destination:prin -> assertion -> samlmessage
+	extern Saml val CreateSamlFailedResponse: issuer:prin -> destination:prin -> SamlStatus -> samlmessage
+	
+	extern reference Network {language="F#";  dll="RuntimeExtention"; namespace=""; classname="Network"}
+	extern Network val SendX: prin -> message -> bool
+	extern Network val RecieveX: prin -> message
+\end{lstlisting}
+\clearpage
+\section{Using .NET functions}
+\begin{lstlisting}[style=fstar, caption={Example of how use types from .NET \cite{jacob}.}]
+	module X
+
+	open Protocol
+	open Interop
+	
+	val GenKeys: prin -> string
+	let GenKeys principal = 
+		println "starting keygen";
+		let (privk, pubk) = KeyGenExt principal in
+		print_int 2;
+		"super"
+	
+	val GetReq: prin -> prin -> samlmessage
+	let GetReq sp idp = 
+		CreateAuthnRequest sp idp
+		
+	val GetSamlMessages: prin -> prin -> string
+	let GetSamlMessages sp idp = 
+		print_string "Getting AuthReq\n";
+		let req = CreateAuthnRequest sp idp in
+		print_string req;
+		print_string "\nGetting Assertion\n";
+		let assertion = CreateSamlAssertion "me" idp sp in
+		print_string assertion;
+		print_string "\nGetting Response\n";
+		let response = CreateSamlResponse idp sp assertion in
+		print_string response;
+		"Done"
+	
+	val CreateAndSend: prin -> prin ->unit
+	let CreateAndSend sp idp =
+		let authReq = CreateAuthnRequest sp idp in
+		let req = SamlProtocolMessage sp authReq "sig" in
+		let status = SendX sp req in
+		match status with
+		| true -> print_string "great!";()
+		| _ -> print_string "failure!";()
+	
+	val CreateSendAndRecieve: prin -> prin ->unit
+	let CreateSendAndRecieve sp idp =
+		let authReq = CreateAuthnRequest sp idp in
+		let req = SamlProtocolMessage sp authReq "sig" in
+		let status = SendX sp req in
+		match status with
+		| true -> print_string "great!";
+			let msg = RecieveX sp in
+			match msg with
+			| HttpGet (url) -> 
+				print_string url;()
+		| _ -> print_string "failure!";()
+\end{lstlisting}
+\clearpage
+\section{Crypto wrapper implemented in F\#}
+\begin{lstlisting}[style=fstar, caption={Example of implementation of crypto functions in F\# \cite{jacob}.}]
+	module Crypto
+
+	open System.Security.Cryptography
+	open System.Text
+	open System
+	open System.IO
+	
+	let GetEncoder = new ASCIIEncoding()
+	let GetHashProvicer = new SHA1CryptoServiceProvider()
+	let GetCryptoProvider = new RSACryptoServiceProvider()
+	
+	let WriteKeyToFile (filename:string) (key:string) = 
+		let fn = filename.Replace("://", "-")
+		let file = File.CreateText(fn)
+		file.Write key |>  file.Close
+	
+	let KeyGenExt prin : Prims.DepTuple<Protocol.pubkey,Protocol.privkey> = 
+		let cspParams = new CspParameters()
+		cspParams.ProviderType <- 1
+		cspParams.Flags <- CspProviderFlags.UseArchivableKey
+		cspParams.KeyNumber <- int KeyNumber.Exchange
+		let rsaProvicer = GetCryptoProvider
+	
+		(* Export Public Key *)
+		let pubkey = Protocol.pubkey(0,rsaProvicer.ToXmlString false)
+	
+		(* Export private key *)
+		let privkey = Protocol.privkey(0,rsaProvicer.ToXmlString true)
+		new Prims.DconDepTuple<Protocol.pubkey,Protocol.privkey>(pubkey, privkey) :> Prims.DepTuple<Protocol.pubkey,Protocol.privkey>
+	
+	let SignMessage (prin:string) (key:string) (msg:string) : string = 
+		let ByteConverter = GetEncoder
+		let msgData = ByteConverter.GetBytes(msg)
+		let alg = GetCryptoProvider
+		alg.FromXmlString key
+		let signedData = alg.SignData(msgData, GetHashProvicer)
+		Convert.ToBase64String(signedData)
+	
+	let ValidateMessage (prin:string) (key:string) (msg:string) (signature:string) : bool = 
+		let ByteConverter = GetEncoder
+		let dataToVerify = ByteConverter.GetBytes msg
+		let sign = Convert.FromBase64String signature
+		let alg = GetCryptoProvider
+		alg.FromXmlString key
+		alg.VerifyData(dataToVerify, GetHashProvicer, sign)
+\end{lstlisting}
+\clearpage
+\section{SAML wrapper implemented in F\#}
+\begin{lstlisting}[style=fstar, caption={Example of implementation of SAML functions in F\# \cite{jacob}.}]
+	module Saml
+
+	open System
+	open System.Security.Cryptography
+	
+	let CreateChallenge prin = 
+		let provider = new RNGCryptoServiceProvider()
+		let randBytes = Array.create 10 (byte 0)
+		let _ = provider.GetNonZeroBytes randBytes
+		BitConverter.ToString (randBytes)
+	
+	let CreateAuthnRequest sp idp = 
+		let authnReq = new dk.nita.saml20.Saml20AuthnRequest()
+		authnReq.Destination <- idp
+		authnReq.Issuer <- sp
+		let doc = authnReq.GetXml()
+		doc.InnerXml
+	
+	let CreateSamlAssertion user issuer destination = 
+		let assertion = new dk.nita.saml20.Schema.Core.Assertion()
+		assertion.Issuer <- issuer
+		"assertion"
+	
+	let CreateSamlResponse user issuer destination status =
+		let response = new dk.nita.saml20.Schema.Protocol.Response()
+		response.Issuer <- issuer
+		response.IssueInstant <- Nullable(DateTime.UtcNow)
+		response.Destination <- destination
+		response
+\end{lstlisting}
+\clearpage
+\section{Network wrapper implemented in F\#}
+\begin{lstlisting}[style=fstar, caption={Example of implementation of network functions in F\# \cite{jacob}.}]
+	module Network
+
+	open System
+	open System.Net
+	open System.Text
+	
+	let listener = new HttpListener()
+	
+	let GetMsg (msg:Protocol.message) = 
+		match msg with
+		| :? Protocol.SamlProtocolMessage -> (msg :?> Protocol.SamlProtocolMessage).field_2
+		| _ -> "<html><head><title>Server</title></head><body><h1>Message from: \%s not valid</h1></body></html>"
+	
+	let StartListen  = 
+		listener.Prefixes.Add("http://localhost:8080/")
+		listener.Start()
+		printfn "listening...."
+	
+	let GetContext = listener.GetContext()
+	
+	let SendX (prin:string) (msg:Protocol.message) = 
+		let resp = GetContext.Response
+		let cookie = new Cookie("AuthnTicket", "12 02 002 020 22")
+		resp.AppendCookie(cookie)
+		let respmsg = GetMsg msg
+		let buffer = System.Text.Encoding.UTF8.GetBytes(respmsg)
+		resp.ContentLength64 <- int64 buffer.Length
+		let output = resp.OutputStream;
+		output.Write(buffer,0,buffer.Length)
+		output.Close();
+		true
+	
+	let RecieveX (prin:string) : (Protocol.message) =
+		let req = GetContext.Request
+		match prin with
+		| "sp" ->  Protocol.HttpGet ("Request to sp: " + req.RawUrl) :> Protocol.message
+		| "idp" -> Protocol.HttpGet "This is a idp reply" :> Protocol.message
+		| "browser" -> Protocol.HttpGet "This is a browserreply" :> Protocol.message
+		| _ -> Protocol.Failed 400 :> Protocol.message
+\end{lstlisting}
 \end{document}
