@@ -573,7 +573,6 @@ The initial AuthRequest extracted from the cookie is verified. Verification fail
 \par
 When verification succeeds, an assertion is build based on the login data received from the authentication provider. The assertion is then encrypted using the service providers public key. A SAML response is created, the assertion is appended to it along with the AuthRequest. The browser is then redirected to the service provider.
 \begin{algorithm}[H]
-	\title{negermand}
 	\caption{Process 7}
 	\begin{algorithmic}
 		\REQUIRE{SP.Public \AND LID is well-formed \AND ARC cookie present}
