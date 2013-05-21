@@ -174,7 +174,7 @@ ST = Status (from Authentication Provider)}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{182, 9.875}, {151, 68.125}}</string>
+			<string>{{182, 9.875}, {151, 60.125}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -2268,7 +2268,7 @@ SS = SIGN(SP.Private, AR)}</string>
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2013-05-17 15:26:13 +0000</string>
+	<string>2013-05-21 13:48:37 +0000</string>
 	<key>Modifier</key>
 	<string>Andreas Kjeldsen</string>
 	<key>NotesVisible</key>
@@ -2373,7 +2373,7 @@ SS = SIGN(SP.Private, AR)}</string>
 		<key>SidebarWidth</key>
 		<integer>120</integer>
 		<key>VisibleRegion</key>
-		<string>{{0, 159}, {636, 675}}</string>
+		<string>{{0, 0}, {636, 675}}</string>
 		<key>Zoom</key>
 		<real>1</real>
 		<key>ZoomValues</key>

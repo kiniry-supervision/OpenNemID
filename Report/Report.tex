@@ -143,12 +143,12 @@ Hannes \textsc{Mehnert}\\
 
 
 \begin{abstract}
-Denmark currently has NemID to provide every resident of Denmark with a digital signature. NemID is an authentication application written in Java. The Java applet is used by banks in Denmark and other government institutions for identifying users. Lately there has been many security issues involved with the Java browser plug-in. This report's objective is to create a replacement for NemID that is both verifiable secure and open source. We propose the use of executable models to prove the security properties of such a system. We provided a detailed the description of the protocol which is based on the SAML Single Sign-On protocols. We use the programming language F* which is a value-dependent, typed language with refinement types to formalize the protocol. We have formalized key parts of the protocol therefore proved it possible to formalize such protocols as a whole with F*. Therefore we have shown that it is possible to use a language like F* to formally specify the protocol and have an executable model at the same time.
+Denmark currently has NemID to provide every resident of Denmark with a digital signature. The frontend of NemID is developed in Java, thereby forcing the danish residents to install Java. Java is not well supported on all mobile platforms, there have also been many security issues with Java lately. Java is therefore frowned upon as the technology selected for NemID. This reports objective is to create a replacement for NemID that is both verifiable secure and open source. We propose the use of executable models to prove the security properties of such a system. We provided a detailed the description of the protocol which is based on the SAML Single Sign-On protocols. We use the programming language F* which is a value-dependent, typed language with refinement types to formalize the protocol. We have formalized key parts of the protocol thereby proving it possible to formalize such protocols as a whole with F*. Therefore we have shown that it is possible to use a language like F* to formally specify the protocol and have an executable model at the same time.
 \end{abstract}
 
 \renewcommand{\abstractname}{Acknowledgements}
 \begin{abstract}
-First of all we would like to thank Joseph Roland Kiniry for his interest in our work and for his many encouraging and helpful comments. Secondly we would also like to thank Hannes Mehnert for his help in designing the protocol and his insights. Lastly we would like to thank Jacob H{\o}jgaard for laying the ground work in his masters thesis \emph{Securing Single Sign-On System With Executable Models}.
+First of all we would like to thank Joseph Roland Kiniry for his interest in our work and for his many encouraging and helpful comments. Secondly we would also like to thank Hannes Mehnert for his help in designing the protocol and his insights. Lastly we would like to thank Jacob H{\o}jgaard for laying the groundwork in his masters thesis \emph{Securing Single Sign-On System With Executable Models}.
 \end{abstract}
 
 \begingroup
@@ -170,7 +170,7 @@ Based on this, it can be assumed that in the making of a secure system obscurity
 \textit{"A system is secure only when it is secure in the light of day, under full public view."} - Dr. Joseph Roland Kiniry \cite{ftspeech}
 \end{quote}
 \par
-In Denmark it is required to use NemID when accessing public websites, online banks and other services requiring a digital signature (DanskeSpil e.g.). NemID claims to be a secure system, they state various reason that would give the impression that they are right \cite{omnemidsikkerhed}. But looking at the system from the outside, there is no way of telling if they're right.
+In Denmark it is required to use NemID when accessing public websites, online banks and other services requiring a digital signature (DanskeSpil e.g.). NemID claims to be a secure system, they state various reason that would give the impression that they are right \cite{omnemidsikkerhed}. But looking at the system from the outside, there is no way of telling if they are in fact right.
 \par
 Even though there is no public record of the NemID system being completely compromised, there is no way for us outsiders to verify whether or not it could happen. This is due to NemID following the security through obscurity principal. The source code for their key components are not publicly available, the Java applet they are providing has been obfuscated and the API they have made available does not reveal enough to conclude anything.
 
@@ -208,11 +208,35 @@ This chapter will clarify the technical concepts that has been used in this repo
 The Security Assertion Markup Language or SAML is an XML based language created for the exchanging of authentication and authorization (security tokens) between different systems or domains, in particular between a service provider and an identity provider. The latest version of SAML is 2.0 released in 2005. SAML specifies three roles: \emph{principal}, \emph{identity provider} and \emph{service provider}. Principal refers to an entity that can be authenticated, therefore both the user and the identity provider and service provider are principals. SAML addresses the problem of web browser single-sign on (SSO). SSO means that the user only has to login once per identity provider per session. Practically this means that the user only has to be redirected once to the identity provider for authentication per session. The identity provider creates a session for the user that can be reused for any subsequent authentication request. SAML specifies 5 core elements - \emph{Assertions}, \emph{Protocols}, \emph{Bindings}, \emph{Profiles} and \emph{Metadata}. See appendix A for examples of assertion and SAML messages.
 \par
 \emph{Assertions} are security tokens containing statements or claims about a principal. These statements in SAML are called attributes and they usually hold information like name, last name, email etc. The principal is referred to as the \emph{subject} in an assertion.
+
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=0.5]{images/SAMLAssertion.png}
+	\begin{tabular}{r l}
+	    \parbox[t][][t]{2.8cm}{\hfill $Assertion :=$} &
+	    \parbox[t][][t]{6.4cm}{
+			$[Id : String\\			IssueInstant : DateTime\\			Issuer : String\\			Signature : String\\			Subject : Subject\\			Conditions : Conditions\\			AttributeStatement : List<attribute>\\			AuthnStatement : AuthnStatement]$} \\
+	\end{tabular}
+	\\[0.2cm]
+	\begin{tabular}{r l}
+	    \parbox[t][][t]{2.8cm}{\hfill $Subject :=$} &
+	    \parbox[t][][t]{6.4cm}{
+			$[NameId : String\\			InResponseTo : String\\			NotOnOrAfter : DateTime\\			Recipient : String]$} \\
+	\end{tabular}
+	\\[0.2cm]
+	\begin{tabular}{r l}
+	    \parbox[t][][t]{2.8cm}{\hfill $Conditions :=$} &
+	    \parbox[t][][t]{6.4cm}{
+			$[NotBefore : DateTime\\			NotOnOrAfter : DateTime\\			AudienceRestriction : List<String>]$} \\
+	\end{tabular}
+	\\[0.2cm]
+	\begin{tabular}{r l}
+	    \parbox[t][][t]{3.4cm}{\hfill $AuthnStatement :=$} &
+	    \parbox[t][][t]{7cm}{
+			 $[AuthnInstant : DateTime\\			 SessionIndex : String]$} \\
+	\end{tabular}
 	\caption{The elements in a SAML Assertion}
 \end{figure}
+
 \par
 
 \emph{Protocols} describe the messages that can be exchanged between the service provider and the identity provider when exchanging \emph{assertions}. The protocol used in OpenNemID is called the Authentication Request Protocol. This protocol consists of AuthnRequest message and a response message. The AuthnRequest message has an id that must be unique and the creator of the message is responsible for ensuring it is.
@@ -227,14 +251,24 @@ AuthnRequest has 5 fields:
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=0.5]{images/SAMLAuthnRequest.png}
+	\begin{tabular}{r l}
+	    \parbox[t][][t]{2.4cm}{\raggedleft $AuthnRequest :=$} &
+	    \parbox[t][][t]{4.2cm}{
+			$[Id : String\\			IssueInstant : DateTime\\			Destination : URI\\			Issuer : String\\			Conditions : Conditions]$} \\
+	\end{tabular}
 	\caption{The SAML AuthnRequest message}
 \end{figure}
+
 \par
 The response message has fields \emph{Id} and \emph{IssueInstant} that was specified in the request message. The \emph{Destination} is the endpoint address for the service provider. The \emph{Issuer} is the entity Id of the identity provider. The response message also has a field \emph{inResponseTo} that specifies the id of the AuthnRequest the response is to. The \emph{Status} field can only have one of three possible values - \emph{Requester}, \emph{Responder} or \emph{Success}. The \emph{Assertion} can only be issued if the \emph{Status} field is \emph{Success}. The assertion can either be plain text or an \emph{EncryptedAssertion} which will be encrypted under the public key of the recipient of the message (service provider).
+
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=0.5]{images/SAMLResponse.png}
+	\begin{tabular}{r l}
+	    \parbox[t][][t]{1.5cm}{\raggedleft $Reponse :=$} &
+	    \parbox[t][][t]{4.2cm}{
+			$[Id : String\\			IssueInstant : DateTime\\			Destination : URI\\			InResponseTo : String\\			Issuer : String\\			Status : String\\			Assertion : Assertion]$} \\
+	\end{tabular}
 	\caption{The SAML Response message}
 \end{figure}
 
@@ -310,22 +344,22 @@ We have chosen to formally specify OpenNemID using F* for several reasons. We bo
 
 \section{N-factor authentication}
 \label{sect:nfactauth}
-Two-factor authentication is the process of a requesting entity presenting some evidence of its identity to a second identity. The goal of two-factor authentication is to decrease the possibility that the requester is presenting false evidence of its identity. In a login scenario the requester would be a user requesting to login. Two-factor authentication requires the use of two of three authentication factors:
+Two-factor authentication is the process of a requesting entity presenting some evidence of its identity to a second entity. The goal of two-factor authentication is to decrease the possibility that the requester is presenting false evidence of its identity. In a login scenario the requester would be a user requesting to login. Two-factor authentication requires the use of two of three authentication factors:
 \begin{enumerate}
 \item Something the requester knows (e.g. password)
 \item Something the requester has (e.g. mobile phone)
 \item Something the requester is (e.g. biometric characteristic - such as fingerprint)
 \end{enumerate}
 \par
-NemID currently implements two-factor authentication. It uses the factor 1 which is the user's userid and password. It also uses factor 2 which is the physical cardboard keycard that comes with creating a NemID login. This cardboard keycard comes with numeric challenges and their corresponding numeric keys. So when a user logs in with their userid and password they will be prompted for the numeric key corresponding to the numeric challenge displayed in the Java applet.
+NemID currently implements two-factor authentication. It uses first factor which is the user's userid and password. It also uses second factor which is the physical cardboard keycard that comes with creating a NemID login. This cardboard keycard comes with numeric challenges and their corresponding numeric keys. So when a user logs in with their userid and password they will be prompted for the numeric key corresponding to the numeric challenge displayed in the Java applet.
 \par
-The OpenNemID protocol extends the two-factor authentication to \emph{n-factor authentication}, thereby adding multiple layers of security that would make it harder for an adversary to login. The first authentication is the factor 1 - userid and password. After this there are various ways for a user to authenticate themselves further based on their registration. However it will only use either the factor 1 or factor 2. Even though it would be preferable with a biometric characteristic authentication factor for digital identities, this is at the moment impossible. The OpenNemID protocol requires that a user at least has the standard factor 1 (a userid and a password) and at least one more authentication method. The user will by default have to authenticate themselves through all the authentication methods they have added.
+The OpenNemID protocol extends the two-factor authentication to \emph{n-factor authentication}, thereby adding multiple layers of security that would make it harder for an adversary to login. The first authentication is the first factor - userid and password. After this there are various ways for a user to authenticate themselves further based on their registration. However it will only use either the first or second factor. Even though it would be preferable with a biometric characteristic authentication factor for digital identities, this is at the moment impossible. The OpenNemID protocol requires that a user at least has the standard factor 1 (a userid and a password) and at least one more authentication method. The user will by default have to authenticate themselves through all the authentication methods they have added.
 \\
 \\
-The authentication methods that has been considered are:
+The authentication methods that have been considered are:
 \begin{enumerate}
 	\item[] \textbf{OpenID}\\
-		OpenID is an open standard federated login utilizing co-operating sites (or relying parties) for user authentication. OpenID is not limited to a single institution provided the identity of the users, instead there can be multiple providers, some of the major ones are Google, Yahoo, VeriSign and Wordpress \cite{openid}. To use OpenID the users would be required to create and setup an account with one of the providers.\\
+		OpenID is an open standard federated login utilizing co-operating sites (or relying parties) for user authentication. OpenID is not limited to a single institution providing the identity of the users, instead there can be multiple providers, some of the major ones are Google, Yahoo, VeriSign and Wordpress \cite{openid}. To use OpenID the users would be required to create and setup an account with one of the providers.\\
 		Some of the providers might have introduced extra security step, one such provider is Google. Google has its own security implementations, such as two-factor authentication. As OpenNemID would depend on the user fully authenticating with OpenID, the user would also have to pass Googles two-factor authentication in the case of authorizing at Google.
 	\item[] \textbf{Facebook Connect}\\
 		Facebook Connect is the single sign-on solution provided by Facebook. This would require the user to create and setup a Facebook account. 
@@ -730,7 +764,7 @@ Refinement types have the form $x:t\{t'\}$ as shown above. So a refinement type 
 Kinds can be seen as an abstraction over types - types can either \emph{have} or be \emph{of} a kind. The *-kind indicates 'regular types' in F*. This covers all the possible types to create in a regular type system for a programming language like Java. Refinement types are of the E-kind and not of the *-kind. The E(rasable)-kinds have no significance at runtime. They only have an effect at the compiling time during type checking.
 
 \section{Understanding F*}
-Since we are extending Jacob's work with the authentication part of the protocol we used his code as a reference for implementing the rest of the OpenNemID protocol. In listing \ref{list:nemididp} we show Jacob's implementation of the Identity Provider. He has implemented a recursive function \emph{identityprovider} declared with the \emph{val} binding just above it. The function declared takes 2 arguments and returns \emph{unit}, which is the same as void in Java and C\#.
+Since we are extending Jacob's work with the authentication part of the protocol we used his code as a reference for implementing the rest of the OpenNemID protocol. In listing \ref{list:nemididp} we show Jacob's implementation of the Identity Provider. He has implemented a recursive function \emph{identityprovider} declared with the val binding just above it. The function declared takes 2 arguments and returns \emph{unit}, which is the same as void in Java and C\#.
 \\
 \\
 \textbf{The arguments}
@@ -739,7 +773,7 @@ Since we are extending Jacob's work with the authentication part of the protocol
 \item a principal for identifying the client.
 \end{enumerate}
 
-\begin{lstlisting}[style=fstar, caption={NemID identity provider implementation \cite{jacob}}, label={list:nemididp}]
+\begin{lstlisting}[style=fstar, caption={[NemID identity provider implementation]NemID identity provider implementation \cite{jacob}}, label={list:nemididp}]
 	module Identityprovider
 
 	open SamlProtocol
@@ -1203,10 +1237,12 @@ This part of the identity provider implements the algorithms 2 and . The identit
 \end{lstlisting}
 
 This part of the identity provider handles the information received from the Authentication Provider. It implements algorithms 6 and 7. The function \emph{handleauthresponse} has two match branches:
+\clearpage
 \begin{enumerate}
 \item \emph{LoginResponseMessage} which will prompt the user for a n-factor authentication method while it relates the challenge generated by the Authentication Provider to the user for verification
 \item \emph{LoginSuccess} which specifies that the user has passed all the n-factor authentication methods. 
 \end{enumerate}
+
 If the user has been successfully logged in the user will be issued an assertion which is done in the \emph{handleUserAuthenticated} function. This function will also save a cookie that specifies that this user has logged in which the identity provider will search for when getting an AuthnRequestMessage from a user.
 
 \begin{lstlisting}[style=fstar, caption={Establising a secure connection with Authentication Provider}]
@@ -1714,39 +1750,69 @@ In conclusion a programming language such as F* can be used to create an executa
 
 \begin{thebibliography}{9}
 
-\bibitem{jacob}
-  Jakob H{\o}jgaard:
-  \emph{Securing Single Sign-On System With Executable Models}.
-  Masters thesis, IT University of Copenhagen,
-  2013.
-
 \bibitem{AppliedInfoS}
   David Basin, Patrick Schaller, Michael Schl{\"a}pfer:
   \emph{Applied Information Security - A Hands-on Approach}.
   Springer, Berlin Heidelberg,
   2011.
 
+\bibitem{dolev-yao}
+ Danny Dolev, Andrew C. Yao:
+ \emph{On the security of public key protocols}.
+ Technical report, Stanford, CA, USA
+ 1981.
+
 \bibitem{HansenSkriver}
-  Steffen M. Hansen and Jakob Skriver:
+  Steffen M. Hansen, Jakob Skriver:
   \emph{Using Static Analysis to Validate SAML Protocols}.
   \\Masters thesis, Technical University of Denmark,
   2004.
+
+\bibitem{jacob}
+  Jakob H{\o}jgaard:
+  \emph{Securing Single Sign-On System With Executable Models}.
+  Masters thesis, IT University of Copenhagen,
+  2013.
+
+\bibitem{kerckhoffs}
+ Auguste Kerckhoffs:
+ \emph{La cryptographie militaire.}
+ Journal des Sciences Militaires, IX:5–38, 161–191, 1883
 
 \bibitem{wayf}
  The WAYF secretariat:
  \emph{Trusted third party based ID federation, lowering the bar for connecting and enhancing privacy}.
  Explanation of WAYF, 2009.
 
-\bibitem{dolev-yao}
- Danny Dolev and Andrew C. Yao:
- \emph{On the security of public key protocols}.
- Technical report, Stanford, CA, USA
- 1981.
+\bibitem{csproto}
+ CSProto:
+ \emph{Tool for analyzing contract signing protocols}
+ \url{http://www.infsec.uni-trier.de/publications/paper/KaehlerKuestersWilke-TOCL-2010.pdf}
 
-\bibitem{kerckhoffs}
- Auguste Kerckhoffs:
- \emph{La cryptographie militaire.}
- Journal des Sciences Militaires, IX:5–38, 161–191, 1883
+\bibitem{dh-proverif}
+ DH-ProVerif:
+ \emph{Tool for analyzing protocol with Diffie-Hellman exponentiation}.
+ \url{http://www.infsec.uni-trier.de/publications/paper/KuestersTruderung-CSF-2009.pdf}
+
+\bibitem{digst}
+ Digitaliseringsstyrrelsen:
+ \emph{Den digitale vej til fremtiden velf{\ae}rd - Den f{\ae}llesoffentlige digitaliseringsstrategi 2011-2015}.
+ \url{http://www.digst.dk/Home/Digitaliseringsstrategi/~/media/Files/Digitaliseringsstrategi/Digitale_vej_til_fremtidens_velf\%C3\%A6rd.ashx}
+
+\bibitem{ftspeech}
+ Dr. Joseph Roland Kiniry:
+ \emph{Parliamentary Statement for Bill L-132}
+ \url{http://www.ft.dk/samling/20121/almdel/kou/bilag/70/1225808.pdf}
+
+\bibitem{jscert}
+ JSCert:
+ \emph{Certified JavaScript}.
+ \url{http://jscert.org/index.html}
+
+\bibitem{kaspersky}
+ Kaspersky:
+ \emph{Oracle Java surpasses Adobe Reader as the most frequently exploited software}
+ \url{http://www.kaspersky.com/about/news/virus/2012/Oracle_Java_surpasses_Adobe_Reader_as_the_most_frequently_exploited_software}
 
 \bibitem{fstar-msr}
  Microsoft Research:
@@ -1758,57 +1824,15 @@ In conclusion a programming language such as F* can be used to create an executa
  \emph{F* guide}
  \url{http://rise4fun.com/FStar/tutorial/guide}
 
-\bibitem{proverif}
- ProVerif:
- \emph{Cryptographic protocol verifier in the formal model}.
- \url{http://prosecco.gforge.inria.fr/personal/bblanche/proverif/}
-
-\bibitem{webcrypto}
- W3.org: 
- \emph{Web Cryptography API}.
- \url{http://www.w3.org/TR/WebCryptoAPI/}
- 
-\bibitem{jscert}
- JSCert:
- \emph{Certified JavaScript}.
- \url{http://jscert.org/index.html}
-
-\bibitem{xor-proverif}
- XOR-ProVerif:
- \emph{Tool for analyzing protocols with XOR}.
- \url{http://www.infsec.uni-trier.de/publications/paper/KuestersTruderung-CCS-2008.pdf}
-
-\bibitem{dh-proverif}
- DH-ProVerif:
- \emph{Tool for analyzing protocol with Diffie-Hellman exponentiation}.
- \url{http://www.infsec.uni-trier.de/publications/paper/KuestersTruderung-CSF-2009.pdf}
-
-\bibitem{csproto}
- CSProto:
- \emph{Tool for analyzing contract signing protocols}
- \url{http://www.infsec.uni-trier.de/publications/paper/KaehlerKuestersWilke-TOCL-2010.pdf}
-
-\bibitem{maffeis}
- Sergio Maffeis:
- \emph{An expert in computer security}.
- Various publications on web security, security protocols and so on.
- \url{http://www.doc.ic.ac.uk/~maffeis/}
-
 \bibitem{nacl}
  NaCl:
  \emph{Networking and Cryptography library}.
  \url{http://nacl.cr.yp.to}
 
-\bibitem{sodium}
- Sodium:
- \emph{A new cross-compilable Cryptography library}.
- A variation of the NaCl library.
- \url{http://labs.umbrella.com/2013/03/06/announcing-sodium-a-new-cryptographic-library/}
-
-\bibitem{digst}
- Digitaliseringsstyrrelsen:
- \emph{Den digitale vej til fremtiden velf{\ae}rd - Den f{\ae}llesoffentlige digitaliseringsstrategi 2011-2015}.
- \url{http://www.digst.dk/Home/Digitaliseringsstrategi/~/media/Files/Digitaliseringsstrategi/Digitale_vej_til_fremtidens_velf\%C3\%A6rd.ashx}
+\bibitem{omnemidsikkerhed}
+ NemID:
+ \emph{Om NemID - Sikkerhed}
+ \url{https://www.nemid.nu/dk-da/om_nemid/sikkerhed/}
 
 \bibitem{nemidcontract}
  Nets DanID:
@@ -1820,30 +1844,42 @@ In conclusion a programming language such as F* can be used to create an executa
  \emph{NemID guide}
  \url{https://www.nets-danid.dk/produkter/for_tjenesteudbydere/nemid_tjenesteudbyder/nemid_tjenesteudbyder_support/tjenesteudbyderpakken/}
 
-\bibitem{ftspeech}
- Dr. Joseph Roland Kiniry:
- \emph{Parliamentary Statement for Bill L-132}
- \url{http://www.ft.dk/samling/20121/almdel/kou/bilag/70/1225808.pdf}
+\bibitem{openid}
+ OpenID:
+ \emph{OpenID Foundation website}
+ \url{http://openid.net/}
 
-\bibitem{omnemidsikkerhed}
- NemID:
- \emph{Om NemID - Sikkerhed}
- \url{https://www.nemid.nu/dk-da/om_nemid/sikkerhed/}
-
-\bibitem{kaspersky}
- Kaspersky:
- \emph{Oracle Java surpasses Adobe Reader as the most frequently exploited software}
- \url{http://www.kaspersky.com/about/news/virus/2012/Oracle_Java_surpasses_Adobe_Reader_as_the_most_frequently_exploited_software}
+\bibitem{proverif}
+ ProVerif:
+ \emph{Cryptographic protocol verifier in the formal model}.
+ \url{http://prosecco.gforge.inria.fr/personal/bblanche/proverif/}
 
 \bibitem{rfc6238}
  RFC 6238:
  \emph{TOTP: Time-Based One-Time Password Algorithm}
  \url{http://tools.ietf.org/html/rfc6238}
 
-\bibitem{openid}
- OpenID:
- \emph{OpenID Foundation website}
- \url{http://openid.net/}
+\bibitem{maffeis}
+ Sergio Maffeis:
+ \emph{An expert in computer security}.
+ Various publications on web security, security protocols and so on.
+ \url{http://www.doc.ic.ac.uk/~maffeis/}
+
+\bibitem{sodium}
+ Sodium:
+ \emph{A new cross-compilable Cryptography library}.
+ A variation of the NaCl library.
+ \url{http://labs.umbrella.com/2013/03/06/announcing-sodium-a-new-cryptographic-library/}
+
+\bibitem{webcrypto}
+ W3.org: 
+ \emph{Web Cryptography API}.
+ \url{http://www.w3.org/TR/WebCryptoAPI/}
+
+\bibitem{xor-proverif}
+ XOR-ProVerif:
+ \emph{Tool for analyzing protocols with XOR}.
+ \url{http://www.infsec.uni-trier.de/publications/paper/KuestersTruderung-CCS-2008.pdf}
 
 \bibitem{yubico}
  Yubico:
@@ -1854,7 +1890,7 @@ In conclusion a programming language such as F* can be used to create an executa
 
 \appendix
 \chapter{SAML Assertion and Messages}
-\begin{lstlisting}[style=cxml, caption={Sample SAML AuthnRequest message \cite{jacob}.}]
+\begin{lstlisting}[style=cxml, caption={[Sample SAML AuthnRequest message]Sample SAML AuthnRequest message \cite{jacob}.}]
 	<samlp:AuthnRequest ID="id84be1b160a0b44d893402f993f080679" Version="2.0"IssueInstant="2012-10-23T18:36:14.5304032Z" Destination="https://login.idp.dk" IsPassive="false"xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol">
 		<Issuer xmlns="urn:oasis:names:tc:SAML:2.0:assertion">https://saml.serviceprovider.dk</Issuer>
 		<Conditions xmlns="urn:oasis:names:tc:SAML:2.0:assertion">
@@ -1865,7 +1901,7 @@ In conclusion a programming language such as F* can be used to create an executa
 	</samlp:AuthnRequest>
 \end{lstlisting}
 
-\begin{lstlisting}[style=cxml, caption={Sample SAML Response message without the content of the Assertion \cite{jacob}.}]
+\begin{lstlisting}[style=cxml, caption={[Sample SAML Response message without the content of the Assertion]Sample SAML Response message without the content of the Assertion \cite{jacob}.}]
 	<samlp:Response ID="_e0ef82f8-f8d9-4 bcc-a4da-894 a165a04c9" Version="2.0"IssueInstant="2012-10-23T18:36:37.997Z" Destination="https://login.serviceprovider.dk" Consent="urn:oasis:names:tc:SAML:2.0:consent:unspecified" InResponseTo="id84be1b160a0b44d893402f993f080679" xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol">
 		<Issuer xmlns="urn:oasis:names:tc:SAML:2.0:assertion">https://saml.idp.dk</Issuer>
 		<samlp:Status>
@@ -1877,7 +1913,7 @@ In conclusion a programming language such as F* can be used to create an executa
 	</samlp:Response>
 \end{lstlisting}
 
-\begin{lstlisting}[style=cxml, caption={Sample SAML Assertion \cite{jacob}.}]
+\begin{lstlisting}[style=cxml, caption={[Sample SAML Assertion]Sample SAML Assertion \cite{jacob}.}]
 	<Assertion ID="_b3e42065-401b-4 fe6-954b-2 f485828e68b" IssueInstant="2012-10-23T18:36:37.997Z"Version="2.0" xmlns="urn:oasis:names:tc:SAML:2.0:assertion">
 		<Issuer>https://saml.idp.dk</Issuer>
 		<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
@@ -1913,7 +1949,7 @@ In conclusion a programming language such as F* can be used to create an executa
 \chapter{Source code examples}
 \label{chap:jacobcode}
 \section{Interop declarations}
-\begin{lstlisting}[style=fstar, caption={Example of how to interop with .NET \cite{jacob}.}]
+\begin{lstlisting}[style=fstar, caption={[Example of how to interop with .NET]Example of how to interop with .NET \cite{jacob}.}]
 	module Interop
 
 	open Protocol
@@ -1938,7 +1974,7 @@ In conclusion a programming language such as F* can be used to create an executa
 \end{lstlisting}
 \clearpage
 \section{Using .NET functions}
-\begin{lstlisting}[style=fstar, caption={Example of how use types from .NET \cite{jacob}.}]
+\begin{lstlisting}[style=fstar, caption={[Example of how use types from .NET]Example of how use types from .NET \cite{jacob}.}]
 	module X
 
 	open Protocol
@@ -1992,7 +2028,7 @@ In conclusion a programming language such as F* can be used to create an executa
 \end{lstlisting}
 \clearpage
 \section{Crypto wrapper implemented in F\#}
-\begin{lstlisting}[style=fstar, caption={Example of implementation of crypto functions in F\# \cite{jacob}.}]
+\begin{lstlisting}[style=fstar, caption={[Example of implementation of crypto functions in F\#]Example of implementation of crypto functions in F\# \cite{jacob}.}]
 	module Crypto
 
 	open System.Security.Cryptography
@@ -2041,7 +2077,7 @@ In conclusion a programming language such as F* can be used to create an executa
 \end{lstlisting}
 \clearpage
 \section{SAML wrapper implemented in F\#}
-\begin{lstlisting}[style=fstar, caption={Example of implementation of SAML functions in F\# \cite{jacob}.}]
+\begin{lstlisting}[style=fstar, caption={[Example of implementation of SAML functions in F\#]Example of implementation of SAML functions in F\# \cite{jacob}.}]
 	module Saml
 
 	open System
@@ -2074,7 +2110,7 @@ In conclusion a programming language such as F* can be used to create an executa
 \end{lstlisting}
 \clearpage
 \section{Network wrapper implemented in F\#}
-\begin{lstlisting}[style=fstar, caption={Example of implementation of network functions in F\# \cite{jacob}.}]
+\begin{lstlisting}[style=fstar, caption={[Example of implementation of network functions in F\#]Example of implementation of network functions in F\# \cite{jacob}.}]
 	module Network
 
 	open System
