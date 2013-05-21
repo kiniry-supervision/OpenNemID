@@ -7,12 +7,11 @@ open TypeFunc
 open Messaging
 
 val loginWithFb: Authentication
-val loginWithGoogle: Authentication
+val loginWithYubico: Authentication
 val loginWithSMS: Authentication
 val loginWithOpenId: Authentication
 val userid: string
 val password: string
-val email: string
 val fakeprint: str:string -> unit
 val newUserId: string
 val newPassword: string
@@ -25,9 +24,9 @@ val handleAuthMethod: auth:Authentication -> Authentication
 let handleAuthMethod auth = 
 	match auth with
 	| Facebook(fbid) -> loginWithFb
-	| Google(gid) -> loginWithGoogle
 	| SMS(gen) -> loginWithSMS
 	| OpenId(oid) -> loginWithOpenId
+	| Yubico(yid) -> loginWithYubico
 					
 val loop: user:string -> idp:prin -> sp:prin -> unit
 
@@ -75,12 +74,10 @@ let browser sp resource =
 
 val retrieveGeneratedPassword: string
 
-val createUser: authp:prin -> unit
+val createUser: authp:prin -> passportnumber:string -> unit
 
-let createUser authp =
-	let name = userid in
-	let pw = password in
-	let req = RequestForLogin name pw email in
+let createUser authp passportnumber =
+	let req = RequestForLogin passportnumber in
 	let _ = SendMessage authp req in
 		let resp = ReceiveMessage authp in
 		match resp with

@@ -186,7 +186,7 @@ The goal of this project is to:
 \end{enumerate}
 
 \section{Scope}
-This project has had it focus towards specifying a new protocol that could replace NemID. The intent of this project is therefore not to develop a complete system, but to make a formal specification for a system that could then later be used to engineer a new system.
+This project has had its focus towards specifying a new protocol that could replace NemID. The intent of this project is therefore not to develop a complete system, but to make a formal specification for a system that could then later be used to engineer a new system.
 
 \section{Background}
 We're extending the work done by Jacob H{\o}jgaard in his Masters thesis \emph{'Securing Single Sign-On Systems With Executable Models'}. Jacob's research has focused on the current implementation of NemID and therefore describes, outlines and models the current system used in Denmark as of May 2013.
@@ -205,11 +205,16 @@ From an academic point of view it would be interesting to see if a platform inde
 This chapter will clarify the technical concepts that has been used in this report. It will describe the SAML protocol and the Danish specialization OIOSAML. Furthermore it will describe the concept of static analysis and outline different protocol verification tools and our choice of tool. Lastly it will introduce the concept \emph{N-factor authentication} that has been used in the development of this project.
 
 \section{SAML protocol}
-The Security Assertion Markup Language or SAML is an XML based language created for the exchanging of authentication and authorization (security tokens) between different systems or domains, in particular between a service provider and an identity provider. The latest version of SAML is 2.0 released in 2005. SAML specifies three roles: \emph{principal}, \emph{identity provider} and \emph{service provider}. Principal refers to an entity that can be authenticated, therefore both the user and the identity provider and service provider are principals. SAML addresses the problem of web browser single-sign on (SSO). SSO means that the user only has to login once per identity provider per session. Practically this means that the user only has to be redirected once to the identity provider for authentication once per session. The identity provider creates a session for the user that can be reused for any subsequent authentication request. SAML specifies 5 core elements - \emph{Assertions}, \emph{Protocols}, \emph{Bindings}, \emph{Profiles} and \emph{Metadata}. See appendix A for examples of assertion and SAML messages.
+The Security Assertion Markup Language or SAML is an XML based language created for the exchanging of authentication and authorization (security tokens) between different systems or domains, in particular between a service provider and an identity provider. The latest version of SAML is 2.0 released in 2005. SAML specifies three roles: \emph{principal}, \emph{identity provider} and \emph{service provider}. Principal refers to an entity that can be authenticated, therefore both the user and the identity provider and service provider are principals. SAML addresses the problem of web browser single-sign on (SSO). SSO means that the user only has to login once per identity provider per session. Practically this means that the user only has to be redirected once to the identity provider for authentication per session. The identity provider creates a session for the user that can be reused for any subsequent authentication request. SAML specifies 5 core elements - \emph{Assertions}, \emph{Protocols}, \emph{Bindings}, \emph{Profiles} and \emph{Metadata}. See appendix A for examples of assertion and SAML messages.
 \par
 \emph{Assertions} are security tokens containing statements or claims about a principal. These statements in SAML are called attributes and they usually hold information like name, last name, email etc. The principal is referred to as the \emph{subject} in an assertion.
-%%%%%INDSÆT FIGUR OM SAML ASSERTION%%%%
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.5]{images/SAMLAssertion.png}
+	\caption{The elements in a SAML Assertion}
+\end{figure}
 \par
+
 \emph{Protocols} describe the messages that can be exchanged between the service provider and the identity provider when exchanging \emph{assertions}. The protocol used in OpenNemID is called the Authentication Request Protocol. This protocol consists of AuthnRequest message and a response message. The AuthnRequest message has an id that must be unique and the creator of the message is responsible for ensuring it is.
 AuthnRequest has 5 fields:
 \begin{enumerate}
@@ -220,10 +225,18 @@ AuthnRequest has 5 fields:
 	\item \emph{Conditions} - conditions of the request (audience restriction, not before this time or not after this time).
 \end{enumerate}
 
-%%%%%INDSÆT FIGUR OM SAML AUTHNREQUEST%%%%
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.5]{images/SAMLAuthnRequest.png}
+	\caption{The SAML AuthnRequest message}
+\end{figure}
 \par
 The response message has fields \emph{Id} and \emph{IssueInstant} that was specified in the request message. The \emph{Destination} is the endpoint address for the service provider. The \emph{Issuer} is the entity Id of the identity provider. The response message also has a field \emph{inResponseTo} that specifies the id of the AuthnRequest the response is to. The \emph{Status} field can only have one of three possible values - \emph{Requester}, \emph{Responder} or \emph{Success}. The \emph{Assertion} can only be issued if the \emph{Status} field is \emph{Success}. The assertion can either be plain text or an \emph{EncryptedAssertion} which will be encrypted under the public key of the recipient of the message (service provider).
-%%%%%INDSÆT FIGUR OM SAML RESPONSE%%%%
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.5]{images/SAMLResponse.png}
+	\caption{The SAML Response message}
+\end{figure}
 
 \par
 \emph{Bindings} specifies how the messages are mapped to the underlying HTTP(S) or SOAP protocols. However in this report only HTTP POST and HTTP REDIRECT bindings will be addressed. The POST binding maps the content of messages to hidden XHTML form fields that are named SAMLRequest and SAMLResponse. The content is BASE64 encoded. For the REDIRECT binding the message content is mapped to the URL query string with SAMLRequest and SAMLResponse as the identifier. Since the URL query string has limited capacity the message is compressed by the DEFLATE algorithm and after that it is BASE64 encoded and URL encoded.
@@ -233,9 +246,9 @@ The response message has fields \emph{Id} and \emph{IssueInstant} that was speci
 \emph{Metadata} is the necessary data exchanged between the involved parties in order to know each other. A service provider's metadata contains the certificate for signing messages and a message that the identity provider should use for encrypting assertion. It also contains endpoints which specifies the addresses to which the identity provider should send response messages. There can be more than one endpoint if different bindings are available. The identity provider's metadata also contains signing and encryption certificates and endpoints that specify the addresses for sending requests to the identity provider. There can be more endpoints for different bindings. The identity provider will publish the attributes it is able to serve through it's metadata.
 
 \subsection{OIOSAML}
-The Danish specialization OIOSAML, \emph{OIO Web SSO Profile}, is a dialect of the SAML profile \emph{Web Browser SSO}. This profile \hl{serves as an umbrella} for most standards when interacting with the government and other public institutions.
+The Danish specialization OIOSAML, \emph{OIO Web SSO Profile}, is a dialect of the SAML profile \emph{Web Browser SSO}. This profile is a standard that specifies the interactions between a user and the government and/or other public institutions.
 \par
-OIOSAML has specific requirements for binding and protocol. The point of adding these measures is to secure the protocol further and some of the extensibility of the SAML Web Browser SSO \hl{is not necessary}. An example is that in plain SAML it is possible to issue authentication requests without having a prior exchange of metadata. This is not desirable in OpenNemID since the security of the protocol will be improved by adding a controlled connection flow, where the service providers are approved beforehand. In the following there has been some concepts left out if deemed insignificant to the level of description necessary for this report.\\\\
+OIOSAML has specific requirements for binding and protocol. The point of adding these measures is to secure the protocol further and that some of the extensibility of the SAML Web Browser SSO is not necessary. An example is that in plain SAML it is possible to issue authentication requests without having a prior exchange of metadata. This is not desirable in OpenNemID since the security of the protocol will be improved by adding a controlled connection flow, where the service providers are approved beforehand. In the following there has been some concepts left out if deemed insignificant to the level of description necessary for this report.\\\\
 \textbf{OIOSAML mandates for the Service Provider}
 \begin{itemize}
   \item The metadata of the service provider should be known to the identity provider (as mentioned before there must be a formal exchange of metadata between the parties)
@@ -265,10 +278,10 @@ OIOSAML has specific requirements for binding and protocol. The point of adding 
 Static program analysis is the opposite of dynamic analysis which is analysis performed on executing programs. Therefore static analysis is analysis of computer software that is performed without actually executing programs. Static analysis is usually the analysis performed by an automated tool. There exists tools to perform analysis on the behavior of individual statements and declarations and tools to perform analysis of the complete source code of a program. Static analysis has been successfully used to automatically validate security properties of classical protocols. The technique has been used to validate the SAML Single Sign-On protocols \cite{HansenSkriver}.
 
 \section{Protocol verification tools}
-A communication protocol is a system of digital message formats and rules for exchanging those messages in or between computing systems. A cryptographic protocol or security protocol is an abstract or concrete communications protocol that performs a security-related function and applies cryptographic models. Cryptographic protocols can be verified formally on an abstract level. Formal verification is an attempt at proving or disproving the correctness of intended algorithms underlying a system with regards to a certain formal specification. There exists various tools to formally verify a cryptographic protocol on an abstract level. This section will outline the tools we have investigated through the work of this project and the key features of the tools.
+A communication protocol is a system of digital message formats and rules for exchanging those messages in or between computing systems. A cryptographic protocol or security protocol is an abstract or concrete communications protocol that performs a security-related function and applies cryptographic models. Cryptographic protocols can be verified formally on an abstract level. Formal verification is an attempt at proving or disproving the correctness of intended algorithms underlying a system with regards to a certain formal specification. There exists various tools to formally verify a cryptographic protocol on an abstract level. This section will outline the tools we have investigated through the work of this project and the key features of these tools.
 
 \subsection{ProVerif}
-ProVerif is an automatic cryptographic protocol verifier in the Dolev \& Yao model\footnote{Cryptographic primitives are assumed perfect and cyphers cannot be decrypted without the proper decryption key}. It is based on a representation of the protocol by Horn clauses\footnote{Horn clause is a clause (a disjunction of literals) with at most one positive literal}. One of \emph{ProVerif}'s key features is its ability to handle many different cryptographic primitives, including shared- and public-key cryptographys, hash functions and Diffie-Hellman key agreements\footnote{Diffie-Hellman keyexchange is a specific method for the exchanging of cryptographic keys}. The other key feature is its ability to handle an unbounded number of sessions of the protocol (even in parallel). \emph{ProVerif} can prove secrecy\footnote{The adversary cannot obtain the secret}, authentication, strong secrecy\footnote{The adversary does not see the difference when the value of the secret changes} and equivalences between processes that differ only by terms.
+ProVerif is an automatic cryptographic protocol verifier in the Dolev \& Yao model\footnote{Cryptographic primitives are assumed perfect and cyphers cannot be decrypted without the proper decryption key}. It is based on a representation of the protocol by Horn clauses\footnote{Horn clause is a clause (a disjunction of literals) with at most one positive literal}. One of ProVerif's key features is its ability to handle many different cryptographic primitives, including shared- and public-key cryptographys, hash functions and Diffie-Hellman key agreements\footnote{Diffie-Hellman keyexchange is a specific method for the exchanging of cryptographic keys}. The other key feature is its ability to handle an unbounded number of sessions of the protocol (even in parallel). ProVerif can prove secrecy\footnote{The adversary cannot obtain the secret}, authentication, strong secrecy\footnote{The adversary does not see the difference when the value of the secret changes} and equivalences between processes that differ only by terms.
 
 \subsection{F*}
 \label{sect:techbgfstar}
@@ -279,16 +292,16 @@ JSCert is an ongoing project. JSCert is short for Certified JavaScript. The goal
 
 
 \subsection{XOR-ProVerif}
-XOR-ProVerif is a tool for analyzing protocols with XOR. It is a tool with an implementation of the reduction of the derivation problem for Horn theories with XOR to the XOR-free case in combination with \emph{ProVerif}. These theories allow the modeling of a large class of intruders capabilities and protocols that employ the XOR operator.
+XOR-ProVerif is a tool for analyzing protocols with XOR. It is a tool with an implementation of the reduction of the derivation problem for Horn theories with XOR to the XOR-free case in combination with ProVerif. These theories allow the modeling of a large class of intruders capabilities and protocols that employ the XOR operator.
 
 \subsection{DH-ProVerif}
-DH-ProVerif is a tool for analyzing protocols with the Diffie-Hellman exponentiation. The tool is an adaption of the \emph{XOR-ProVerif} approach to the case of Diffie-Hellman exponentiation. The approach is to reduce the derivation problem for Horn theories modulo algebraic properties of Diffie-Hellman exponentiation to a purely syntactical derivation problem for Horn theories. The reduction for Diffie-Hellman exponentiation is more efficient than the one for XOR.
+DH-ProVerif is a tool for analyzing protocols with the Diffie-Hellman exponentiation. The tool is an adaption of the XOR-ProVerif approach to the case of Diffie-Hellman exponentiation. The approach is to reduce the derivation problem for Horn theories modulo algebraic properties of Diffie-Hellman exponentiation to a purely syntactical derivation problem for Horn theories. The reduction for Diffie-Hellman exponentiation is more efficient than the one for XOR.
 
 \subsection{CSProto}
 CSProto is a tool for analyzing contract signing protocols. The tool is used to prove that certain game-theoretic security properties, including balance for contract signing protocols, can be decided in a Dolev \& Yao style model with a bounded number of sessions. The decision algorithm is based on constraint-solving procedures which have been successfully employed in tools for reachability properties.
 
 \subsection{Our choice}
-We have chosen to formally specify OpenNemID using F* for several reasons. Both of us have previous experience working with the functional programming language F\# which F* is based on and a little experience with ML. However the most contributing factors was:
+We have chosen to formally specify OpenNemID using F* for several reasons. We both have previous experience working with the functional programming language F\# which F* is based on and a little experience with ML. However the most contributing factors was:
 \begin{enumerate}
 \item Since we are extending the work done by Jacob it made sense to use F* as he did
 \item The fully abstract compilation from F* to JavaScript
@@ -300,11 +313,11 @@ We have chosen to formally specify OpenNemID using F* for several reasons. Both 
 Two-factor authentication is the process of a requesting entity presenting some evidence of its identity to a second identity. The goal of two-factor authentication is to decrease the possibility that the requester is presenting false evidence of its identity. In a login scenario the requester would be a user requesting to login. Two-factor authentication requires the use of two of three authentication factors:
 \begin{enumerate}
 \item Something the requester knows (e.g. password)
-\item Something the user has (e.g. mobile phone)
+\item Something the requester has (e.g. mobile phone)
 \item Something the requester is (e.g. biometric characteristic - such as fingerprint)
 \end{enumerate}
 \par
-NemID currently implements two-factor authentication. It uses the factor 1 which is the user's userid and password. It also uses factor 2 which is the physical cardboard keycard that comes with creating a NemID login. This cardboard keycard comes with numeric challenges and their corresponding numeric keys. So when a user logs in with their userid and password they will be prompted for the numeric key corresponding to the numeric challenge display in the Java applet.
+NemID currently implements two-factor authentication. It uses the factor 1 which is the user's userid and password. It also uses factor 2 which is the physical cardboard keycard that comes with creating a NemID login. This cardboard keycard comes with numeric challenges and their corresponding numeric keys. So when a user logs in with their userid and password they will be prompted for the numeric key corresponding to the numeric challenge displayed in the Java applet.
 \par
 The OpenNemID protocol extends the two-factor authentication to \emph{n-factor authentication}, thereby adding multiple layers of security that would make it harder for an adversary to login. The first authentication is the factor 1 - userid and password. After this there are various ways for a user to authenticate themselves further based on their registration. However it will only use either the factor 1 or factor 2. Even though it would be preferable with a biometric characteristic authentication factor for digital identities, this is at the moment impossible. The OpenNemID protocol requires that a user at least has the standard factor 1 (a userid and a password) and at least one more authentication method. The user will by default have to authenticate themselves through all the authentication methods they have added.
 \\
@@ -318,7 +331,7 @@ The authentication methods that has been considered are:
 		Facebook Connect is the single sign-on solution provided by Facebook. This would require the user to create and setup a Facebook account. 
 	\item[] \textbf{One-Time Passwords}\\
 		A One-Time Password, henceforth \emph{OTP}, is a generated password with the limitation of only being usable once. To further enhance the security of the OTP, a time limiting factor could be applied, thereby creating a Time-based One-time Password, henceforth \emph{TOTP}.\\
-		A TOTP is generated based on a uniform algorithm, the requirements for the algorithm includes that the key must be shared by the prover and the verifier, the time-step value\footnote{The time-step value is the amount of seconds that must be between each generated password. If the first password was generated at 01:03:02 PM and the time-step value was 30, the next password must be generated at 01:03:32 PM.} must be the same for the prover and the verifier, both the prover and the verifier must have the capabilities of deriving the current Unix timestamp\footnote{Unix time, or POSIX time, refers to the amount of seconds that has passed since January 1st 1970 00:00:00 UTC, without counting leap seconds.} \cite{rfc6238}.\\
+		A TOTP is generated based on a uniform algorithm, the requirements for the algorithm includes that the key must be shared by the prover and the verifier. The time-step value\footnote{The time-step value is the amount of seconds that must be between each generated password. If the first password was generated at 01:03:02 PM and the time-step value was 30, the next password must be generated at 01:03:32 PM.} must be the same for the prover and the verifier, both the prover and the verifier must have the capabilities of deriving the current Unix timestamp\footnote{Unix time, or POSIX time, refers to the amount of seconds that has passed since January 1st 1970 00:00:00 UTC, without counting leap seconds.} \cite{rfc6238}.\\
 		Various client applications have been developed for generating the TOTP. \emph{Google Authenticator} is Google's open-source TOTP client that runs on mobile platforms such as Android, iOS and Blackberry.
 	\item[] \textbf{Yubico}
 		Yubico has specialized in OTP hardware and software. Their flagship product, the YubiKey, is a tiny device that is inserted into the USB port on the user's device. When challenged with a OTP, the user would use the YubiKey to generate the OTP. YubiKey is already integrated with various single-sign on systems such as OpenID.
@@ -339,7 +352,7 @@ Before formalizing the protocol, it's required to specify and explain some of th
 A sequence diagram depicting the protocol is useful for introducing the basics of the protocol. The sequence diagrams give a brief overview of the logon protocol, identity provider registration protocol and the user registration protocol. The logon protocol will, later in this chapter, be modeled using a communication diagram, this is done to give a more thorough descriptions
 
 \subsection{Logon protocol}
-Jacob have depicted the NemID protocol with 12 steps. The sequence diagram shows how the browser must delegate messages from the service provider to the identity provider, while also having to delegate messages from DanId to the identity provider. A single challenge is used to authenticate the user after credentials have been submitted.
+Jacob has depicted the NemID protocol with 12 steps. The sequence diagram shows how the browser must delegate messages from the service provider to the identity provider, while also having to delegate messages from DanId to the identity provider. A single challenge is used to authenticate the user after credentials have been submitted.
 
 \begin{figure}[H]
 	\centering
@@ -615,7 +628,6 @@ The initial AuthnRequest extracted from the cookie is verified. Verification fai
 \par
 When verification succeeds, an assertion is build based on the login data received from the authentication provider. The assertion is then encrypted using the service providers public key. A SAML response is created and the assertion is appended to it along with the AuthnRequest. The browser is then redirected to the service provider.
 \begin{algorithm}[H]
-	\title{negermand}
 	\caption{Process 7}
 	\begin{algorithmic}
 		\REQUIRE{SP.Public \AND LID is well-formed \AND ARC cookie present}
@@ -680,7 +692,7 @@ We briefly introduced F* in chapter \ref{chap:techbg}, but will now give a more 
 F* is a research language from Microsoft Research. F* primarily subsumes two research languages from Microsoft Research, F7\footnote{http://research.microsoft.com/en-us/projects/f7/} and Fine\footnote{http://research.microsoft.com/en-us/projects/fine/}. F* is at this time considered to be an $\alpha$-release. The purpose of designing F* is to enable the construction and communication of proofs of program properties and of properties of a program's environment in a verifiable secure way. F* is a dialect of ML and compiles to .NET bytecode in a type-preserving style. This means that it can interop with other .NET languages and the types defined in F* can be used by other .NET languages without losing type information. Furthermore there also exists a fully abstract compiler from F* to JavaScript. This makes it possible to deploy F* programs on web pages as JavaScript meanwhile there is a formal guarantee that the program still behaves just as they would according to F* semantics. The compiling and type-checking of F* code utilizes the Z3\footnote{http://z3.codeplex.com/} SMT solver for proving assumptions made with refinement types. F* has been formalized and verified using Coq\footnote{Coq is an interactive theorem prover written in OCaml.}.
 
 \section{Syntax and semantics}
-F* inherits syntax and semantics from ML. F* is a functional language which means that it has features like immutability by default, polymorphic types and type inference. In Listing \ref{list:helloworld} we have shown the classic Hello World example in F*. This example shows how to specify a main method by defining a function \_ (underscore) at the end of a module. \hl{This will instruct the compiler to make an .exe file instead of a dll.}
+F* inherits syntax and semantics from ML. F* is a functional language which means that it has features like immutability by default, polymorphic types and type inference. In Listing \ref{list:helloworld} we have shown the classic Hello World example in F*. This example shows how to specify a main method by defining a function \_ (underscore) at the end of a module. This will instruct the compiler to make an .exe file instead of a dll.
 
 \begin{lstlisting}[style=fstar, caption={Hello World example in F*}, label={list:helloworld}]
 	module HelloWorld
@@ -784,7 +796,7 @@ signAssertion in
   	      identityprovider me client (*Start over*)
 \end{lstlisting}
 
-The recursive function \emph{identityprovider} starts by receiving a SAML message from the client. It then matches the request with a \emph{SamlMessage.AuthnRequestMessage} or\emph{SamlMessage.UserAuthenticated} type. When matched with an AuthnRequest message it verifies the Service Providers signature of the message by the function \emph{VerifySignature} which is shown in listing \ref{list:crypelm}. The function takes a principal, the principals public key, a message and a signature. It returns a boolean indicating if the check passed. The return type however has a refinement type that relates the message to the principal if the verification passes. \hl{$==>$ should be as implication therefore stating that the predicate is valid}. If the verification of the Service Providers signature of the AuthnRequestMessage passes it creates a nonce to be related to this user when the user has authenticated himself/herself by NemID and sends the response to the user. When the user has authenticated through NemID the function \emph{handleUserAuthenticated} is called. The functions purpose is to issue a signed assertion and sending the AuthResponseMessage to the user. The signature for signing messages takes 4 arguments - the principal, the signer, the private key of the principal and the message to be signed. The message is annotated with a refinement type \emph{\{Log p msg\}}. This refinement type is an E-kinded type that takes a principal and a string as constructor elements. The val declaration for a method Sign in listing \ref{list:crypelm} requires the predicate \{Log p msg\} to be true before it can typecheck. This means that the message to sign is related to the principal signing the message. Securing this is done by calling \emph{assume\{Log me assertion\}} before signing the message. The predicate is by virtue of this "verified". After this the assertion is encrypted by using the Service Providers public key and sent within an AuthResponseMessage to the user.
+The recursive function \emph{identityprovider} starts by receiving a SAML message from the client. It then matches the request with a \emph{SamlMessage.AuthnRequestMessage} or\emph{SamlMessage.UserAuthenticated} type. When matched with an AuthnRequest message it verifies the Service Providers signature of the message by the function \emph{VerifySignature} which is shown in listing \ref{list:crypelm}. The function takes a principal, the principals public key, a message and a signature. It returns a boolean indicating if the check passed. The return type however has a refinement type that relates the message to the principal if the verification passes. $==>$ should be seen as an implication therefore stating that the predicate is valid. If the verification of the Service Providers signature of the AuthnRequestMessage passes it creates a nonce to be related to this user when the user has authenticated himself/herself by NemID and sends the response to the user. When the user has authenticated through NemID the function \emph{handleUserAuthenticated} is called. The functions purpose is to issue a signed assertion and sending the AuthResponseMessage to the user. The signature for signing messages takes 4 arguments - the principal, the signer, the private key of the principal and the message to be signed. The message is annotated with a refinement type \emph{\{Log p msg\}}. This refinement type is an E-kinded type that takes a principal and a string as constructor elements. The val declaration for a method Sign in listing \ref{list:crypelm} requires the predicate \{Log p msg\} to be true before it can typecheck. This means that the message to sign is related to the principal signing the message. Securing this is done by calling \emph{assume\{Log me assertion\}} before signing the message. The predicate is by virtue of this "verified". After this the assertion is encrypted by using the Service Providers public key and sent within an AuthResponseMessage to the user.
 
 \begin{lstlisting}[style=fstar, caption={Cryptographic elements}, label={list:crypelm}]
 	type pubkey :: prin => *
@@ -1004,7 +1016,7 @@ The \emph{CertStore} module is taken from Jacob's code and expanded with functio
 		| ChallengeResponse: challenge:nonce -> Message
 		| IdpChalResponse: challenge:nonce -> Message
 		| AcceptedIdp: idp:prin -> pubkey:pubkey idp -> authp:prin -> authpubkey:pubkey authp -> signedjavascript:string -> Message
-		| RequestForLogin: userid:string -> password:string -> email:string -> Message
+		| RequestForLogin: passportnumber:string -> Message
 		| ReqLoginResponse: challenge:nonce -> Message
 		| CreateLogin: generatedpassword:string -> challenge:nonce -> Message
 		| ChangeUserId: userid:string -> newUserId:string -> password:string -> Message
@@ -1137,7 +1149,7 @@ The specification of the Identity Provider is divided into several listings for 
 			identityprovider me user authp
 \end{lstlisting}
 
-This part of the identity provider implements the algorithms (INDSÆT NR på algoritmerne). The identity provider accepts the three SAML messages \emph{AuthnRequestMessage}, \emph{Login} and \emph{UserAuthResponse} from the user.
+This part of the identity provider implements the algorithms 2 and . The identity provider accepts the three SAML messages \emph{AuthnRequestMessage}, \emph{Login} and \emph{UserAuthResponse} from the user.
 \begin{enumerate}
 \item The \emph{AuthnRequestMessage} branch decodes the message and if the user has not logged in previously it sends a \emph{UserCredRequest} back with the JavaScript and a nonce to be used for relating the login at the Identity Provider prompting the user to give his or her login information. If the user has already logged in previously it issues an assertion to the user.
 \item The \emph{Login} branch handles the user's login information which is the response the user provides after receiving the \emph{UserCredRequest}. This branch verifies that the nonce from the user is the correct one and if it is correct it delegates the login information to the Authentication Provider and then calls the function \emph{handleauthresponse} which we will explain later in this section. If the nonce is incorrect it returns a HTTP error.
@@ -1165,6 +1177,7 @@ This part of the identity provider implements the algorithms (INDSÆT NR på alg
 			SendSaml user resp)
 	      else
 		SendSaml user (Failed Requester)
+
 	val handleauthresponse: me:prin -> user:prin -> authp:prin -> unit
 
 	let handleauthresponse me user authp =
@@ -1189,7 +1202,7 @@ This part of the identity provider implements the algorithms (INDSÆT NR på alg
 		| _ -> SendSaml user (DisplayError 400)
 \end{lstlisting}
 
-This part of the identity provider handles the information received from the Authentication Provider. It has two match branches:
+This part of the identity provider handles the information received from the Authentication Provider. It implements algorithms 6 and 7. The function \emph{handleauthresponse} has two match branches:
 \begin{enumerate}
 \item \emph{LoginResponseMessage} which will prompt the user for a n-factor authentication method while it relates the challenge generated by the Authentication Provider to the user for verification
 \item \emph{LoginSuccess} which specifies that the user has passed all the n-factor authentication methods. 
@@ -1345,7 +1358,7 @@ The specification of the Authentication Provider is divided into several listing
 			authenticationprovider me idp user
 \end{lstlisting}
 
-The Authentication Provider implements algorithms ....... . The Authentication Provider accepts two SAML messages \emph{LoginRequestMessage} and \emph{NfactAuthRequest} from the Identity Provider.
+The Authentication Provider implements algorithms 5 and 9. The Authentication Provider accepts two SAML messages \emph{LoginRequestMessage} and \emph{NfactAuthRequest} from the Identity Provider.
 \begin{enumerate}
 \item The \emph{LoginRequestMessage} branch will check the login information. If the correct login information has been provided by the user it generates a nonce to be related to the user and specifies which type of n-factor authentication the user has to go through and that will be sent to the identity provider.
 \item The \emph{NfactAuthRequest} branch is the receiving of n-factor authentication response from the user. It verifies that the sender of the message is the correct user and the n-factor information. The correct n-factor information will make the function \emph{nfactauth} which will handle if the user has gone through all n-factor authentication method or needs to specify more. The function will send the information to the identity provider.
@@ -1357,8 +1370,8 @@ The Authentication Provider implements algorithms ....... . The Authentication P
 	let rec usercommunication me user =
 		let req = ReceiveMessage user in
 		match req with
-		| RequestForLogin(userid, password, email) -> 
-			if createuser user userid password email then
+		| RequestForLogin(passportnumber) -> 
+			if createuser user passportnumber then
 				let challenge = GenerateNonce me in
 				relatechallenge user challenge;
 				SendMessage user (ReqLoginResponse challenge);
@@ -1459,12 +1472,11 @@ The specification of the Browser is divided into two listings for the sake of un
 	open Messaging
 
 	val loginWithFb: Authentication
-	val loginWithGoogle: Authentication
+	val loginWithYubico: Authentication
 	val loginWithSMS: Authentication
 	val loginWithOpenId: Authentication
 	val userid: string
 	val password: string
-	val email: string
 	val fakeprint: str:string -> unit
 
 	val handleAuthMethod: auth:Authentication -> Authentication
@@ -1472,9 +1484,9 @@ The specification of the Browser is divided into two listings for the sake of un
 	let handleAuthMethod auth = 
 		match auth with
 		| Facebook(fbid) -> loginWithFb
-		| Google(gid) -> loginWithGoogle
 		| SMS(gen) -> loginWithSMS
 		| OpenId(oid) -> loginWithOpenId
+		| Yubico(yid) -> loginWithYubico
 					
 	val loop: user:string -> idp:prin -> sp:prin -> unit
 	
@@ -1521,7 +1533,7 @@ The specification of the Browser is divided into two listings for the sake of un
 			| _ -> res; ()	
 \end{lstlisting}
 
-This part of the \emph{Browser} module is used to model the client's side of a logging in session. It is worth noticing that the browser verifies the JavaScript is actually received from the correct identity provider. The function \emph{fakeprint} is used to give the user messages about errors and if they are logged in. The recursive function \emph{loop} will provide n-factor authentication methods until the client receives a \emph{AuthResponseMessage} which it then will send to the service provider and the user is now logged in.
+This part of the \emph{Browser} module is used to model the client's side of a logging in session. It implements algorithms 3 and 7. It is worth noticing that the \emph{Browser} verifies the JavaScript is actually received from the correct Identity Provider. The function \emph{fakeprint} is used to give the user messages about errors and if they are logged in. The recursive function \emph{loop} will provide n factor authentication methods until the client receives a \emph{AuthResponseMessage} which it then will send to the Service Provider and the user is now logged in.
 
 \begin{lstlisting}[style=fstar, caption={The Browser's side of the account creation and changing}]
 	val newUserId: string
@@ -1532,12 +1544,10 @@ This part of the \emph{Browser} module is used to model the client's side of a l
 
 	val retrieveGeneratedPassword: string
 
-	val createUser: authp:prin -> unit
+	val createUser: authp:prin -> passportnumber:string -> unit
 	
-	let createUser authp =
-		let name = userid in
-		let pw = password in
-		let req = RequestForLogin name pw email in
+	let createUser authp passportnumber =m
+		let req = RequestForLogin passportnumber in
 		let _ = SendMessage authp req in
 			let resp = ReceiveMessage authp in
 			match resp with
